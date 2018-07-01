@@ -6,7 +6,24 @@ A good coding standard helps the code quality and development productivity becau
 
 There are two tools used in maitaining TypeScript coding standard: [TSLint](https://github.com/palantir/tslint) and [Prettier](https://prettier.io/). TSLint is used for code analysis and prettier is used for code format. Both tools should be configured and used in both IDE and the automatic build process.
 
-## 2 TSLint
+## 2 TS Compiler Options
+
+First of all, set the following compiler options in `tsconfig.json` to enforce strict type checking and error detection.
+
+```json
+"strict": true,
+"noUnusedLocals": true,
+"noUnusedParameters": true,
+"noImplicitReturns": true,
+"noFallthroughCasesInSwitch": true,
+"skipLibCheck": true,
+```
+
+In the above configuration, enabling `--strict` enables `--noImplicitAny`, `--noImplicitThis`, `--alwaysStrict`, `--strictNullChecks`, `--strictFunctionTypes` and `--strictPropertyInitialization`.
+
+The `skipLibCheck` tells the compiler to skil checking for all declaraton files (`*.d.ts`). There was an error in an Ionic 3.9 declaration file.
+
+## 3 TSLint
 
 Both the Angular CLI tool `ng` and the Ionic CLI tool `ionic` generate a `tslint.json` file. First, install and use `tslint-angular` preset for code analyzer: `npm i -D tslint-angular`.
 
@@ -36,7 +53,7 @@ Then, disable code style checking rules. Update the `tslint.json` file to have t
 
 For an Ionic project, write the npm run command as `"lint": "tslint -c tslint.json -p tsconfig.json",`. You also need to change the `ionic` generated component class names to follow the [Angular code style](https://angular.io/guide/styleguide).
 
-## 3 Prettier
+## 4 Prettier
 
 First, install the Prettier package using `npm i -D prettier`. Then create a configuration file named `.prettierrc` that has customized rules:
 
@@ -54,7 +71,7 @@ First, install the Prettier package using `npm i -D prettier`. Then create a con
 
 To make it format files automatically, set `“editor.formatOnSave”: true` in VS Code after installing the Prettier extension.
 
-## 4 Configure Pre-commit Hooks
+## 5 Configure Pre-commit Hooks
 
 Use [`husky`](https://github.com/typicode/husky), [`pretty-quick`](https://github.com/azz/pretty-quick) and [`npm-run-all`](https://github.com/mysticatea/npm-run-all) to run Prettier on changed files before commit.
 
