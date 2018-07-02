@@ -10,6 +10,24 @@ README： 请参考通用的项目 [README.md 模版](../sample-project-readme.m
 
 前端 Javascript 和 TypeScript 的项目统一采用 VS Code 做为 IDE。按转 VS Code 后，根据不同具体项目安装常用的 Extensions.
 
+### User Settings
+
+The following are some commons user settings for VS Code IDE.
+
+```json
+"files.autoSave": "onFocusChange",
+"editor.rulers": [
+    100
+],
+"git.enableSmartCommit": true,
+"editor.renderWhitespace": "all",
+"editor.formatOnSave": true,
+"editor.tabSize": 2,
+"editor.minimap.enabled": false,
+"files.trimFinalNewlines": true,
+"files.insertFinalNewline": true
+```
+
 ### 常用的 Extensions
 
 - [Angular 6 Snippets](https://marketplace.visualstudio.com/items?itemName=Mikael.Angular-BeastCode): TypeScript, HTML, Angular Material, RxJS 等的 snippets.
