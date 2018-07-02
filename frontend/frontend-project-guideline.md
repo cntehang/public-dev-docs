@@ -17,7 +17,7 @@ README： 请参考通用的项目 [README.md 模版](../sample-project-readme.m
 - [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome): a debug tool for Chrome.
 - [Kary Pro Colors](https://marketplace.visualstudio.com/items?itemName=karyfoundation.theme-karyfoundation-themes): 配置主题和颜色。
 - [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint): 保证 markdown 文件风格的一致性。
-- [Node npm](https://marketplace.visualstudio.com/items?itemName=eg2.vscode-npm-script): 运行 NPM 命令和`package.json`与安装 package 的一致性。 -[](): -[](): -[](): -[]():
+- [Node npm](https://marketplace.visualstudio.com/items?itemName=eg2.vscode-npm-script): 运行 NPM 命令和`package.json`与安装 package 的一致性.
 - [Npm Intellisense](https://marketplace.visualstudio.com/items?itemName=christian-kohler.npm-intellisense): 自动输入完成 package 的引用。
 - [Path Intellisense](https://marketplace.visualstudio.com/items?itemName=christian-kohler.path-intellisense): 自动完成文件路径的输入。
 - [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode): 自动格式 JS/TS 代码。具体配置请参考代码标准文档。
