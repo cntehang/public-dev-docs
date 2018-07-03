@@ -25,7 +25,8 @@ The following are some commons user settings for VS Code IDE.
 "editor.tabSize": 2,
 "editor.minimap.enabled": false,
 "files.trimFinalNewlines": true,
-"files.insertFinalNewline": true
+"files.insertFinalNewline": true,
+"html.format.wrapLineLength": 60,
 ```
 
 ### 常用的 Extensions
