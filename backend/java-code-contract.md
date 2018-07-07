@@ -5,7 +5,7 @@
 ### 1. Spring 依赖注入
 - **结论**：绝大部分情况下只使用 Constructor DI，不使用 Field DI
 - **注意事项**：
-    - 使用 Constructor DI时，不用在构造方法上加 @Autowired 注解，且只能有一个 Constructor，即只包含要注入的那些参数的构造函数
+    - 使用 Constructor DI时，若只有一个构造方法，则不用在构造方法上加 @Autowired 注解，且该构造方法形参应只包含要注入的那些依赖
     -  It’s fine to use field based injection in tests when you’re using the SpringJUnit4ClassRunner.
 - **主要原因**：
     - 如果使用 Field DI，对于IOC容器以外的环境，除了使用反射来提供它需要的依赖之外，无法复用该实现类。而且将一直是个潜在的隐患，因为你不调用将一直无法发现 NullPointerException 的存在。 
