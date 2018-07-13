@@ -2,6 +2,16 @@
 
 基于一个流行的 [项目开发指南](https://github.com/elsewhencode/project-guidelines)，本文描述了一个建议的 github 工作流程。具体项目可以定制工作流程。项目初期可以采用简化的工作流。比如，一个项目在初期只有一、二个人的时候，所有操作都在 master 分支 -- 但是上线前必须有 develop 分支。
 
+分支类型：
+- Master分支：该分支在第一次上线之后，永远保持可随时上线状态，不允许直接在这个上面进行更改或者提交代码，只能从其他分支merge
+- develop分支：原则上，develop分支主要用于新版本的开发，代码第一次上线后，从master创建出develop分支，后期版本开发在此之上进行，版本开发完毕之后，上线前，将develop merge到master，并做上线测试
+- 功能分支：每个版本的开发，会有很多独立功能，每个独立功能的开发，从develop创建一个功能分支，并在功能分支上进行功能的开发，最后合并到develop
+- hotfix分支：这种类型的分支是针对线上bug的紧急fix，直接从master创建分支，修复，测试完毕之后，合并到master，并上线
+
+一些原则：
+- PR每个PR都只是针对一个功能，不能够太大, 原则上不超过10个文件
+
+
 ## 1. 一些原则
 
 这里有一套规则要牢记：
@@ -54,11 +64,10 @@
 
 基于以上原因, 我们将 [功能分支工作流](https://www.atlassian.com/git/tutorials/comparing-workflows#feature-branch-workflow) ， [交互式变基的使用方法](https://www.atlassian.com/git/tutorials/merging-vs-rebasing#the-golden-rule-of-rebasing) 结合一些 [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows#gitflow-workflow)中的基础 (比如，命名和使用一个 develop branch)一起使用。 主要步骤如下:
 
-* 针对一个新项目, 在您的项目目录初始化您的项目。 **如果是（已有项目）随后的功能开发/代码变动，这一步请忽略**。
+* 针对一个新项目, 在github上创建项目的repo，并clone到本地
 
   ```sh
-  cd <项目目录>
-  git init
+  git clone <项目地址>
   ```
 
 * 检出（Checkout） 一个新的功能或故障修复（feature/bug-fix）分支。
@@ -67,7 +76,7 @@
   git checkout -b <分支名称>
   ```
 
-* 新增代码变更。
+* 在功能分枝上进行新功能的开发，与代码提交
 
   ```sh
   git add
@@ -78,22 +87,21 @@
 
   > `git commit -a` 会独立启动一个编辑器用来编辑您的说明信息，这样的好处是可以专注于写这些注释说明。请参考下面关于说明信息的要求。
 
-* 保持与远程（develop 分支）的同步，以便（使得本地 develop 分支）拿到最新变更。
+* 在准备提交合并前， 先将需要merge到的分支更新到最新，例如要将功能分支merge的develop，那么需要更新develop到最新
 
   ```sh
-  git checkout develop
-  git pull
+  git pull <master or develop，取决于要merge到哪个分支去>
   ```
 
   _为什么：_
 
   > 当您进行（稍后）变基操作的时候，保持更新会给您一个在您的机器上解决冲突的机会。这比（不同步更新就进行下一步的变基操作并且）发起一个与远程仓库冲突的合并请求要好。
 
-* （切换至功能分支并且）通过交互式变基从您的 develop 分支中获取最新的代码提交，以更新您的功能分支。
+* 切换至功能分支，merge <相关分支>到功能分支，并采用`rebase -i --autosquash`的方式进行merge
 
   ```sh
   git checkout <branchname>
-  git rebase -i --autosquash develop
+  git rebase -i --autosquash <master or develop，取决于要merge到哪个分支去>
   ```
 
   _为什么：_
@@ -107,7 +115,7 @@
   git rebase --continue
   ```
 
-* 推送您的（功能）分支。变基操作会改变提交历史, 所以您必须使用 `-f` 强制推送到远程（功能）分支。 如果其他人与您在该分支上进行协同开发，请使用破坏性没那么强的 `--force-with-lease` 参数。
+* 推送您的（功能）分支到github。变基操作会改变提交历史, 所以您必须使用 `-f` 强制推送到远程（功能）分支。 如果其他人与您在该分支上进行协同开发，请使用破坏性没那么强的 `--force-with-lease` 参数。
 
   ```sh
   git push -f
