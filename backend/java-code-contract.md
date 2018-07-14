@@ -15,15 +15,75 @@
 ### 2. 路由 Router文件
 - **结论**：为保证对外服务的统一管理，将具体的路由信息写在一个统一的文件中，而不是将其拆散写在控制器的每个方法声明头上
 
-### 3. Restful Or Not
+### 3. Restful? and Error Respnses
 - **结论**：
     - 拒绝Restful
     - 应用运行的状态码由开发人员自己制定和维护
-    - HTTP 动词使用 GET、POST、DELETE
+    - HTTP 动词使用 GET、POST
+    - 业务请求参数错误也应该放到业务层而不是网络层（如下面 bing 的例子）
+    - 错误代码/信息的目的是为了给出错误来源，最好能给出用户解决问题的方法（如下面Bing的例子）
+    - Error Response结构
+
+    ```javascript
+    {
+        "code": [success with 0, business exception starts with 1, system exception starts with 500]
+        "message":[specificed information about the code]
+        "data":[{data to return}]
+    }
+    ```
+- **他山之石**
+    - **Twitter**：用HTTP代码400表示所有的商业逻辑错误，同时提供错误细节
+
+    ```javascript
+    {
+        "errors":
+                [{
+                    "code":215,
+                    "message":"Bad Authentication data."
+                }]
+    }
+    ```
+    - **Facebook**：用的GraphQL风格，HTTP仅仅是通讯层。错误信息包含了Exception的类型和内部调试索引
+    
+    ```javascript
+    {
+        "error": 
+                {
+                    "message": "Syntax error \"Field picture specified more than once. This is only possible before version 2.1\" at character 23: id,name,picture,picture",
+                    "type": "OAuthException",
+                    "code": 2500,
+                    "fbtrace_id": "xxxxxxxxxxx"
+                }
+    }
+    ```
+    
+    - **Bing**：HTTP仅仅是通讯层。商业逻辑错误还是用 HTTP 200 状态码。特点是给出了错误的解决答案（那个参数不对）和请求的后台URL
+    
+    ```javascript
+    HTTP/1.1 200
+    {
+        "SearchResponse":
+                {
+                    "Version":"2.2",
+                    "Query":
+                            {
+                                "SearchTerms":"api error codes"
+                            },
+                    "Errors":
+                            [{
+                                "Code":1001,
+                                "Message":"Required parameter is missing.",
+                                "Parameter":"SearchRequest.AppId",
+                                "HelpUrl":"http\u003a\u002f\u002fmsdn.microsoft.com\u002fen-us\u002flibrary\u002fdd251042.aspx"
+                            }]
+                }
+    }
+    ```
 - **主要思路**：HTTP Code 用于区分网络问题和业务问题，自定义 Code 用于处理业务问题，不要使用 HTTP Code 去反映业务的运行情况，一方面其容量有限，另一方面使用其的学习成本也不低。Restful 风格的 API 虽然流行，但是要有自己的思考，其更适用于简单的场景。而商业系统开发往往是复杂的，不要开始就想着去简化，而应该从后期的管理上深入、想办法。
 
 ### 4. 接口与实现类命名风格
 - **结论**
+
     - 接口名称前不加附属的字母（如接口前加 I），
     - 实现类后不加附属的无意义单词（如 Impl）
     - 实现类名相较于接口名后面可加有意义的单词，如Db
@@ -54,4 +114,3 @@
 - **结论**：
     - 不要求进出都写，非常短小的的方法不用写，只要能追踪主要参数即可
     - 数据量太大时打印变量用Trace，数据量小用Info
-
