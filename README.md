@@ -11,3 +11,9 @@
 对全体有用的放在根目录，超过十个之后在建立相关分类目录。
 
 第一层可以有前端，后端，需求，设计。
+
+## 文档格式
+
+统一采用 Markdown 格式。
+
+建议采用 VS Code 并用 [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)来保证 markdown 文件风格的一致性。
