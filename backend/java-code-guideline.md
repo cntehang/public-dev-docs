@@ -1,4 +1,4 @@
-# 20180706 代码契约 V0.1 Beta
+# java-code-guideline
 
 ---
 
