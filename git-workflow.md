@@ -63,7 +63,9 @@
 
 ## 2. 建议的工作流
 
-基于以上原因, 我们将 [功能分支工作流](https://www.atlassian.com/git/tutorials/comparing-workflows#feature-branch-workflow) ， [交互式变基的使用方法](https://www.atlassian.com/git/tutorials/merging-vs-rebasing#the-golden-rule-of-rebasing) 结合一些 [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows#gitflow-workflow)中的基础 (比如，命名和使用一个 develop branch)一起使用。 主要步骤如下:
+基于以上原因, 我们将 [功能分支工作流](https://www.atlassian.com/git/tutorials/comparing-workflows#feature-branch-workflow) ， [交互式变基的使用方法](https://www.atlassian.com/git/tutorials/merging-vs-rebasing#the-golden-rule-of-rebasing) 结合一些 [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows#gitflow-workflow)中的基础功能 (比如，命名和使用一个 develop branch)一起使用。 主要步骤如下:
+
+### 2.1 项目初始建立`master` and `develop`二个分支
 
 - 针对一个新项目, 在 github 上创建项目的 repo，用 github 界面创建 `develop` 开发分支， `clone`到本地后，只基于开发分支做开发：
 
@@ -71,6 +73,8 @@
 git clone <项目地址> # clone the remote repository
 git checkout develop # set the develop branch as the current branch
 ```
+
+### 2.2 创建功能分支做具体开发
 
 - 检出（Checkout） 一个新的功能或故障修复（feature/bug-fix）分支。同步到 Github, 随时用 `git branch -a`检查当前分支状态：
 
@@ -80,28 +84,31 @@ git push -u origin my-feature-branch # sync to remote server
 git branch -a # display branch status
 ```
 
-- 在功能分枝上进行新功能的开发，与代码提交。
+- 在功能分枝上进行新功能的开发，提交代码并同步到远程 Git 服务器。
 
 ```sh
 git add . # Add all local changes
 git commit -a # commit all changes
+git push # push to remote frequently to bakcup changes
 ```
 
 为什么
 
-> `git commit -a` 会独立启动一个编辑器用来编辑您的说明信息，这样的好处是可以专注于写这些注释说明。请参考下面关于说明信息的要求。
+> `git commit -a` 会独立启动一个编辑器用来编辑您的说明信息，这样的好处是可以专注于写这些注释说明。请参考下面关于说明信息的要求。经常同步到远程库做备份。通常在 IDE 里执行上面三个操作也可以，注意当前分支为功能分支就好。
 
-- 在准备提交合并前， 先将需要 merge 到的分支更新到最新，例如要将功能分支 merge 到 develop，那么需要更新 develop 到最新
+### 2.3 合并功能分支到`develop`分支
+
+- 1）在准备提交合并前， 先将需要 merge 到的分支更新到最新，例如要将功能分支 merge 到 develop，那么需要更新 develop 到最新。下面的步骤建议手工运行。
 
 ```sh
-git pull develop # 如果是master的hotfix，需要从master同步。
+git pull develop
 ```
 
 为什么
 
 > 当您进行（稍后）变基操作的时候，保持更新会给您一个在您的机器上解决冲突的机会。这比（不同步更新就进行下一步的变基操作并且）发起一个与远程仓库冲突的合并请求要好。
 
-- 切换至功能分支，merge <相关分支>到功能分支，并采用`rebase -i --autosquash`的方式进行 merge
+- 2）切换至功能分支，merge <相关分支>到功能分支，并采用`rebase -i --autosquash`的方式进行 merge
 
 ```sh
 git checkout my-feature
@@ -119,7 +126,7 @@ git add <file1> <file2> ...
 git rebase --continue
 ```
 
-- 推送您的（功能）分支到 github。变基操作会改变提交历史, 所以您必须使用 `-f` 强制推送到远程（功能）分支。 如果其他人与您在该分支上进行协同开发，请使用破坏性没那么强的 `--force-with-lease` 参数。
+- 3）推送您的功能分支到 github。变基操作会改变提交历史, 所以您必须使用 `-f` 强制推送到远程（功能）分支。 如果其他人与您在该分支上进行协同开发，请使用破坏性没那么强的 `--force-with-lease` 参数。
 
 ```sh
 git push -f
@@ -129,9 +136,9 @@ git push -f
 
 > 当您进行 rebase 操作时，您会改变功能分支的提交历史。这会导致 Git 拒绝正常的 `git push` 。那么，您只能使用 `-f` 或 `--force` 参数了。[更多请阅读...](https://developer.atlassian.com/blog/2015/04/force-with-lease/)
 
-- 提交一个合并请求（Pull Request）。
-- Pull Request 会被负责代码审查的同事接受，合并和关闭。
-- 如果您完成了开发，请记得删除您的本地分支。
+- 4）提交一个合并请求（Pull Request）。Pull Request 会被负责代码审查的同事接受，合并和关闭。合并请求完成同时需要删除远程的功能分支。这些操作都利用 github 的用户界面进行。
+
+- 5）合并完成后，记得删除您的本地分支。
 
 ```sh
 git branch -d <分支>
@@ -142,6 +149,16 @@ git branch -d <分支>
 ```sh
 git fetch -p && for branch in `git branch -vv | grep ': gone]' | awk '{print $1}'`; do git branch -D $branch; done
 ```
+
+命令太长，建议在`.bash_profile`创建一个`alias`：
+
+```sh
+alias syncBranch='git fetch -p && for brach in `git branch -vv | grep ": gone]" | awk "{print $1}"`; do git branch -D $branch; done'
+```
+
+### 2.4 开发分支发布到`master`分支
+
+TODO.
 
 ## 3 如何写好 Commit Message
 
