@@ -101,18 +101,19 @@ git push # push to remote frequently to bakcup changes
 - 1）在准备提交合并前， 先将需要 merge 到的分支更新到最新，例如要将功能分支 merge 到 develop，那么需要更新 develop 到最新。下面的步骤建议手工运行。
 
 ```sh
-git pull develop
+git checkout develop
+git pull
 ```
 
 为什么
 
 > 当您进行（稍后）变基操作的时候，保持更新会给您一个在您的机器上解决冲突的机会。这比（不同步更新就进行下一步的变基操作并且）发起一个与远程仓库冲突的合并请求要好。
 
-- 2）切换至功能分支，merge <相关分支>到功能分支，并采用`rebase -i --autosquash`的方式进行 merge
+- 2）切换至功能分支，变基`develop`分支到功能分支，并采用`rebase -i --autosquash`的交互方式
 
 ```sh
 git checkout my-feature
-git rebase -i --autosquash develop # develop or master，取决于要merge到哪个分支去
+git rebase -i --autosquash develop
 ```
 
 为什么
