@@ -121,14 +121,14 @@ git rebase -i --autosquash master
 
 > 您可以使用 `--autosquash` 将所有提交压缩到单个提交。没有人会愿意（看到） `master` 分支中的单个功能开发就占据如此多的提交历史。 [更多请阅读...](https://robots.thoughtbot.com/autosquashing-git-commits)
 
-- 第三步（可能需要）：如果没有冲突请跳过此步骤，如果您有冲突, 就需要[解决它们](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/)并且继续变基操作。
+- 第三步（可能需要）：这一步在代码冲突或合并请求（PR）要求修改完善时用到。如果您有代码合并冲突, 就需要[解决它们](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/)。任何后续的代码改变需要继续变基操作。
 
 ```sh
 git add <file1> <file2> ... # 任何必要的增删改
 git rebase --continue # 继续刚才的变基操作
 ```
 
-- 第四步：推送您的功能分支到 github。变基操作会改变提交历史, 所以您必须使用 `-f` 强制推送到远程（功能）分支。 如果其他人与您在该分支上进行协同开发，请使用破坏性没那么强的 `--force-with-lease`。
+- 第四步：推送您的功能分支到 github。变基操作会改变提交历史, 所以您必须使用 `-f` 强制推送到远程（功能）分支。如果其他人与您在该分支上进行协同开发，请使用破坏性没那么强的 `--force-with-lease`。
 
 ```sh
 git push -f
@@ -136,9 +136,13 @@ git push -f
 
 为什么
 
-> 当您进行 rebase 操作时，您会改变功能分支的提交历史。这会导致 Git 拒绝正常的 `git push` 。那么，您只能使用 `-f` 或 `--force` 参数了。[更多请阅读...](https://developer.atlassian.com/blog/2015/04/force-with-lease/)
+> 当您进行 rebase 操作时，您会改变功能分支的提交历史。下一步的合并请求（PR）是基于远程库进行的。这一步把本地的变基操作同步到远程库。 由于变基会导致 Git 拒绝正常的 `git push` 。能使用 `-f` 或 `--force` 或当多人在同一分支合作时用 `--force-with-lease` 参数了。[更多请阅读...](https://developer.atlassian.com/blog/2015/04/force-with-lease/)
 
-- 第五步：提交一个合并请求（Pull Request）。Pull Request 会被负责代码审查的同事接受，合并和关闭。合并请求完成同时需要删除远程的功能分支。这些操作都利用 github 的用户界面进行。
+- 第五步：提交一个合并请求（Pull Request）。Pull Request 会被负责代码审查的同事接受，合并和关闭。合并请求完成同时需要删除远程的功能分支。这些操作都利用 github 的用户界面进行。如果代码需要进一步的修改完善，请回到第三步。
+
+为什么
+
+> 只有经过授权的人做代码的合并维护可以保护代码库的稳定可靠。代码是开发团队最宝贵的资源。
 
 - 第六步：合并完成后，记得删除您的本地分支。
 
