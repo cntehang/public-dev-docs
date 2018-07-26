@@ -121,10 +121,11 @@ git rebase -i --autosquash master
 
 > 您可以使用 `--autosquash` 将所有提交压缩到单个提交。没有人会愿意（看到） `master` 分支中的单个功能开发就占据如此多的提交历史。 [更多请阅读...](https://robots.thoughtbot.com/autosquashing-git-commits)
 
-- 第三步（可能需要）：这一步在代码冲突或合并请求（PR）要求修改完善时用到。如果您有代码合并冲突, 就需要[解决它们](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/)。任何后续的代码改变需要继续变基操作。
+- 第三步（可能需要）：这一步在没有代码冲突可以跳过。如果您有代码合并冲突, 就需要[解决它们](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/)。
 
 ```sh
 git add <file1> <file2> ... # 任何必要的增删改
+git commit -a # 提交所有修改
 git rebase --continue # 继续刚才的变基操作
 ```
 
@@ -138,7 +139,7 @@ git push -f
 
 > 当您进行 rebase 操作时，您会改变功能分支的提交历史。下一步的合并请求（PR）是基于远程库进行的。这一步把本地的变基操作同步到远程库。 由于变基会导致 Git 拒绝正常的 `git push` 。能使用 `-f` 或 `--force` 或当多人在同一分支合作时用 `--force-with-lease` 参数了。[更多请阅读...](https://developer.atlassian.com/blog/2015/04/force-with-lease/)
 
-- 第五步：提交一个合并请求（Pull Request）。Pull Request 会被负责代码审查的同事接受，合并和关闭。合并请求完成同时需要删除远程的功能分支。这些操作都利用 github 的用户界面进行。如果代码需要进一步的修改完善，请回到第三步。
+- 第五步：提交一个合并请求（Pull Request）。Pull Request 会被负责代码审查的同事接受，合并和关闭。合并请求完成同时需要删除远程的功能分支。这些操作都利用 github 的用户界面进行。如果代码需要进一步的修改完善，请回到第一步。
 
 为什么
 
