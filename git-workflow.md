@@ -1,19 +1,21 @@
 # Git 工作流程
 
-基于一个流行的 [项目开发指南](https://github.com/elsewhencode/project-guidelines)，本文描述了一个建议的 github 工作流程。具体项目可以定制工作流程。项目初期可以采用简化的工作流。比如，一个项目在初期只有一、二个人的时候，所有操作都在 master 分支 -- 但是上线前必须有 develop 分支。
+基于一个流行的 [项目开发指南](https://github.com/elsewhencode/project-guidelines)，本文描述了一个建议的 github 工作流程。和上述指南最大的不同是我们采用 master 分支作为主开发分支。另外创建专门的上线发布 release 分支。这样的好处是 master 在 github 是缺省的分支，变基，PR 和合并都比较自然。而且上线发布分支只有少数人关注，对开发人员越隐蔽越好。
+
+具体项目可以定制工作流程。项目初期可以采用简化的工作流。比如，一个项目在初期只有一、二个人的时候，所有操作都在 master 分支 -- 但是上线前必须有 release 分支。
 
 分支类型：
 
-- Master 分支：该分支在第一次上线之后，永远保持可随时上线状态，不允许直接在这个上面进行更改或者提交代码，只能从其他分支 merge
-- develop 分支：原则上，develop 分支主要用于新版本的开发，代码第一次上线后，从 master 创建出 develop 分支，后期版本开发在此之上进行，版本开发完毕之后，上线前，将 develop merge 到 master，并做上线测试
-- 功能分支：每个版本的开发，会有很多独立功能，每个独立功能的开发，从 develop 创建一个功能分支，并在功能分支上进行功能的开发，最后合并到 develop
-- hotfix 分支：这种类型的分支是针对线上 bug 的紧急 fix，直接从 master 创建分支，修复，测试完毕之后，合并到 master，并上线
+- release 分支：该分支在第一次上线之后，永远保持可随时上线状态，不允许直接在这个上面进行更改或者提交代码，只能从其他分支 merge
+- master 分支：master 分支主要用于新版本的开发，代码第一次上线时，从 master 创建出 release 分支用于上线发布。所有后期版本开发都在 master 分支上进行。版本开发完毕之后，上线前，将 master 的修改合并到 release，并做上线测试
+- 功能分支：每个版本的开发，会有很多独立功能，每个独立功能的开发，从 master 创建一个功能分支，并在功能分支上进行功能的开发，最后变基合并到 master。
+- hotfix 分支：这种类型的分支是针对线上 bug 的紧急 fix，直接从 release 创建分支。修复，测试完毕之后，合并到 release 上线。然后相应应该也并入 master 分支。
 
 一些原则：
 
 - PR 每个 PR 都只是针对一个功能，不能够太大, 原则上不超过 10 个文件
 
-## 1. 一些原则
+## 1. 基本规则
 
 这里有一套规则要牢记：
 
@@ -23,31 +25,29 @@
 
 > 因为这样，所有的工作都是在专用的分支而不是在主分支上隔离完成的。它允许您提交多个 pull request 而不会导致混乱。您可以持续迭代提交，而不会使得那些很可能还不稳定而且还未完成的代码污染 master 分支。
 
-- 从 `develop` 独立出分支。
+- 从 `master` 独立出分支 `release` 分支用于上线发布。
 
 为什么
 
-> 这样，您可以保持 `master` 分支中的代码稳定性，这样就不会导致构建问题，并且几乎可以直接用于发布（当然，这可能对某些项目来说要求会比较高）。
+> 这样，您可以保持 `release` 分支中的代码稳定性，随时可以直接用于发布。
 
-- 永远也不要将分支（直接）推送到 `develop` 或者 `master` ，请使用合并请求（Pull Request）。
+- 永远也不要将分支（直接）推送到 `master` ，请使用合并请求（Pull Request）。
 
 为什么
 
 > 通过这种方式，它可以通知整个团队他们已经完成了某个功能的开发。这样开发伙伴就可以更容易对代码进行 code review，同时还可以互相讨论所提交的需求功能。
 
-- 在推送所开发的功能并且发起合并请求前，请更新您本地的`develop`分支并且完成交互式变基操作（interactive rebase）。
+- 在推送所开发的功能并且发起合并请求前，请更新您本地的`master`分支并且完成交互式变基操作（interactive rebase）。
 
 为什么
 
-> rebase 操作会将（本地开发分支）合并到被请求合并的分支（ `master` 或 `develop` ）中，并将您本地进行的提交应用于所有历史提交的最顶端，而不会去创建额外的合并提交（假设没有冲突的话），从而可以保持一个漂亮而干净的历史提交记录。 [合并（merge）和变基（rebase）的比较](https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
+> rebase 操作会将功能合并到被请求合并的 master 分支，并将您本地进行的提交应用于所有历史提交的最顶端，而不会去创建额外的合并提交（假设没有冲突的话），从而可以保持一个漂亮而干净的历史提交记录。 [合并（merge）和变基（rebase）的比较](https://www.atlassian.com/git/tutorials/merging-vs-rebasing)
 
-- 请确保在变基(rebase)并发起合并请求之前解决完潜在的冲突。
-
-- 合并分支后删除本地和远程功能分支。
+- 请确保在变基(rebase)并发起合并请求之前解决完潜在的冲突，合并分支后删除本地和远程功能分支。
 
 为什么
 
-> 如果不删除需求分支，大量僵尸分支的存在会导致分支列表的混乱。而且该操作还能确保有且仅有一次合并到`master` 或  `develop`。只有当这个功能还在开发中时对应的功能分支才存在。
+> 如果不删除需求分支，大量僵尸分支的存在会导致分支列表的混乱。而且该操作还能确保有且仅有一次合并到`master`。只有当这个功能还在开发中时对应的功能分支才存在。
 
 - 在进行合并请求之前，请确保您的功能分支可以成功构建，并已经通过了所有的测试（包括代码规则检查）。
 
@@ -55,7 +55,7 @@
 
 > 因为您即将将代码提交到这个稳定的分支。而如果您的功能分支测试未通过，那您的目标分支的构建有很大的概率也会失败。此外，确保在进行合并请求之前应用代码规则检查。因为它有助于我们代码的可读性，并减少格式化的代码与实际业务代码更改混合在一起导致的混乱问题。
 
-- 保护您的 `develop` 和 `master` 分支。
+- 保护您的 `master`，尤其是 `release` 分支改动需要特别授权。
 
 为什么
 
@@ -63,20 +63,19 @@
 
 ## 2. 建议的工作流
 
-基于以上原因, 我们将 [功能分支工作流](https://www.atlassian.com/git/tutorials/comparing-workflows#feature-branch-workflow) ， [交互式变基的使用方法](https://www.atlassian.com/git/tutorials/merging-vs-rebasing#the-golden-rule-of-rebasing) 结合一些 [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows#gitflow-workflow)中的基础功能 (比如，命名和使用一个 develop branch)一起使用。 主要步骤如下:
+基于以上原因, 我们将 [功能分支工作流](https://www.atlassian.com/git/tutorials/comparing-workflows#feature-branch-workflow) ， [交互式变基的使用方法](https://www.atlassian.com/git/tutorials/merging-vs-rebasing#the-golden-rule-of-rebasing) 结合一些 [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows#gitflow-workflow)中的基础功能一起使用。 主要步骤如下:
 
-### 2.1 项目初始建立`master` and `develop`二个分支
+### 2.1 项目初始建立`master` 和 `release`二个分支
 
-- 针对一个新项目, 在 github 上创建项目的 repo，用 github 界面创建 `develop` 开发分支， `clone`到本地后，只基于开发分支做开发：
+- 针对一个新项目, 在 github 上创建项目的 repo，同时用 github 界面创建 `release` 发行分支仅用于新版本发布上线。 `clone`到本地后，只基于 `master` 分支做开发：
 
 ```sh
 git clone <项目地址> # clone the remote repository
-git checkout develop # set the develop branch as the current branch
 ```
 
 ### 2.2 创建功能分支做具体开发
 
-- 检出（Checkout） 一个新的功能或故障修复（feature/bug-fix）分支。同步到 Github, 随时用 `git branch -a`检查当前分支状态：
+- 第一步：检出（Checkout）一个新的功能或故障修复（feature/bug-fix）分支或用 github 界面基于`master`创建功能分支。下面是命令行创建功能分支并同步到服务器。随时用 `git branch -a`检查当前分支状态。
 
 ```sh
 git checkout -b my-feature # create a new branch my-feature from the current branch
@@ -84,7 +83,7 @@ git push -u origin my-feature-branch # sync to remote server
 git branch -a # display branch status
 ```
 
-- 在功能分枝上进行新功能的开发，提交代码并同步到远程 Git 服务器。
+- 第二步：在功能分枝上进行新功能的开发，提交代码并随时同步到远程 Git 服务器做备份。
 
 ```sh
 git add . # Add all local changes
@@ -96,12 +95,14 @@ git push # push to remote frequently to bakcup changes
 
 > `git commit -a` 会独立启动一个编辑器用来编辑您的说明信息，这样的好处是可以专注于写这些注释说明。请参考下面关于说明信息的要求。经常同步到远程库做备份。通常在 IDE 里执行上面三个操作也可以，注意当前分支为功能分支就好。
 
-### 2.3 合并功能分支到`develop`分支
+### 2.3 合并功能分支到 `master` 分支
 
-- 1）在准备提交合并前， 先将需要 merge 到的分支更新到最新，例如要将功能分支 merge 到 develop，那么需要更新 develop 到最新。下面的步骤建议手工运行。
+当功能开发完成时，要将所做工作变基并入 `master` 分支。
+
+- 第一步：在准备提交合并前， 先将需要 `master` 分支更新到最新。下面的步骤建议手工运行。
 
 ```sh
-git checkout develop
+git checkout master
 git pull
 ```
 
@@ -109,25 +110,25 @@ git pull
 
 > 当您进行（稍后）变基操作的时候，保持更新会给您一个在您的机器上解决冲突的机会。这比（不同步更新就进行下一步的变基操作并且）发起一个与远程仓库冲突的合并请求要好。
 
-- 2）切换至功能分支，变基`develop`分支到功能分支，并采用`rebase -i --autosquash`的交互方式
+- 第二步：切换至功能分支，把功能分支变基到`master`分支，建议采用`rebase -i --autosquash`的交互方式
 
 ```sh
 git checkout my-feature
-git rebase -i --autosquash develop
+git rebase -i --autosquash master
 ```
 
 为什么
 
-> 您可以使用 `--autosquash` 将所有提交压缩到单个提交。没有人会愿意（看到） `develop` 分支中的单个功能开发就占据如此多的提交历史。 [更多请阅读...](https://robots.thoughtbot.com/autosquashing-git-commits)
+> 您可以使用 `--autosquash` 将所有提交压缩到单个提交。没有人会愿意（看到） `master` 分支中的单个功能开发就占据如此多的提交历史。 [更多请阅读...](https://robots.thoughtbot.com/autosquashing-git-commits)
 
-- 如果没有冲突请跳过此步骤，如果您有冲突, 就需要[解决它们](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/)并且继续变基操作。
+- 第三步（可能需要）：如果没有冲突请跳过此步骤，如果您有冲突, 就需要[解决它们](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/)并且继续变基操作。
 
 ```sh
-git add <file1> <file2> ...
-git rebase --continue
+git add <file1> <file2> ... # 任何必要的增删改
+git rebase --continue # 继续刚才的变基操作
 ```
 
-- 3）推送您的功能分支到 github。变基操作会改变提交历史, 所以您必须使用 `-f` 强制推送到远程（功能）分支。 如果其他人与您在该分支上进行协同开发，请使用破坏性没那么强的 `--force-with-lease` 参数。
+- 第四步：推送您的功能分支到 github。变基操作会改变提交历史, 所以您必须使用 `-f` 强制推送到远程（功能）分支。 如果其他人与您在该分支上进行协同开发，请使用破坏性没那么强的 `--force-with-lease`。
 
 ```sh
 git push -f
@@ -137,29 +138,26 @@ git push -f
 
 > 当您进行 rebase 操作时，您会改变功能分支的提交历史。这会导致 Git 拒绝正常的 `git push` 。那么，您只能使用 `-f` 或 `--force` 参数了。[更多请阅读...](https://developer.atlassian.com/blog/2015/04/force-with-lease/)
 
-- 4）提交一个合并请求（Pull Request）。Pull Request 会被负责代码审查的同事接受，合并和关闭。合并请求完成同时需要删除远程的功能分支。这些操作都利用 github 的用户界面进行。
+- 第五步：提交一个合并请求（Pull Request）。Pull Request 会被负责代码审查的同事接受，合并和关闭。合并请求完成同时需要删除远程的功能分支。这些操作都利用 github 的用户界面进行。
 
-- 5）合并完成后，记得删除您的本地分支。
+- 第六步：合并完成后，记得删除您的本地分支。
 
 ```sh
+git checkout master
 git branch -d <分支>
 ```
 
 （使用以下代码）删除所有已经不在远程仓库维护的分支。
 
 ```sh
-git fetch -p && for branch in `git branch -vv | grep ': gone]' | awk '{print $1}'`; do git branch -D $branch; done
+git checkout master
+git fetch -p
+git branch -D featureBranch
 ```
 
-命令太长，建议在`.bash_profile`创建一个`alias`：
+### 2.4 版本发布到`release`分支
 
-```sh
-alias syncBranch='git fetch -p && for brach in `git branch -vv | grep ": gone]" | awk "{print $1}"`; do git branch -D $branch; done'
-```
-
-### 2.4 开发分支发布到`master`分支
-
-TODO.
+由程序员、运维人员和项目经理共同决定发布的时机。具体流程另外描述。
 
 ## 3 如何写好 Commit Message
 
