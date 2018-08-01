@@ -124,8 +124,7 @@ git rebase -i --autosquash master
 - 第三步（可能需要）：这一步在没有代码冲突可以跳过。如果您有代码合并冲突, 就需要[解决它们](https://help.github.com/articles/resolving-a-merge-conflict-using-the-command-line/)。
 
 ```sh
-git add <file1> <file2> ... # 任何必要的增删改
-git commit -a # 提交所有修改
+git add <file1> <file2> ... # 任何必要的增删改后，加入修改
 git rebase --continue # 继续刚才的变基操作
 ```
 
