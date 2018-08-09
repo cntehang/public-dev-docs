@@ -4,9 +4,49 @@ A good coding standard helps the code quality and development productivity becau
 
 ## 1 Introduction
 
-There are two tools used in maitaining TypeScript coding standard: [TSLint](https://github.com/palantir/tslint) and [Prettier](https://prettier.io/). TSLint is used for code analysis and prettier is used for code format. Both tools should be configured and used in both IDE and the automatic build process.
+The coding guidelines are defined in the next section. There are two tools used in maitaining TypeScript coding standard: [TSLint](https://github.com/palantir/tslint) and [Prettier](https://prettier.io/). TSLint is used for code analysis and prettier is used for code format. Both tools should be configured and used in both IDE and the automatic build process.
 
-## 2 TS Compiler Options
+## 2 Guidelines
+
+### 2.1 Names
+
+1. Use PascalCase for type names.
+1. Do not use "I" as a prefix for interface names.
+1. Use PascalCase for enum values.
+1. Use camelCase for function names.
+1. Use camelCase for property names and local variables.
+1. Do not use `_` as a prefix for private properties.
+1. Use whole words in names when possible.
+
+### 2.2 Types
+
+1. Do not export types/functions unless you need to share it across multiple components.
+1. Do not introduce new types/values to the global namespace.
+1. Shared types should be defined in a `types.ts` file or in files in `models` directory.
+1. Within a file, type definitions should come first.
+
+### 2.3 Usage
+
+1. Use `undefined`, do't use `null`.
+1. Consider objects like Nodes, Symbols, etc. as immutable outside the component that created them. Do not change them.
+1. Consider arrays as immutable by default after creation.
+1. More than 2 related Boolean properties on a type should be turned into an Enum flag.
+1. Try to use `ts.forEach`, `ts.map`, and `ts.filter` instead of loops, i.e., no `for..in`, when it is not strongly inconvenient.
+
+### 2.4 Comments
+
+1. Use JSDoc style comments for functions, interfaces, enums, and classes.
+
+### 2.5 Diagnostic Messages
+
+1. All strings visible to the user need to be localized.
+1. Use a period at the end of a sentence.
+1. Use indefinite articles for indefinite entities.
+1. Definite entities should be named (this is for a variable name, type name, etc..).
+1. When stating a rule, the subject should be in the singular (e.g. "An external module cannot..." instead of "External modules cannot...").
+1. Use present tense.
+
+## 3 TS Compiler Options
 
 First of all, set the following compiler options in `tsconfig.json` to enforce strict type checking and error detection.
 
@@ -23,7 +63,7 @@ In the above configuration, enabling `--strict` enables `--noImplicitAny`, `--no
 
 The `skipLibCheck` tells the compiler to skil checking for all declaraton files (`*.d.ts`). There was an error in an Ionic 3.9 declaration file.
 
-## 3 TSLint
+## 4 TSLint
 
 Both the Angular CLI tool `ng` and the Ionic CLI tool `ionic` generate a `tslint.json` file. First, install and use `tslint-angular` preset for code analyzer: `npm i -D tslint-angular`.
 
@@ -53,7 +93,7 @@ Then, disable code style checking rules. Update the `tslint.json` file to have t
 
 For an Ionic project, write the npm run command as `"lint": "tslint -c tslint.json -p tsconfig.json",`. You also need to change the `ionic` generated component class names to follow the [Angular code style](https://angular.io/guide/styleguide).
 
-## 4 Prettier
+## 5 Prettier
 
 First, install the Prettier package using `npm i -D prettier`. Then create a configuration file named `.prettierrc` that has customized rules:
 
@@ -71,7 +111,7 @@ First, install the Prettier package using `npm i -D prettier`. Then create a con
 
 To make it format files automatically, set `“editor.formatOnSave”: true` in VS Code after installing the Prettier extension.
 
-## 5 Configure Pre-commit Hooks
+## 6 Configure Pre-commit Hooks
 
 Use [`husky`](https://github.com/typicode/husky), [`pretty-quick`](https://github.com/azz/pretty-quick) and [`npm-run-all`](https://github.com/mysticatea/npm-run-all) to run Prettier on changed files before commit.
 
