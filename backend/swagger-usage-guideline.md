@@ -34,9 +34,9 @@
 
 ## 请求参数说明
 
-- 参数若为类对象：
+- 参数若为类对象：
 
-  - 类名上需加如下注释，用于说明此对象参数的名称：
+  - 类名上需加如下注释，用于说明此对象参数的名称：
 
   ```java
   @ApiModel(value = "登陆信息")
@@ -45,14 +45,14 @@
   - 类中字段需在 @ApiModelProperty 注解中加如下说明：
     - value：表示字段名
     - example：表示该字段的示例值，在测试时很有帮助
-    - required: 若为必携带的参数，则为true
+    - required: 若为必携带的参数，则为true
   
     ```java
       @ApiModelProperty(value = "用户名，可以为手机/邮箱", example = "709091988@qq.com", required = true)
     ```
 
 - 若为普通参数：
-  - 在方法的请求参数前，与 @RequestParam并列
+  - 在方法的请求参数前，与 @RequestParam并列
 
   ```java
   @ApiParam(value = “用户ID”, example = "1100020")
