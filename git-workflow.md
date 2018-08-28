@@ -79,7 +79,7 @@ git clone <项目地址> # clone the remote repository
 
 ```sh
 git checkout -b my-feature # create a new branch my-feature from the current branch
-git push -u origin my-feature-branch # sync to remote server
+git push -u origin my-feature # sync to remote server
 git branch -a # display branch status
 ```
 
