@@ -31,7 +31,7 @@ The following are some commons user settings for VS Code IDE.
 
 ### 常用的 Extensions
 
-- [Angular 6 Snippets](https://marketplace.visualstudio.com/items?itemName=Mikael.Angular-BeastCode): TypeScript, HTML, Angular Material, RxJS 等的 snippets.
+- [Angular 6 Snippets](https://marketplace.visualstudio.com/items?itemName=johnpapa.Angular2): TypeScript and HTML 的 snippets.
 - [Bracket Pair Colorizer](https://marketplace.visualstudio.com/items?itemName=CoenraadS.bracket-pair-colorizer): 给予匹配的括号`()`, `{}`, `[]`不同颜色。
 - [Debugger for Chrome](https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome): a debug tool for Chrome.
 - [Kary Pro Colors](https://marketplace.visualstudio.com/items?itemName=karyfoundation.theme-karyfoundation-themes): 配置主题和颜色。
