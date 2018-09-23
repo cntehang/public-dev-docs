@@ -103,3 +103,10 @@ Adding additional markdown document files in a folder named `docs`. Then add a `
 ```
 
 Use `--include` flag to include the addtional files in the final documentation.
+
+## Resources
+
+- [CompoDoc Website](https://compodoc.app/)
+- [A Live Demo](https://compodoc.github.io/compodoc-demo-todomvc-angular/)
+- [The Live Demo Source Code](https://github.com/compodoc/compodoc-demo-todomvc-angular)
+- [A tutorial of an Ionic project](https://compodoc.app/guides/tutorial.html)
