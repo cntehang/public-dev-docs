@@ -2,7 +2,17 @@
 
 All Angular-based projects use [CompoDoc](https://compodoc.app/) as code documentation tool to generate project document.
 
-## Documentation
+## What to Document
+
+Document non-trivial modules, components, methods and important class memebers. Feel free to use Chinese, but please use English for technical terms.
+
+Use `/docs` folder for additional project documents such as design document, implementation explanation etc.
+
+Generate documents to `/dist/documentation` folder. The command is `npx compodoc -p tsconfig.json -n 'My App Documentation' --includes ./docs -d dist/documentation`.
+
+To see the output, use `-w -s -o` options with `compodoc`.
+
+## How to Write Document
 
 Compodoc uses JSDoc comments for documentation.
 
