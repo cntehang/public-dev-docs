@@ -110,3 +110,4 @@ Use `--include` flag to include the addtional files in the final documentation.
 - [A Live Demo](https://compodoc.github.io/compodoc-demo-todomvc-angular/)
 - [The Live Demo Source Code](https://github.com/compodoc/compodoc-demo-todomvc-angular)
 - [A tutorial of an Ionic project](https://compodoc.app/guides/tutorial.html)
+- [Another video tutorial](https://youtu.be/90lnNtPmL8Y)
