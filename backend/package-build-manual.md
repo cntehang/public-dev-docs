@@ -50,7 +50,3 @@ jar {
   - release Tag version 是打包时实际上采用的版本号，应与 application_version.gradle 中的版本号一致，且与 update.md 中的当前版本字段一致
   - release Title 与 release Tag version 保持一致
   - release 描述文字，复制 update.md 中的**更新内容**和**回滚操作**中的条目对齐即可
-
-### Step 4: 通知运维打包
-
-- 运维编写自动化工具检测 release 分支变化，自动拉取代码亦可。
