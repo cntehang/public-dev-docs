@@ -46,6 +46,10 @@ The coding guidelines are defined in the next section. There are two tools used 
 1. When stating a rule, the subject should be in the singular (e.g. "An external module cannot..." instead of "External modules cannot...").
 1. Use present tense.
 
+### 2.6 Angular and others
+
+The Google Angular team has [a style guide](https://angular.io/guide/styleguide) that has many rules applicable for other front end develpment. Some useful rules include naming, small functions, single responsible principle, filename and etc.
+
 ## 3 TS Compiler Options
 
 First of all, set the following compiler options in `tsconfig.json` to enforce strict type checking and error detection.
