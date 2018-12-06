@@ -26,3 +26,11 @@ createForm() {
 ```
 
 For most simple scenarios, use `FormBuilder` to create a form. For a complicated form, create `FormGroup` and `FormControl` directly.
+
+## Dependency Injection
+
+- Use `providedIn: 'root'` for services which should be available in whole application as singletons.
+- Never use `providedIn: EagerlyImportedModule`, you don’t need it and if there is some super exceptional use case then go with the `providers: []` instead.
+- Use `providedIn: LazyServiceModule` to prevent service injection in the eagerly imported part of the application. Use `LazyServiceModule` which will be imported by `LazyModule` to prevent circular dependency warning. LazyModule will then be lazy loaded using Angular Router for some route in a standard fashion. This is not recommended for too much confusing code.
+- Use `providers: []` inside of `@Component` or `@Directive` to scope service only for the particular component sub-tree which will also lead to creation of multiple service instances (one service instance per one component usage)
+- Always try to scope your services conservatively to prevent dependency creep and resulting tangled hell
