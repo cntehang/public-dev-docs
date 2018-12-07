@@ -1,4 +1,4 @@
-# 每周前端小组内部沟通内容  汇总
+# 每周前端小组内部沟通内容汇总
 
 ## 2018-11-30
 
@@ -35,7 +35,7 @@
 
 > 使用时需要注意下面两点
 
-- 它会在 ngOnInit 前调用，官方有可能会在下个版本修改此行为，使用时需注意
+- 它会在 `ngOnInit` 前调用，官方有可能会在下个版本修改此行为，使用时需注意
 
 - 为了提高变化检测的性能，对于对象比较，Angular 内部直接使用 `===` 运算符进行值比较。因此当输入属性是引用类型，当改变对象内部属性时，是不会调用 `ngOnChanges` 生命周期钩子的
 
@@ -43,27 +43,27 @@
 
 > 统一使用 reactive form, 使用时需要注意以下几点.
 
-- 针对复杂表单（表单项的验证规则是可变的情况），使用 from.valid/invalid 判断时，需要注意是否是最新的状态，因为可能某个表单项改变了验证规则，但是没有更新.
+- 针对复杂表单（表单项的验证规则是可变的情况），使用 `from.valid/invalid` 判断时，需要注意是否是最新的状态，因为可能某个表单项改变了验证规则，但是没有更新.
 - 对于大范围改变表单验证规则的情况，可以考虑重新 init form, 但需要小心（注意 html 中需要用 ngif 把不需要的表单 remove 掉）.
 - 把定义和获取 control 的代码放到最后 `get controlName() { return this.form.get('controlName')}`, 以更方便 review .
 - 如果一个验证规则被重复多次使用，请使用类似 `const pattern = Validators.pattern(moneyRegex)` ,让代码变得更简洁.
 
 ## 2018-12-07
 
-- 使用插件 document this 进行代码注释
+- 使用插件 `document this` 进行代码注释
 
-- 表单 control 统一使用 touched 进行错误提示
+- 表单 `control` 统一使用 `touched` 进行错误提示
 
-- 使用 Object.keys(xxx).forEach() 代替 for in
+- 使用 `Object.keys(xxx).forEach()` 代替 `for in`
 
-- 简单查询条件 form 统一使用 shf-item 组件，较复杂（需要我们自己控制布局 长短的）统一使用 nz row + nz col
+- 简单查询条件 `form` 统一使用 `shf-item` 组件，较复杂（需要我们自己控制布局 长短的）统一使用 `nz row + nz col`
 
-- spin 统一使用 BehaviorSubject, 定义一个 showSpin/hideSpin 方法， 如果需要改变 nzTip 则 showSpin(nzTip)
+- `spin` 统一使用 `BehaviorSubject`, 定义一个 `showSpin/hideSpin` 方法， 如果需要改变 `nzTip` 则 `showSpin(nzTip)`
 
-- Component 中 方法名可以简单（query add update delete），但是必须有注释
+- `Component` 中 方法名可以简单 `query add update delete` ，但是必须有注释
 
-- Http Service 中方法名参照 Api 命名， 且必须有注释。命名风格 xxxApi
+- `Http Service` 中方法名参照 Api 命名， 且必须有注释。命名风格 `const getXxxApi = admin/xxx/getXxx`
 
-- 统一使用 Router Service 进行页面跳转，并且保证 一个 module 一个 router
+- 统一使用 `Router Service` 进行页面跳转，并且保证 一个 module 一个 router
 
-- 单一实体服务用 root，各个模块或组件直接 constructor 注入，但必须保证只能用本目录或者父级目录的 service ， 如果需要跨目录使用，请提取到相应级别的 Shared 目录。如果不是单例的 service , 则用 provider 和 constructor 注入。
+- 单一实体服务用 `root`，各个模块或组件直接 `constructor` 注入，但必须保证只能用本目录或者父级目录的 service ， 如果需要跨目录使用，请提取到相应级别的 Shared 目录。如果不是单例的 service , 则用 `provider` 和 `constructor` 注入。

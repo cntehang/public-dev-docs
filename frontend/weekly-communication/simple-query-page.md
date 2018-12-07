@@ -74,68 +74,6 @@
 - 统一使用 ReactiveForms 禁止使用 Template-driven forms
 - 若操作按钮过多，建议另起一行 用 nz-row 包裹
 
-## 页面样式
-
-为了保持系统的整体性和统一行，非特殊的查询展示页统一使用: `class="page-header-small"` `class="form-small"` `class="table-text-center table-small"`  
-以上样式定义在 index.less 中 便于统一修改
-**_注意_**：本样式只适用于后台页面，前台请自行定义
-
-```less
-.page-header-small {
-  padding: 6px 24px 0px 24px;
-  margin-bottom: 6px;
-}
-
-.page-header-small.ad-ph .title,
-.page-header-small.ad-ph .action {
-  margin-bottom: 6px;
-}
-
-.form-small {
-  border: 1px solid #d9d9d9;
-  border-radius: 4px;
-  padding: 6px;
-  margin-bottom: 6px;
-
-  .ant-input {
-    padding: 1px 7px;
-    height: 24px;
-  }
-
-  .ant-form-item {
-    margin-bottom: 0;
-  }
-
-  .ant-select-selection--multiple,
-  .ant-select-selection--single {
-    height: 24px;
-  }
-
-  .ant-select-selection__rendered {
-    line-height: 22px;
-    margin: 0 7px;
-  }
-}
-
-.table-text-center {
-  table th,
-  table td {
-    text-align: center !important;
-  }
-}
-
-.table-small {
-  table th,
-  table td {
-    padding: 2px;
-    height: 47px;
-  }
-  table td {
-    background-color: white;
-  }
-}
-```
-
 ## 基本逻辑代码
 
 ```ts
@@ -157,10 +95,8 @@ export class BillListComponent implements OnInit {
       buttons: [
         {
           text: "详情",
-          click: (record: BillSummaryResponse) => {
-            this.log.debug(record);
+          click: (record: BillSummaryResponse) =>
             this.routerService.toDetail(record.billId);
-          }
         }
       ]
     }
@@ -269,6 +205,68 @@ export class BillListComponent implements OnInit {
 
   private hideSpin() {
     this.isSpinning$.next(false);
+  }
+}
+```
+
+## 页面样式
+
+为了保持系统的整体性和统一行，非特殊的查询展示页统一使用: `class="page-header-small"` `class="form-small"` `class="table-text-center table-small"`  
+以上样式定义在 index.less 中 便于统一修改
+**_注意_**：本样式只适用于后台页面，前台请自行定义
+
+```less
+.page-header-small {
+  padding: 6px 24px 0px 24px;
+  margin-bottom: 6px;
+}
+
+.page-header-small.ad-ph .title,
+.page-header-small.ad-ph .action {
+  margin-bottom: 6px;
+}
+
+.form-small {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 6px;
+  margin-bottom: 6px;
+
+  .ant-input {
+    padding: 1px 7px;
+    height: 24px;
+  }
+
+  .ant-form-item {
+    margin-bottom: 0;
+  }
+
+  .ant-select-selection--multiple,
+  .ant-select-selection--single {
+    height: 24px;
+  }
+
+  .ant-select-selection__rendered {
+    line-height: 22px;
+    margin: 0 7px;
+  }
+}
+
+.table-text-center {
+  table th,
+  table td {
+    text-align: center !important;
+  }
+}
+
+.table-small {
+  table th,
+  table td {
+    padding: 2px;
+    height: 47px;
+  }
+  table td {
+    background-color: white;
   }
 }
 ```
