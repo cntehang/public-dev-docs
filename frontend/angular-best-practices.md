@@ -1,17 +1,24 @@
 # Angular Best Practices
 
-Here is a set of best practices using Angular
+Here is a set of best practices using Angular.
+
+## Constructor and Lifecycle Hooks
+
+For property bindings and change detection theories, check [these blogs](https://blog.angularindepth.com/these-5-articles-will-make-you-an-angular-change-detection-expert-ed530d28930).
+
+Simply, follow the following rules:
+
+- Use `constructor()` only for dependency injection.
+- Use `ngOninit()` to initialize data-bound properties.
+- Use `ngAfterViewInit()` when you need to do something after the component view is initialized. The `@ViewChild` fields are initialized when this hook is called.
+- Use `ngDestroy()` to clear resources such as unsubscribing from observables.
+- Use asynchronous methods to update properties and know the `NgZone` concept to avoid the `ExpressionChangedAfterItHasBeenCheckedError` error.
 
 ## Forms
 
-As hinted by the offical Angular document, use the new Reactive Form, not Template Form. Template forms are asynchornous and event-driven. They are also not as flexible as reactive forms. Reactive fomrs have the following benefits:
+Only use the reactive Form, not Template Form. Template forms are asynchornous and event-driven. They are also not as flexible as reactive forms.
 
-- Synchronous form controls are easier to unit test
-- Forms and models are closely aligned
-- Group form controls together at different levels using group and array.
-- Validate form controls at any level and dynamically
-
-Use the following style to create a form:
+For most simple scenarios, use `FormBuilder` to create a form. For a complicated form, create `FormGroup` and `FormControl` directly.
 
 ```ts
 constructor(private formBuilder: FormBuilder) {}
@@ -25,12 +32,16 @@ createForm() {
 }
 ```
 
-For most simple scenarios, use `FormBuilder` to create a form. For a complicated form, create `FormGroup` and `FormControl` directly.
+一些建议：
+
+- 针对复杂表单（表单项的验证规则是可变的情况），使用 `from.valid/invalid` 判断时，需要注意是否是最新的状态，因为可能某个表单项改变了验证规则，但是没有更新.
+- 对于大范围改变表单验证规则的情况，可以考虑重新 init form, 但需要小心（注意 html 中需要用 ngif 把不需要的表单 remove 掉）.
+- 把定义和获取 control 的代码放到最后 `get controlName() { return this.form.get('controlName')}`, 以更方便 review .
+- 如果一个验证规则被重复多次使用，请使用类似 `const pattern = Validators.pattern(moneyRegex)` ,让代码变得更简洁.
+- 表单 `control` 统一使用 `touched` 进行错误提示。
 
 ## Dependency Injection
 
-- Use `providedIn: 'root'` for services which should be available in whole application as singletons.
-- Never use `providedIn: EagerlyImportedModule`, you don’t need it and if there is some super exceptional use case then go with the `providers: []` instead.
-- Use `providedIn: LazyServiceModule` to prevent service injection in the eagerly imported part of the application. Use `LazyServiceModule` which will be imported by `LazyModule` to prevent circular dependency warning. LazyModule will then be lazy loaded using Angular Router for some route in a standard fashion. This is not recommended for too much confusing code.
-- Use `providers: []` inside of `@Component` or `@Directive` to scope service only for the particular component sub-tree which will also lead to creation of multiple service instances (one service instance per one component usage)
-- Always try to scope your services conservatively to prevent dependency creep and resulting tangled hell
+- Use `providedIn: 'root'` for all services which should be available as singletons.
+- Use file structure to scope services. A module can only use services that are in its subfoler or share the same parent folder.
+- Use `providers: []` for services that 1) need initialization (such as `myService.forRoot()`) or 2) inside `@Component` or `@Directive` for scoped mulitple-instance services.

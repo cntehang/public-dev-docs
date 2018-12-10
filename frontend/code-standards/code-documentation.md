@@ -16,7 +16,7 @@ To see the output, use `-w -s -o` options with `compodoc`.
 
 ## How to Write Document
 
-Compodoc uses JSDoc comments for documentation.
+Compodoc uses JSDoc comments for documentation. 建议使用 VS Code 插件 [`document this`](https://marketplace.visualstudio.com/items?itemName=joelday.docthis) 进行代码注释。
 
 ### JSDoc Comments
 

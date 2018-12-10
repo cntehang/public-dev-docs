@@ -43,6 +43,7 @@ The following are some commons user settings for VS Code IDE.
 - [TSLint](https://marketplace.visualstudio.com/items?itemName=eg2.tslint): TypeScript 代码检查工具。和 Preettier 一起用。具体配置参考代码标准文档。
 - [TypeScript Hero](https://marketplace.visualstudio.com/items?itemName=rbbit.typescript-hero): 管理排列`imports`。
 - [vscode-icons](https://marketplace.visualstudio.com/items?itemName=robertohuertasm.vscode-icons): 各种文件 Icon。
+- [document this](https://marketplace.visualstudio.com/items?itemName=joelday.docthis): 生成代码注释。
 
 ### 命令行运行 VS Code
 
