@@ -13,9 +13,7 @@
 登录github，在工程页面，点击release -> Draft a new release -> 填写对应的version tag(来自于build_scripts/application_version.gradle中的版本号)与release title(与version一致)，从updlate文档把修改历史拷贝到describe中 -> Publish release，如下：
 
 ![发布示例](./resources/release_example.png)
-
 2. 通知运维发布新版，并确定发版成功
-
 3. 版本迭代
 
 发布之后，发布人需要把当前版本号更新迭代，如v2.0.1 -> v2.0.2，迭代涉及以下工作：
@@ -25,7 +23,8 @@
 - 修改update文件，把版本号改为最新的，并且删除所有的修改历史
 - 把上述修改push并merge到master中
 
-*特别注意：*
+### 特别注意：
+
 - release Tag version 是打包时实际上采用的版本号，应与 application_version.gradle 中的版本号一致，且与 update.md 中的当前版本字段一致
 - release Title 与 release Tag version 保持一致
 - release 描述文字，复制 update.md 中的**更新内容**和**回滚操作**中的条目对齐即可
@@ -36,7 +35,7 @@
 
 ### 2.1 build_scripts/application_version.gradle
 
-打包相关的版本信息，内部记录了对应的版本号，发版之后需要按照流程迭代版本号
+打包相关的版本信息，内部记录了对应的版本号，发版之后需要按照流程迭代版本号
 
 ```text
 version = 'v2.0.1'
