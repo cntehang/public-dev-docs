@@ -44,6 +44,7 @@
 
 <nz-spin [nzTip]="[nzTip]" [nzSpinning]="isSpinning$ | async">
   <simple-table
+    #simpleTable
     class="table-text-center table-small"
     showSizeChanger
     showPagination
@@ -82,7 +83,7 @@ export class BillListComponent implements OnInit {
   nzTip: string;
   form: FormGroup;
 
-  @ViewChild(SimpleTableComponent)
+  @ViewChild('simpleTable')
   simpleTable: SimpleTableComponent;
   columns: SimpleTableColumn[] = [
     { title: "出账日", render: "billDate" },
