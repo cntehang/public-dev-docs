@@ -6,12 +6,12 @@ Here is a set of best practices using Angular.
 
 The overall Angular application could be organized into two types of components: [smart components and presentational components](https://blog.angular-university.io/angular-2-smart-components-vs-presentation-components-whats-the-difference-when-to-use-each-and-why/).
 
-- Smart component: aslo called application level component or container component. A smart component usually retrieves data using services and may use presentational components to display data.
-- Presentational components: also known as pure component or dumb component. It receives its data from parent smart component using `@Input()` binding. It uses `@Output()` event to communicate with its parent component.
+- Smart component: aslo called stateful component or container component. A smart component usually retrieves data using services and may use presentational components to display data.
+- Presentational components: also known as pure component or stateless component. It receives its data from parent smart component using `@Input()` binding. It uses `@Output()` event to communicate with its parent component.
 
-If there are multiple level between a smart component and a presentational component, use RxJS's `subject` to communicate via a service. This should be carefully documented in all components involved in the communication.
+Presentational component should only use `@Input()` and `@Output()`. If there are multiple level between a smart component and a presentational component, use RxJS's `subject` to communicate via a service. This should be carefully documented in all components involved in the communication.
 
-The `ngrx/store` is not recommended because the depency injection and RxJS can solve most problems in a more elegent way.
+The `ngrx/store` is not recommended because the Angular's dependency injection and RxJS can solve most problems in a more elegent way.
 
 ## Change Detection Strategy
 
