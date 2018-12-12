@@ -10,7 +10,7 @@
 
 1. 发版
 
-登录github，在工程页面，点击release -> Draft a new release -> 填写对应的version tag(来自于build_scripts/application_version.gradle中的版本号)与release title(与version一致)，从updlate文档把修改历史拷贝到describe中 -> Publish release，如下：
+登录github，在工程页面，点击release -> Draft a new release -> 填写对应的version tag(来自于build_scripts/application_version.gradle中的版本号)与release title(与version一致)，从github Wiki中把该版本的Page文档修改历史拷贝到describe中 -> Publish release，如下：
 
 ![发布示例](./resources/release_example.png)
 2. 通知运维发布新版，并确定发版成功
@@ -20,14 +20,14 @@
 
 - 修改build_scripts/application_version.gradle中的版本号
 - 新建该版本对应的sql目录
-- 修改update文件，把版本号改为最新的，并且删除所有的修改历史
+- github上，点击Wiki -> New Page -> title用版本号（版本号为最新的），初始化内容
 - 把上述修改push并merge到master中
 
 ### 特别注意：
 
-- release Tag version 是打包时实际上采用的版本号，应与 application_version.gradle 中的版本号一致，且与 update.md 中的当前版本字段一致
+- release Tag version 是打包时实际上采用的版本号，应与 application_version.gradle 中的版本号一致，且与 Wiki 中title的版本字段一致
 - release Title 与 release Tag version 保持一致
-- release 描述文字，复制 update.md 中的**更新内容**和**回滚操作**中的条目对齐即可
+- release 描述文字，复制 Wiki 中的**更新内容**和**回滚操作**中的条目对齐即可
 
 ## 2. 版本相关文件
 
@@ -48,7 +48,7 @@ jar {
 
     对应版本需要执行的sql语句存放的目录，vX_X_X与版本号对应，由发版人员新建，开发人员在该版本使用的sql都存放在对应的目录下
 
-### 2.3 update.md
+### 2.3 Wiki Page
 
 对应版本的修改历史，具体内容如下：
 
@@ -65,4 +65,4 @@ jar {
 
 - 版本号由发版人在发布新版后迭代更新，与application_version中的版本号一致，在发布该版本之前不允许修改
 - 开发过程中，每个pr都需要如实记录提交的内容，并且带上pr链接与issue链接
-- 发布成功后，由发布人更新update文档
+- 发布成功后，由发布人更新Wiki Page文档
