@@ -68,3 +68,54 @@ createForm() {
 - Use `providedIn: 'root'` for all services, either global or local, which should be available as singletons.
 - Use file structure to scope services. A module can only use services that are in its subfoler or share the same parent folder.
 - Use `providers: []` for services that 1) need initialization (such as `myService.forRoot()`) or 2) inside `@Component` or `@Directive` for scoped mulitple-instance services.
+
+## 异步操作和 Spin
+
+RxJS 有二种常见的数据处理方式，用`subscribe()`或`pipe()`.
+
+```ts
+// 方式一: recommended
+this.service.getData().subscribe(data => this.onSuccess(data), error => this.handleError(error))
+
+// 方式二
+this.service
+  .getAll()
+  .pipe(
+    map(data => this.onSuccess(data)),
+    catchError(error => of(this.handleError(error))),
+  )
+  .subscribe()
+```
+
+建议采用方式一的原因在最后一步分别处理正常和错误数据而不用顾虑处理结果， 避免了方式二为了保证统一输出所需要的`of()`转换。
+
+建议`pipe()`只用于调试，log 或需要数据转换但不能用`subscribe()`的场合。
+
+当运行后台任务时需要显示 Spinner 或 loading 信息。建议采用如下模式：
+
+```ts
+// recommended
+this.startSpin()
+this.service
+  .getData()
+  .subscribe(data => this.onSuccess(data), error => this.handleError(error))
+  .add(() => this.stopSpin())
+```
+
+采用`finalize()`来在正常或错误情况下都停止显示 spinner 或 loacing 信息。此处的`finalize()`在`error`或`complete`之后调用。其效果和如下二种方法一致：
+
+```ts
+//
+this.startSpin()
+const subscription = this.service
+  .getData()
+  .subscribe(data => this.onSuccess(data), error => this.handleError(error))
+subscription.add(() => this.stopSpin())
+
+// 或者
+this.startSpin()
+this.service
+  .getData()
+  .pipe(finalize(() => this.stopLoading())
+  .subscribe(data => this.onSuccess(data), error => this.handleError(error))
+```
