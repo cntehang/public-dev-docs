@@ -27,6 +27,21 @@ The following table summarizes the module types.
 
 The "Rare" means that noramlly you should not provider definitions in that type.
 
+To prevent a service module provided by a lazy loading moudle, use the following code in a service module:
+
+```ts
+constructor (@Optional() @SkipSelf() parentModule: CoreModule) {
+  if (parentModule) {
+    throw new Error(
+      'CoreModule is already loaded. Import it in the AppModule only');
+  }
+}
+```
+
+A module whose class defined with the above constructor will throw an exception when it is provided more than once.
+
+It is not recommended that a module provides services and declares declarables. If that happens, such as the `RouterModule`, use `forRoot()` to provide and config services for the root module and `forChild()` for other modules.
+
 ## Architecture: Smart Components and Presentational Components
 
 The overall Angular application could be organized into two types of components: [smart components and presentational components](https://blog.angular-university.io/angular-2-smart-components-vs-presentation-components-whats-the-difference-when-to-use-each-and-why/).
