@@ -2,6 +2,31 @@
 
 Here is a set of best practices using Angular.
 
+## Types of Angular Modules
+
+An Angular module, called NgModule or simply module, is a class marked by the `@NgModule` decorator. The modules can be classified into the following types.
+
+- The Root module: it is the root `AppModule` that lauches the app. This module be as simple as possible. For exaple, it should only use one, not many, top-level feature module to organize the UI.
+- Feature module: feature modules handles UI features. It has two sub types.
+  - eager-loading feature modules: these modules provide the UI features required in application start. Usually a feature module has a top component and many supporting sub-components. It declares and exports the top componnent but hides the sub-components. It is usually imported by the root module and other eager-loading modules. For simplicity, it is called eager-loading module or eager module.
+  - routed feature module: these modules proide the UI features that are targets of navigation routes. They can be preloaded or lazy loaded. They don't declare and export components because they are loaded by the router and are usd independently. They are also called as routed modules.
+- Routing module: a routing module provides routing configuration for a routed module and should have a matching name. For example, the root module `AppModule` has a routing module `AppRoutingModule`. A routed moudle `FooModule` should have a routing module `FooRoutingModule`. It defines routes, guards and resolver servcie providers. It should re-exports the `RouterModule` thus its corresponding routed mdoule can use route services. To configure routes, the `AppModule` calls `RouterModule.forRoot(routes)` and a feature module calls `RouterModule.forChid(routes)`. A routing module should not have declarations.
+- Service module: a service module provides utility services such as data access. It should only has providers and have no declarations. The root `AppModule` is the only module that should import service modules. If a service is only used locally in a feature module, then it should be defined as a service class, not in a module, inside the feature module folder.
+- Widget module: a widget module defines shareable components, directives, and pipes for other feature modules. It should only have exported declarables and should not have providers.
+
+The following table summarizes the module types.
+
+| Type    | Declarations | Providers    | Exports        | Imported by   |
+| ------- | ------------ | ------------ | -------------- | ------------- |
+| Root    | No           | No           | No             | None          |
+| Eager   | Yes          | Rare         | Top components | Root, Feature |
+| Routed  | Yes          | Rare         | No             | None          |
+| Routing | No           | Yes (Guards) | RouterModule   | Root, Feature |
+| Service | No           | Yes          | No             | Root          |
+| Widget  | Yes          | Rare         | Yes            | Feature       |
+
+The "Rare" means that noramlly you should not provider definitions in that type.
+
 ## Architecture: Smart Components and Presentational Components
 
 The overall Angular application could be organized into two types of components: [smart components and presentational components](https://blog.angular-university.io/angular-2-smart-components-vs-presentation-components-whats-the-difference-when-to-use-each-and-why/).
@@ -89,7 +114,7 @@ this.service
 
 建议采用方式一的原因在最后一步分别处理正常和错误数据而不用顾虑处理结果， 避免了方式二为了保证统一输出所需要的`of()`转换。
 
-建议`pipe()`只用于调试，log 或需要数据转换但不能用`subscribe()`的场合。
+建议`pipe()`只用于调试，log，延时，错误重试或需要数据转换但不能用`subscribe()`的场合。
 
 当运行后台任务时需要显示 Spinner 或 loading 信息。建议采用如下模式：
 
