@@ -18,7 +18,7 @@ The following table summarizes the module types.
 
 | Type    | Declarations | Providers    | Exports        | Imported by   |
 | ------- | ------------ | ------------ | -------------- | ------------- |
-| Root    | No           | No           | No             | None          |
+| Root    | Only root    | No           | No             | None          |
 | Eager   | Yes          | Rare         | Top components | Root, Feature |
 | Routed  | Yes          | Rare         | No             | None          |
 | Routing | No           | Yes (Guards) | RouterModule   | Root, Feature |
@@ -68,6 +68,8 @@ For property bindings and change detection theories, check [these blogs](https:/
 Simply, follow the following rules:
 
 - Use `constructor()` only for dependency injection.
+- Use `ngOnChanges()` to handle any data-bound property of a directive changes
+  - The first called is before `ngOninit`
 - Use `ngOninit()` to initialize data-bound properties or subscribe to third-party widget events.
 - Use `ngDestroy()` to clear resources such as unsubscribing from observables.
 
@@ -97,7 +99,9 @@ createForm() {
 
 一些建议：
 
-- 针对复杂表单（表单项的验证规则是可变的情况），使用 `from.valid/invalid` 判断时，需要注意是否是最新的状态，因为可能某个表单项改变了验证规则，但是没有更新.
+- 针对复杂表单（表单项的验证规则是可变的情况），使用 `from.valid/invalid` 判断时，
+  - 需要注意是否是最新的状态，因为可能某个表单项改变了验证规则，但是没有更新.
+  - 或者改变任意一项，请使用 `control.updateValueAndValidity()` 已保证 form 状态的正确性
 - 对于大范围改变表单验证规则的情况，可以考虑重新 init form, 但需要小心（注意 html 中需要用 ngif 把不需要的表单 remove 掉）.
 - 把定义和获取 control 的代码放到最后 `get controlName() { return this.form.get('controlName')}`, 以更方便 review .
 - 如果一个验证规则被重复多次使用，请使用类似 `const pattern = Validators.pattern(moneyRegex)` ,让代码变得更简洁.
@@ -113,18 +117,28 @@ createForm() {
 
 在 UI 层，RxJS 有二种常见的数据获取方式，
 
-- 用 HTML 里的`async`管道： `source$||async`
+- 用 HTML 里的`async`管道： `source$ | async`
+  - 尽可能使用这一种方式，优点：1 支持 `ChangeDetectionStrategy.OnPush` 2 自动释放资源,不需要手动 unsubscribe
 - 用代码的`source$.subscribe(data=>...)`
+  - 当第一种方式不满足的时候，才使用。使用后请确认是否需要手动 unsubscribe
 
 ### `async` 管道
 
-用 HTML 里的`async`管道： `source$||async` 来获取数据是建议的异步数据获取方式。原因有二个：自动支持`ChangeDetectionStrategy.OnPush` strategy； 支持自动释放资源`unsubscribe()`。 当运行后台任务时需要显示 Spinner 或 loading 信息时，可以参考如下代码：
+用 HTML 里的`async`管道： `source$ | async` 来获取数据是建议的异步数据获取方式。
 
 ```ts
-this.startSpin()
-this.source$ = this.service
-  .getData()
-  .pipe(finalize(() => this.stopLoading())
+this.startSpin();
+this.source$ = this.service.getData().pipe(
+  finalize(() => this.stopLoading()),
+  map(data => this.onSuccess(data)),
+  catchError(error => of(this.handleError(error)))
+);
+```
+
+```html
+<ng-container *ngIf="(source$ | async) as source">
+  <span> {{ source.xxx }} </span>
+</ng-container>
 ```
 
 为了清晰起见，`finalize()` 应该作为 `pipe()`  里面的第一个方法和前面的 `this.startSpin()`结对使用，在正常或错误情况下都停止显示 spinner 或 loacing 信息。此处的`finalize()`在`error`或`complete`之后调用。
@@ -133,29 +147,31 @@ this.source$ = this.service
 
 ```ts
 // 方式一
-this.service.getData().subscribe(data => this.onSuccess(data), error => this.handleError(error))
+this.service
+  .getData()
+  .subscribe(data => this.onSuccess(data), error => this.handleError(error));
 
 // 方式二
 this.service
   .getAll()
   .pipe(
     map(data => this.onSuccess(data)),
-    catchError(error => of(this.handleError(error))),
+    catchError(error => of(this.handleError(error)))
   )
-  .subscribe()
+  .subscribe();
 ```
 
 方式一在最后一步分别处理正常和错误数据而不用顾虑处理结果。方式二为了保证统一输出所需要用`of()`转换。
 
-`subscribe()`方式的弊端有二个：不支持`ChangeDetectionStrategy.OnPush` strategy； 有时候需要释放资源`unsubscribe()`。虽然不建议这种方法，但是为了有助于理解，下面给出当运行后台任务时需要显示 Spinner 或 loading 信息的例子。
+下面给出当运行后台任务时需要显示 Spinner 或 loading 信息的例子。
 
 ```ts
 // recommended
-this.startSpin()
+this.startSpin();
 this.service
   .getData()
   .subscribe(data => this.onSuccess(data), error => this.handleError(error))
-  .add(() => this.stopSpin())
+  .add(() => this.stopSpin());
 ```
 
 其效果和如下二种方法一致：
@@ -168,10 +184,51 @@ const subscription = this.service
   .subscribe(data => this.onSuccess(data), error => this.handleError(error))
 subscription.add(() => this.stopSpin())
 
-// 或者
+// 更推荐使用这一种方式
 this.startSpin()
 this.service
   .getData()
   .pipe(finalize(() => this.stopLoading())
   .subscribe(data => this.onSuccess(data), error => this.handleError(error))
 ```
+
+### `unsubscribe` 方式
+
+- Angular 内置的 Observable 是不需要我们手动 unsubscribe 例如：
+
+  - HttpClient
+  - Router
+  - ActivatedRoute
+  - html 中的 async 管道
+
+- 使用 Subject + takeUntil 去 unsubscribe
+
+  ```ts
+  export class XxxComponent implements OnInit, OnDestroy {
+    data1: any;
+    data2: any;
+    private unsubscribe$ = new Subject();
+    constructor(private xxxService: XxxService) {}
+
+    ngOnInit(): void {
+      this.xxxService
+        .getData1()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(data1 => {
+          this.data1 = data1;
+        });
+
+      this.xxxService
+        .getData2()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(data2 => {
+          this.data2 = data2;
+        });
+    }
+
+    ngOnDestroy(): void {
+      this.unsubscribe$.next();
+      this.unsubscribe$.complete();
+    }
+  }
+  ```
