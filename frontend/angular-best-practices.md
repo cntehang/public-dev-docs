@@ -227,8 +227,9 @@ this.service
     }
 
     ngOnDestroy(): void {
+      // 这里的 unsubscribe$ 不再需要 complete 或者再次 unsubscribe
+      // 因为它是 Component 的一个 property 会自动释放
       this.unsubscribe$.next();
-      this.unsubscribe$.complete();
     }
   }
   ```
