@@ -127,7 +127,7 @@ this.source$ = this.service
   .pipe(finalize(() => this.stopLoading())
 ```
 
-采用`finalize()`来在正常或错误情况下都停止显示 spinner 或 loacing 信息。此处的`finalize()`在`error`或`complete`之后调用。
+为了清晰起见，`finalize()` 应该作为 `pipe()`  里面的第一个方法和前面的 `this.startSpin()`结对使用，在正常或错误情况下都停止显示 spinner 或 loacing 信息。此处的`finalize()`在`error`或`complete`之后调用。
 
 ### `Subscribe` 方式
 
