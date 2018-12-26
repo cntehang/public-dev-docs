@@ -71,11 +71,11 @@ Simply, follow the following rules:
 - Use `ngOninit()` to initialize data-bound properties or subscribe to third-party widget events.
 - Use `ngDestroy()` to clear resources such as unsubscribing from observables.
 
-Use the other hooks only if you fully understand the consequences:
+Use the other hooks only if you fully understand the consequences. Avoid the following three because they run in all possible UI and asynchronous events.
 
 - Use `ngAfterViewInit()` when you need to do something after the component view is initialized. The `@ViewChild` fields are initialized when this hook is called.
-- Use `ngOnChanges()` if you want to track parent bound `@Input` properties.
-- Use `ngDoCheck()` if you want to track self-component peroperties and calculated properties. For example, `ngDoCheck() { this.time = Time.getCurrentTime() }`.
+- Use `ngDoCheck()` if you want to track self-component peroperties and calculated properties. For example, `ngDoCheck() { this.time = Time.getCurrentTime() }`. It ocurrs evey time there is a possible change event such as button clicked, promise completed or http response received. The method must be very quick because it happens a lot.
+- `ngAfterContentChecked()` occures after `ngDoCheck()` and when Angular finishes checking its projected contents -- triggered under the same condition as the `ngDoCheck()`. Should be careful when use this method. This is the last chance that you can change component view data after each change detection run because it happens before view is rendered. But you cann't change the projected contect properties becaue it happens after the content is checked. `ExpressionChangedAfterItHasBeenCheckedError` is throwed if content property is changed in or after the `ngAfterContentChecked()` hook.
 
 ## Forms
 
@@ -109,12 +109,30 @@ createForm() {
 - Use file structure to scope services. A module can only use services that are in its subfoler or share the same parent folder.
 - Use `providers: []` for services that 1) need initialization (such as `myService.forRoot()`) or 2) inside `@Component` or `@Directive` for scoped mulitple-instance services.
 
-## 异步操作和 Spin
+## RxJS 数据流和 Spin
 
-RxJS 有二种常见的数据处理方式，用`subscribe()`或`pipe()`.
+在 UI 层，RxJS 有二种常见的数据获取方式，
+
+- 用 HTML 里的`async`管道： `source$||async`
+- 用代码的`source$.subscribe(data=>...)`
+
+### `async` 管道
+
+用 HTML 里的`async`管道： `source$||async` 来获取数据是建议的异步数据获取方式。原因有二个：自动支持`ChangeDetectionStrategy.OnPush` strategy； 支持自动释放资源`unsubscribe()`。 当运行后台任务时需要显示 Spinner 或 loading 信息时，可以参考如下代码：
 
 ```ts
-// 方式一: recommended
+this.startSpin()
+this.source$ = this.service
+  .getData()
+  .pipe(finalize(() => this.stopLoading())
+```
+
+采用`finalize()`来在正常或错误情况下都停止显示 spinner 或 loacing 信息。此处的`finalize()`在`error`或`complete`之后调用。
+
+### `Subscribe` 方式
+
+```ts
+// 方式一
 this.service.getData().subscribe(data => this.onSuccess(data), error => this.handleError(error))
 
 // 方式二
@@ -127,11 +145,9 @@ this.service
   .subscribe()
 ```
 
-建议采用方式一的原因在最后一步分别处理正常和错误数据而不用顾虑处理结果， 避免了方式二为了保证统一输出所需要的`of()`转换。
+方式一在最后一步分别处理正常和错误数据而不用顾虑处理结果。方式二为了保证统一输出所需要用`of()`转换。
 
-建议`pipe()`只用于调试，log，延时，错误重试或需要数据转换但不能用`subscribe()`的场合。
-
-当运行后台任务时需要显示 Spinner 或 loading 信息。建议采用如下模式：
+`subscribe()`方式的弊端有二个：不支持`ChangeDetectionStrategy.OnPush` strategy； 有时候需要释放资源`unsubscribe()`。虽然不建议这种方法，但是为了有助于理解，下面给出当运行后台任务时需要显示 Spinner 或 loading 信息的例子。
 
 ```ts
 // recommended
@@ -142,7 +158,7 @@ this.service
   .add(() => this.stopSpin())
 ```
 
-采用`finalize()`来在正常或错误情况下都停止显示 spinner 或 loacing 信息。此处的`finalize()`在`error`或`complete`之后调用。其效果和如下二种方法一致：
+其效果和如下二种方法一致：
 
 ```ts
 //
