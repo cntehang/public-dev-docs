@@ -25,7 +25,7 @@ The following table summarizes the module types.
 | Service | No           | Yes          | No             | Root          |
 | Widget  | Yes          | Rare         | Yes            | Feature       |
 
-The "Rare" means that noramlly you should not provider definitions in that type.
+The "Rare" means that noramlly you should not provide definitions in that type.
 
 To prevent a service module provided by a lazy loading moudle, use the following code in a service module:
 
