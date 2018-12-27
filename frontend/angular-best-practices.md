@@ -68,13 +68,12 @@ For property bindings and change detection theories, check [these blogs](https:/
 Simply, follow the following rules:
 
 - Use `constructor()` only for dependency injection.
-- Use `ngOnChanges()` to handle any data-bound property of a directive changes
-  - The first called is before `ngOninit`
-- Use `ngOninit()` to initialize data-bound properties or subscribe to third-party widget events.
+- Use `ngOnInit()` to initialize data-bound properties or subscribe to third-party widget events.
 - Use `ngDestroy()` to clear resources such as unsubscribing from observables.
 
 Use the other hooks only if you fully understand the consequences. Avoid the following three because they run in all possible UI and asynchronous events.
 
+- Use `ngOnChanges()` to handle any data-bound property of a directive changes
 - Use `ngAfterViewInit()` when you need to do something after the component view is initialized. The `@ViewChild` fields are initialized when this hook is called.
 - Use `ngDoCheck()` if you want to track self-component peroperties and calculated properties. For example, `ngDoCheck() { this.time = Time.getCurrentTime() }`. It ocurrs evey time there is a possible change event such as button clicked, promise completed or http response received. The method must be very quick because it happens a lot.
 - `ngAfterContentChecked()` occures after `ngDoCheck()` and when Angular finishes checking its projected contents -- triggered under the same condition as the `ngDoCheck()`. Should be careful when use this method. This is the last chance that you can change component view data after each change detection run because it happens before view is rendered. But you cann't change the projected contect properties becaue it happens after the content is checked. `ExpressionChangedAfterItHasBeenCheckedError` is throwed if content property is changed in or after the `ngAfterContentChecked()` hook.
@@ -100,8 +99,8 @@ createForm() {
 一些建议：
 
 - 针对复杂表单（表单项的验证规则是可变的情况），使用 `from.valid/invalid` 判断时，
-  - 需要注意是否是最新的状态，因为可能某个表单项改变了验证规则，但是没有更新.
-  - 或者改变任意一项，请使用 `control.updateValueAndValidity()` 已保证 form 状态的正确性
+  - 需要注意是否是最新的状态，因为可能某个表单项改变了验证规则，但是没有更新 from 状态.
+  - 或者改变任意一项，请使用 `control.updateValueAndValidity()` 以保证 form 状态的正确性
 - 对于大范围改变表单验证规则的情况，可以考虑重新 init form, 但需要小心（注意 html 中需要用 ngif 把不需要的表单 remove 掉）.
 - 把定义和获取 control 的代码放到最后 `get controlName() { return this.form.get('controlName')}`, 以更方便 review .
 - 如果一个验证规则被重复多次使用，请使用类似 `const pattern = Validators.pattern(moneyRegex)` ,让代码变得更简洁.
@@ -167,29 +166,30 @@ this.service
 
 ```ts
 // recommended
-this.startSpin();
-this.service
-  .getData()
-  .subscribe(data => this.onSuccess(data), error => this.handleError(error))
-  .add(() => this.stopSpin());
-```
-
-其效果和如下二种方法一致：
-
-```ts
-//
-this.startSpin()
-const subscription = this.service
-  .getData()
-  .subscribe(data => this.onSuccess(data), error => this.handleError(error))
-subscription.add(() => this.stopSpin())
-
-// 更推荐使用这一种方式
 this.startSpin()
 this.service
   .getData()
   .pipe(finalize(() => this.stopLoading())
   .subscribe(data => this.onSuccess(data), error => this.handleError(error))
+
+```
+
+其效果和如下二种方法一致：
+
+```ts
+// 仅供参考理解
+this.startSpin();
+this.service
+  .getData()
+  .subscribe(data => this.onSuccess(data), error => this.handleError(error))
+  .add(() => this.stopSpin());
+
+// 仅供参考理解
+this.startSpin();
+const subscription = this.service
+  .getData()
+  .subscribe(data => this.onSuccess(data), error => this.handleError(error));
+subscription.add(() => this.stopSpin());
 ```
 
 ### `unsubscribe` 方式
