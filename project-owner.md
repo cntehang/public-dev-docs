@@ -10,7 +10,13 @@
   - 刘纯祥
 - web-teyixing
   - 李迎春
-
+- domestic-flight-service
+  - 张煜
+- flight-dynamic
+  - 张煜
+- insurance-services
+  - 张煜
+  
 # 其他责任划分
 
 - 正式上线
@@ -21,8 +27,6 @@
   - 胡耀友
 - 后台代码规范、流程
   - 戴炳沛
-- 前台代码规范、流程
-  - 李迎春
 
 # 责任说明
 
