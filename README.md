@@ -1,4 +1,15 @@
-# 开发规则与文档
+# 开发文档
+
+持续的、高质效的软件开发能力是现代企业的核心竞争力。
+
+- 思想就是软件 Mind is software （老刘）
+- 切忌随波逐流 Only dead fish go with the flow （西谚）
+- 做人如果没有梦想，跟咸鱼有什么分别 Salted fish has no dream (星爷)
+- 管理的本质是激发善意和潜能 The essence of management is to inspire goodwill and potential（德鲁克）
+
+用思想创造软件进而改变世界的程序员责任重大，任劳任怨。可是环顾四周，多数软件团队的研发能力相对计算机的巨大潜力和广泛的业务需求有巨大鸿沟，开发效率低，软件的质量令人忧伤。稍感安慰的是半个多世纪的编程历史积累了一些最佳实践（best practices)。遵守基于这些最佳实践的规则能大大改善程序员的工作效率。
+
+## 出发点
 
 软件开发有二个根本性原则：正确的业务逻辑与可维护性。
 
@@ -15,10 +26,11 @@
 所有文件的创建和更新需要创建 PR 和通过 Review。然后通知所有相关人员按新规则执行。不影响软件开发活动的简单的笔误更正和内容改善可以直接提交。
 
 文档统一采用 Markdown 格式。建议采用 VS Code 并用 [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)来保证 markdown 文件风格的一致性。
+v
 
 ## 文档说明
 
-- [程序员工作指南](./developer-working-guide.md)：我们的开发理念
+- [程序员工作指南](./程序员工作指南.md)：我们的开发理念
 - [backend](./backend/README.md): 后端的技术文档
 - [backend-and-frontend](./backend-and-frontend/README.md)：前后端接口相关的技术文档
 - [dev-process](./dev-process/README.md)：开发流程规则
