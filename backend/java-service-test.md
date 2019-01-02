@@ -3,5 +3,9 @@
 当前 Java 服务采用的是 Spock 进行测试
 具体文档可以参考： http://spockframework.org/
 
+# API测试用例
+- 如果API的条件是由严变松（如：not null --> nullable ），并增加null的测试（测试用例、测试脚本都可以）
+- 如果API的条件是由松变严(如：nullable --> not null)，那么可以沿用之前的测试用例
+
 # 其他原则
 - 测试数据以json文件存放，且json文件必须格式化
