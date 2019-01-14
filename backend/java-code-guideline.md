@@ -4,7 +4,7 @@
 
 ## 1. Spring 依赖注入
 
-- **结论**：绝大部分情况下只使用 Constructor DI，不使用 Field DI
+- **结论**：只使用 Constructor DI，不使用 Field DI
 - **注意事项**：
   - 使用 Constructor DI 时，若只有一个构造方法，则不用在构造方法上加 @Autowired 注解，且该构造方法形参应只包含要注入的那些依赖
   - It’s fine to use field based injection in tests when you’re using the SpringJUnit4ClassRunner.
@@ -132,35 +132,31 @@ HTTP/1.1 200
     - 使用异常类型而非异常信息来分辨异常来自的不同 Domain 类
 - **注意**：以上两个例子即使和你的业务契合，也不一定满足和你的业务要求
 
-### 9. LOG 的要求
+### 9. 数据库事物处理（Transaction）
 
-- **结论**：
-  - 不要求进出都写，非常短小的的方法不用写，只要能追踪主要参数即可
-  - 数据量太大时打印变量用 Trace，数据量小用 Info
+读数据错误与丢失更新
 
-### 10. 如何避免丢失更新
+- [事务隔离级中](https://juejin.im/post/5b90cbf4e51d450e84776d27)，脏读、不可重复读、幻读三个问题都是由事务 A 对数据进行修改、增加，事务 B 总是在做读操作。
 
-什么是丢失更新：
-
-- 事务隔离级别中，脏读、不可重复读、幻读三个问题都是由事务A对数据进行修改、增加，事务B总是在做读操作。如果两事务都在对数据进行修改则会导致另外的问题：丢失更新。
-
-为什么出现丢失更新：
+如果两事务都在对数据进行修改则会导致另外的问题：丢失更新。为什么出现丢失更新：
 
 - 多个 session 对数据库同一张表的同一行数据进行修改，时间线上有所重复，可能会出现各种写覆盖的情况。
 - 示例可见：[并发事务的丢失更新及其处理方式](https://blog.csdn.net/u014590757/article/details/79612858)
 
 解决方案：
 
+- 根据具体的业务场景，尽量缩小事物范围并采用正确的[事物隔离级别](https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html)。
 - 使用数据库行级锁（如乐观锁）。完全避免对行级数据的脏操作，但是使得对该行数据的访问串行化，对于比较大的表对象而言，这样的设置往往不是我们想要的结果。
-- 缩小事务管辖的范围。控制事务所辖代码执行时间的长度，不能将很耗时的操作（如外部服务调用）与数据修改置于同一个事务中。此方案只是尽量减少两个事务中的写操作互相影响的可能，理论上无法完全避免。
+- 缩小事务管辖的范围。控制事务所辖代码执行时间的长度，不能将很耗时的操作（如外部服务调用）与数据修改置于同一个事务中。此方案只是尽量减少两个事务中的写操作互相影响的可能，无法完全避免。
 - 使用 ORM save 方法实现数据持久化的情况下，开启 Dynamic update，使得保存更改时影响的字段仅限于被改动了字段。此方案通过控制更新字段的范围，尽量减少脏操作可能，但也无法完全避免。
 
 ### 11. 关于 Hibernate Dynamic update
 
 主要缺陷
 
+- 语义错位。本意是直接修改部分属性，现在变成取整个 Object，改部分属性，存整个 Object。中间不可控因素太多。
 - 每次根据改动了的字段，动态生成 SQL 语句，性能上相比全更操作有所降低
-- 每次需要追踪比对字段更改，增加了开销
+- 需要从数据库拿到整个 Object 所有数据才能修改，大多数时候不必要，
 - 当两个 session 同时对同一字段进行更新操作，极端情况下会因为 ORM 缓存出现莫名其妙的情况，示例见：[Stackexchange Q: What's the overhead of updating all columns, even the ones that haven't changed](https://dba.stackexchange.com/questions/176582/whats-the-overhead-of-updating-all-columns-even-the-ones-that-havent-changed)
 
 ### 12. 如何更新数据库字段
