@@ -1,7 +1,7 @@
 # 理解 Angular 变更检测 和 OnPush 策略
 
-> 了解 Angular 变更检测（ Change Detection ）可以帮助我们避免掉一些陷阱
-> 使用 OnPush 策略能够优化我们的应用，极大的提高应用的性能
+> 了解 Angular 变更检测（ Change Detection ）可以帮助我们避免掉一些陷阱  
+> 使用 OnPush 策略能够优化我们的应用，极大的提高应用的性能  
 > 学习并理解它们可以让我们以优雅的方式构建出高效的应用
 
 本文目录如下：
