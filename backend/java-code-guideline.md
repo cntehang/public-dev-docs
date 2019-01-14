@@ -161,13 +161,13 @@ HTTP/1.1 200
 
 - 每次根据改动了的字段，动态生成 SQL 语句，性能上相比全更操作有所降低
 - 每次需要追踪比对字段更改，增加了开销
-- 当两个 session 同时对同一字段进行更新操作，极端情况下会因为 ORM 缓存出现莫名其妙的情况，示例见：[Stackexchange Q: What's the overhead of updating all columns, even the ones that haven't changed](https://dba.stackexchange.com/questions/176582/whats-the-overhead-of-updating-all-columns-even-the-ones-that-havent-changed)
+- 当两个 session 同时对同一字段进行更新操作，极端情况下会因为 ORM 缓存出现莫名其妙的情况，示例见：[Stackexchange Q: What's the overhead of updating all columns, even the ones that haven't changed](https://dba.stackexchange.com/questions/176582/whats-the-overhead-of-updating-all-columns-even-the-ones-that-havent-changed)
 
 ### 12. 如何更新数据库字段
 
-- 拒绝使用 Spring Data JPA 的 save 方法
+- 拒绝使用 Spring Data JPA 的 save 方法
   - 默认配置且未使用锁的情况下，save 方法会更新实体类的所有字段，一方面增加了开销，另一方面歪曲了更新特定字段的语义，多线程并发访问更新下的情况下易出现问题。
-  - 配置动态更新且未使用锁的情况下，save 方法会监测改动了的字段并进行更新，但是可能会出现 11 点中提到的古怪情形。
+  - 配置动态更新且未使用锁的情况下，save 方法会监测改动了的字段并进行更新，但是可能会出现 11 点中提到的古怪情形。
   - 总的来看，使用 ORM save 方法进行实体类更新陷入了 “You wanted a banana but you got a gorilla holding the banana” 的怪圈，导致做的事情不精确、或者有其它的风险。[参考文章](https://www.johndcook.com/blog/2011/07/19/you-wanted-banana/)
 - 使用自定义 SQL 进行字段更新
   - 使用 JPA 提供的 @Query/@Modifying 书写 JPQL 进行精确控制的字段更新操作。
