@@ -116,80 +116,30 @@ createForm() {
 
 在 UI 层，RxJS 有二种常见的数据获取方式，
 
-- 用 HTML 里的`async`管道： `source$ | async`
-  - 尽可能使用这一种方式，优点：1 支持 `ChangeDetectionStrategy.OnPush` 2 自动释放资源,不需要手动 unsubscribe
-- 用代码的`source$.subscribe(data=>...)`
-  - 当第一种方式不满足的时候，才使用。使用后请确认是否需要手动 unsubscribe
-
-### `async` 管道
-
-用 HTML 里的`async`管道： `source$ | async` 来获取数据是建议的异步数据获取方式。
-
-```ts
-this.startSpin();
-this.source$ = this.service.getData().pipe(
-  finalize(() => this.stopLoading()),
-  map(data => this.onSuccess(data)),
-  catchError(error => of(this.handleError(error)))
-);
-```
-
-```html
-<ng-container *ngIf="(source$ | async) as source">
-  <span> {{ source.xxx }} </span>
-</ng-container>
-```
-
-为了清晰起见，`finalize()` 应该作为 `pipe()`  里面的第一个方法和前面的 `this.startSpin()`结对使用，在正常或错误情况下都停止显示 spinner 或 loacing 信息。此处的`finalize()`在`error`或`complete`之后调用。
+- 用代码的`source$.subscribe(data=>...)`。这种方式的最大好处是对数据的处理非常灵活，可以分别处理网络层和应用层的错误。缺点是在 `OnPush` 的变化检查策略时要做额外的工作。我们建议采用这种方式，依靠下面的统一代码模式保证正确性。
+- 用 HTML 里的`async`管道： `source$ | async` 这种方式有二个优点：1 支持 `ChangeDetectionStrategy.OnPush` 2 自动释放资源,不需要手动 unsubscribe。缺点是数据处理不够灵活。
 
 ### `Subscribe` 方式
 
+为了高效，以下代码假设都采用 `OnPush` 的 change detection 策略。`changeDetectionRef` 是注入的 `ChangeDetectionRef`。如果采用缺省的 change detection 策略， 则不需要 markForCheck()。
+
 ```ts
-// 方式一
-this.service
-  .getData()
-  .subscribe(data => this.onSuccess(data), error => this.handleError(error));
-
-// 方式二
-this.service
-  .getAll()
-  .pipe(
-    map(data => this.onSuccess(data)),
-    catchError(error => of(this.handleError(error)))
-  )
-  .subscribe();
+this.service.getData()
+  .pipe(finalize(() => this.changeDetectionRef.markForCheck())
+  .subscribe(data => this.onSuccess(data), error => this.handleError(error))
 ```
-
-方式一在最后一步分别处理正常和错误数据而不用顾虑处理结果。方式二为了保证统一输出所需要用`of()`转换。
 
 下面给出当运行后台任务时需要显示 Spinner 或 loading 信息的例子。
 
 ```ts
 // recommended
-this.startSpin()
+this.startSpin() // 当前页面事件会触发 change detection, 开始spin。否则此处也需要 markForCheck()
 this.service
   .getData()
-  .pipe(finalize(() => this.stopLoading())
+  .pipe(finalize(() => {
+    this.stopLoading()
+    this.changeDetectionRef.markForCheck()})
   .subscribe(data => this.onSuccess(data), error => this.handleError(error))
-
-```
-
-其效果和如下二种方法一致：
-
-```ts
-// 仅供参考理解
-this.startSpin();
-this.service
-  .getData()
-  .subscribe(data => this.onSuccess(data), error => this.handleError(error))
-  .add(() => this.stopSpin());
-
-// 仅供参考理解
-this.startSpin();
-const subscription = this.service
-  .getData()
-  .subscribe(data => this.onSuccess(data), error => this.handleError(error));
-subscription.add(() => this.stopSpin());
 ```
 
 ### `unsubscribe` 方式
@@ -205,9 +155,9 @@ subscription.add(() => this.stopSpin());
 
   ```ts
   export class XxxComponent implements OnInit, OnDestroy {
-    data1: any;
-    data2: any;
-    private unsubscribe$ = new Subject();
+    data1: any
+    data2: any
+    private unsubscribe$ = new Subject()
     constructor(private xxxService: XxxService) {}
 
     ngOnInit(): void {
@@ -215,21 +165,21 @@ subscription.add(() => this.stopSpin());
         .getData1()
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe(data1 => {
-          this.data1 = data1;
-        });
+          this.data1 = data1
+        })
 
       this.xxxService
         .getData2()
         .pipe(takeUntil(this.unsubscribe$))
         .subscribe(data2 => {
-          this.data2 = data2;
-        });
+          this.data2 = data2
+        })
     }
 
     ngOnDestroy(): void {
       // 这里的 unsubscribe$ 不再需要 complete 或者再次 unsubscribe
       // 因为它是 Component 的一个 property 会自动释放
-      this.unsubscribe$.next();
+      this.unsubscribe$.next()
     }
   }
   ```
