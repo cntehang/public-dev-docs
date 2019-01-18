@@ -1,6 +1,5 @@
 # java-code-guideline
 
-
 ## 1. Spring 依赖注入
 
 - **结论**：只使用 Constructor DI，不使用 Field DI
