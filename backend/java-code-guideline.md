@@ -97,7 +97,7 @@ HTTP/1.1 200
 }
 ```
 
-### 4. 接口与实现类命名风格
+## 4. 接口与实现类命名风格
 
 - **结论**
 
@@ -106,7 +106,7 @@ HTTP/1.1 200
   - 如果接口表示能力，可以使用 able 作为结尾
   - 实现类名相较于接口名后面可加有意义的单词，如 Db
 
-### 5. Pimitive Type or Wrapper Class
+## 5. Pimitive Type or Wrapper Class
 
 - **结论**：
   - 若该字段可以不初始化，使用 Wrapper Class
@@ -116,16 +116,16 @@ HTTP/1.1 200
     - 如果员工定义时可以不指定所属公司，则用 Integer
     - 若定义员工时必须定义公司，则用 int
 
-### 6. 实体类字段不赋默认值
+## 6. 实体类字段不赋默认值
 
-### 7. 方法（Method）风格
+## 7. 方法（Method）风格
 
 - **结论**：
   - 过长代码要抽成方法
   - 每个函数不超过10条语句
   - 一个函数的所有语句都在单一抽象层（SLA原则）
 
-### 8. 异常的处理
+## 8. 异常的处理
 
 - **结论**：开发应用时，使用两种异常
   - Java 定义的标准异常，如参数检查中发现 null 参数
@@ -134,7 +134,7 @@ HTTP/1.1 200
     - 使用异常类型而非异常信息来分辨异常来自的不同 Domain 类
 - **注意**：以上两个例子即使和你的业务契合，也不一定满足和你的业务要求
 
-### 9. 数据库事物处理（Transaction）
+## 9. 数据库事物处理（Transaction）
 
 读数据错误与丢失更新
 
@@ -152,7 +152,7 @@ HTTP/1.1 200
 - 缩小事务管辖的范围。控制事务所辖代码执行时间的长度，不能将很耗时的操作（如外部服务调用）与数据修改置于同一个事务中。此方案只是尽量减少两个事务中的写操作互相影响的可能，无法完全避免。
 - 使用 ORM save 方法实现数据持久化的情况下，开启 Dynamic update，使得保存更改时影响的字段仅限于被改动了字段。此方案通过控制更新字段的范围，尽量减少脏操作可能，但也无法完全避免。
 
-### 10. 关于 Hibernate Dynamic update
+## 10. 关于 Hibernate Dynamic update
 
 主要缺陷
 
@@ -161,7 +161,7 @@ HTTP/1.1 200
 - 需要从数据库拿到整个 Object 所有数据才能修改，大多数时候不必要，
 - 当两个 session 同时对同一字段进行更新操作，极端情况下会因为 ORM 缓存出现莫名其妙的情况，示例见：[Stackexchange Q: What's the overhead of updating all columns, even the ones that haven't changed](https://dba.stackexchange.com/questions/176582/whats-the-overhead-of-updating-all-columns-even-the-ones-that-havent-changed)
 
-### 11. 如何更新数据库字段
+## 11. 如何更新数据库字段
 
 - 拒绝使用 Spring Data JPA 的 save 方法
   - 默认配置且未使用锁的情况下，save 方法会更新实体类的所有字段，一方面增加了开销，另一方面歪曲了更新特定字段的语义，多线程并发访问更新下的情况下易出现问题。
@@ -169,3 +169,13 @@ HTTP/1.1 200
   - 总的来看，使用 ORM save 方法进行实体类更新陷入了 “You wanted a banana but you got a gorilla holding the banana” 的怪圈，导致做的事情不精确、或者有其它的风险。[参考文章](https://www.johndcook.com/blog/2011/07/19/you-wanted-banana/)
 - 使用自定义 SQL 进行字段更新
   - 使用 JPA 提供的 @Query/@Modifying 书写 JPQL 进行精确控制的字段更新操作。
+
+## 12. 注释
+
+- 类注释
+  - 类级别的注释必须的，注释的内容是该类的职责描述，也可以包含一些使用说明，示例等。
+  - 类的作者，添加修改时间之类的注释是不需要的，因为有源代码可以查到这些信息。
+
+- 方法注释
+  - 方法的注释应该描述该方法做什么。
+  - 方法的命名应该清晰易懂，合理地命名比注释更重要，如果方法名能够足够表达清楚就不需要注释。
