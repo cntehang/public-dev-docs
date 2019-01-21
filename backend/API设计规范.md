@@ -56,5 +56,5 @@ https://dev-tmc-services.teyixing.com/front/v1/flight/cancelApply
 ## 5. 测试
 
 - API开发时应先定义出接口，包括路由，传入和传出参数。
-- 在开发完成之前，应先生成模拟数据，模拟数据应定义为json为文件。
+- 在开发完成之前，应先生成模拟数据，模拟数据应定义为json文件。
 - 在开发完成之后，使用真实数据替代模拟数据。
