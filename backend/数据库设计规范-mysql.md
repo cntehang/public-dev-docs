@@ -17,3 +17,7 @@ SELECT id, pay_mode FROM flight_order
 ## 3. 数据列设计
 
 ## 4. 索引
+
+## 5. 最佳实践
+
+- 每个版本的SQL语句要保证能够重复执行。
