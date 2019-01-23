@@ -9,7 +9,6 @@
 
 ![分层示例](./resources/java_project_layer.png)
 
-
 ## 2. API层
 
 API层用来定义对外的接口，对应于SpringMVC的Controller。  
@@ -66,5 +65,6 @@ utility层包含一些共用的辅助方法。
 
 ## 7. 最佳实践
 
+- 对于比较复杂的项目，每个分层中可以根据模块再分成多个目录，以方便管理。
 - 事务应该在ApplicationService或DomainService中定义，具体位置根据情况决定。
 - 事务范围应尽量短，事务中不应包括远程服务调用及消息队列操作。
