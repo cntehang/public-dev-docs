@@ -42,6 +42,47 @@ A module whose class defined with the above constructor will throw an exception 
 
 It is not recommended that a module provides services and declares declarables. If that happens, such as the `RouterModule`, use `forRoot()` to provide and config services for the root module and `forChild()` for other modules.
 
+
+### 解决 Module 冲突
+
+出现场景：
+
+- 在订单处理模块中有一个国内机票模块，我们命名为：
+  - 文件相对路径以及文件名：`./flight/flight.module.ts`
+  - `Module` 名： `FlightModule`
+- 在基础数据模块中同样有一个国内机票模块，命名也和订单处理一致。
+- 在订单处理模块和基础数据模块的 `RoutingModule` 中使用懒加载：
+
+```ts
+  {
+    path: 'flight',
+    loadChildren: './flight/flight.module#FlightModule',
+  },
+```
+
+那么就回会出现下面的错误提示：
+
+```bash
+ERROR in Duplicated path in loadChildren detected: "./domestic-flight/domestic-flight.module#DomesticFlightModule" is used in2 loadChildren, but they point to different modules "(/Users/vm/Workspace/Webs/Angular/tehang-system/src/app/routes/order/domestic-flight/domestic-flight.module.ts and "/Users/vm/Workspace/Webs/Angular/tehang-system/src/app/routes/basic-resource/domestic-flight/domestic-flight.module.ts"). Webpack cannot distinguish on context and would fail to load the proper one.
+```
+
+通过错误提示，我们可以得知问题的原因是由于 `Webpack` 无法正确的区分它们。  
+那么解决办法有两个：
+
+- 在 `RoutingModule` 中的 `loadChildren` 添加一个父级路径，例如：
+
+```ts
+  // 基础数据模块的 `RoutingModule`
+  {
+    path: 'flight',
+    loadChildren: '../basic-resource/flight/flight.module#FlightModule',
+  },
+```
+
+- 把其中一个国内机票模块改个名字(不仅仅是改 `FlightModule` 这个名字, 还要改文件名)
+
+我们建议使用第一种解决方式，理由是：① 重新命名需要修改的地方较多。 ② 命名是编程两大难题之一。
+
 ## Architecture: Smart Components and Presentational Components
 
 The overall Angular application could be organized into two types of components: [smart components and presentational components](https://blog.angular-university.io/angular-2-smart-components-vs-presentation-components-whats-the-difference-when-to-use-each-and-why/).
