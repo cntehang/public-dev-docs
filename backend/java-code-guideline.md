@@ -170,6 +170,7 @@ HTTP/1.1 200
 - 使用自定义 SQL 进行字段更新
   - 使用 JPA 提供的 @Query/@Modifying 书写 JPQL 进行精确控制的字段更新操作。
 
+<<<<<<< HEAD
 ## 12. 注释
 
 - 类注释
@@ -179,3 +180,28 @@ HTTP/1.1 200
 - 方法注释
   - 方法的注释应该描述该方法做什么。
   - 方法的命名应该清晰易懂，合理地命名比注释更重要，如果方法名能够足够表达清楚就不需要注释。
+=======
+### 12. 处理 Hibernate 懒加载
+
+什么是懒加载
+
+> An object that doesn't contain all of the data you need but knows how to get it.
+\- Martin Fowler defines in [Patterns of Enterprise Application Architecture](https://martinfowler.com/books/eaa.html)
+
+懒加载在我们项目中带来的问题：
+
+- 使用 Spring Data JPA 进行包含列表子对象的对象的列表查询时，若最后使用的结果集不仅限于该对象本身，而还包含其子对象中的内容，会出现 N + 1 问题
+- 使用 Spring Data JPA 查询数据时，若是从非 Controller 环境（如消息队列消费者等异步线程环境），访问对象下面的列表子对象会出现 session closed 异常
+
+对付 N + 1 问题：
+
+- 列表查询改用 Spring Jdbc Template 直接书写原生 SQL 语句执行查询，最大程度上提高效率
+
+对付非事务环境下访问懒加载数据 session closed 问题：
+
+1. 设置 Hibernate 属性(v4.1.6 版本后可用)：hibernate.enable_lazy_load_no_trans=true
+2. 使用 @Fetch(FetchMode.JOIN) 注解
+3. 使用 @LazyCollection(LazyCollectionOption.FALSE) 注解
+
+结论：使用非懒加载
+>>>>>>> 69298a9... add hibernate related description
