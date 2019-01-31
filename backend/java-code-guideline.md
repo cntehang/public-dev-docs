@@ -148,7 +148,7 @@ HTTP/1.1 200
 解决方案：
 
 - 根据具体的业务场景，尽量缩小事物范围并采用正确的[事物隔离级别](https://dev.mysql.com/doc/refman/8.0/en/innodb-transaction-isolation-levels.html)。
-- 使用数据库行级锁（如乐观锁）。完全避免对行级数据的脏操作，但是使得对该行数据的访问串行化，对于比较大的表对象而言，这样的设置往往不是我们想要的结果。
+- 使 用数据库行级锁（如乐观锁、S 锁）。完全避免对行级数据的脏操作，但是使得对该行数据的访问串行化，对于比较大的表对象而言，这样的设置往往不是我们想要的结果。
 - 缩小事务管辖的范围。控制事务所辖代码执行时间的长度，不能将很耗时的操作（如外部服务调用）与数据修改置于同一个事务中。此方案只是尽量减少两个事务中的写操作互相影响的可能，无法完全避免。
 - 使用 ORM save 方法实现数据持久化的情况下，开启 Dynamic update，使得保存更改时影响的字段仅限于被改动了字段。此方案通过控制更新字段的范围，尽量减少脏操作可能，但也无法完全避免。
 
@@ -170,7 +170,30 @@ HTTP/1.1 200
 - 使用自定义 SQL 进行字段更新
   - 使用 JPA 提供的 @Query/@Modifying 书写 JPQL 进行精确控制的字段更新操作。
 
-## 12. 注释
+## 12. 处理 Hibernate 懒加载
+
+什么是懒加载
+
+> An object that doesn't contain all of the data you need but knows how to get it.
+\- Martin Fowler defines in [Patterns of Enterprise Application Architecture](https://martinfowler.com/books/eaa.html)
+
+懒加载在我们项目中带来的问题：
+
+- 使用 Spring Data JPA 进行包含列表子对象的对象的列表查询时，若最后使用的结果集不仅限于该对象本身，而还包含其子对象中的内容，会出现 N + 1 问题
+- 使用 Spring Data JPA 查询数据时，若是从非 Controller 环境（如消息队列消费者等异步线程环境），访问对象下面的列表子对象会出现 session closed 异常
+
+对付 N + 1 问题：
+
+- 列表查询改用 Spring Jdbc Template 直接书写原生 SQL 语句执行查询，最大程度上提高效率
+
+对付非事务环境下访问懒加载数据 session closed 问题：
+
+1. 设置 Hibernate 属性(v4.1.6 版本后可用)：hibernate.enable_lazy_load_no_trans=true
+2. 使用 @Fetch(FetchMode.JOIN) 注解
+3. 使用 @LazyCollection(LazyCollectionOption.FALSE) 注解
+4. 其它请补充
+
+## 13. 注释
 
 - 类注释
   - 类级别的注释必须的，注释的内容是该类的职责描述，也可以包含一些使用说明，示例等。
@@ -179,3 +202,44 @@ HTTP/1.1 200
 - 方法注释
   - 方法的注释应该描述该方法做什么。
   - 方法的命名应该清晰易懂，合理地命名比注释更重要，如果方法名能够足够表达清楚就不需要注释。
+
+## 14. 使用 AspectJ
+
+建议AOP用aspectJ：
+
+```xml
+<tx:annotation-driven transaction-manager="transactionManager" mode="aspectj"/>
+```
+
+相较于 Java JDK 代理、Cglib 登，AspectJ 不但 runtime 性能提高一个数量级，而且支持 class，method（public or private) 和同一个类的方法调用。可以把@Transaction写到最相关的地方。坏处是配置和build可能稍稍有些麻烦。
+
+## 15. 减少乐观锁使用
+
+不建议用乐观锁。所有的事物都明明白白的写出事物处理控制语句。如果更新不需要检查条件（比如更改地址），则直接更新，后面的提交可能覆盖前面的版本。因为我们不用 respository.save(), 通常只有最后提交的部分属性更新，多数业务场景都可以用。
+
+如果更新有一定条件，比如取消订单需要订单的状态是可取消状态，则更新时需要先用select for update检查更新的条件符合再更新，不符合条件返回相应的业务错误代码。乐观锁适用于读的版本是最新的数据版本。
+
+需要使用乐观锁的场景有：
+
+- 待补充
+
+## 16. 事务的使用
+
+1. 所有查询放在事务之外，多条查询考虑用 readOnly 模式，建议用READ COMMITTED事物级别。但是外层事务 readOnly 事务会覆盖内层事务，使内层非只读事务表现出只读特性，我们的处理方式：(待补充)
+2. 远程调用与事务，事物过程里面不许有远程调用。
+3. 在处理中应该先完成一个表的所有操作再处理下一个表的操作。相关的表进行的操作相邻。先业务表再history/audit之类的辅助表操作。
+4. 在事物里面处理多个表时，程序各处一定要按照同样的顺序。最好时按照聚合群的概念，从根部的表开始，广度优先，每层指定表的顺序。
+5. 多个表的操作最好封装到一个函数/方法里面。
+6. 序列号生成使用下面的事物模式：
+
+```java
+ @Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.SERIALIZABLE)
+```
+
+## 17. 减少外键使用
+
+插入操作会需要S lock所有的外键。所以像History或审计之类的表不要和主要业务表建立外键，可以建个索引用于快速查询就是了，这样也实现了表之间的解耦。
+
+## 18. 锁的使用
+
+尽可能避免表级别的锁。如果很多需要串行处理的操作，可以建立一个辅助的只有一行的semaphore（信号）表，事物开始时先修改这个表，然后进行其他业务处理。
