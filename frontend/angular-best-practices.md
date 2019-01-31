@@ -142,7 +142,8 @@ createForm() {
   - 需要注意是否是最新的状态，因为可能某个表单项改变了验证规则，但是没有更新 from 状态.
   - 或者改变任意一项，请使用 `control.updateValueAndValidity()` 以保证 form 状态的正确性
 - 对于大范围改变表单验证规则的情况，可以考虑重新 init form, 但需要小心（注意 html 中需要用 ngif 把不需要的表单 remove 掉）.
-- 把定义和获取 control 的代码放到最后 `get controlName() { return this.form.get('controlName')}`, 以更方便 review .
+- 没有必须忽略 `disabled` 状态下 `control` 值的需求，请使用 `formGroup.getRawValue()` 代替 `formGroup.value` 去获取表单的值。
+- 把定义和获取 `control` 的代码放到最后 `get controlName() { return this.form.get('controlName')}`, 以更方便 review .
 - 如果一个验证规则被重复多次使用，请使用类似 `const pattern = Validators.pattern(moneyRegex)` ,让代码变得更简洁.
 - 表单 `control` 统一使用 `touched` 进行错误提示。
 
