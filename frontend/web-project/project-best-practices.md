@@ -13,4 +13,3 @@
 - `Http Service` 中方法名参照 Api 命名， 且必须有注释。命名风格 `const getXxxApi = admin/xxx/getXxx`
 
 - 统一使用 `Router Service` 进行页面跳转，并且保证 一个 module 一个 router
-
