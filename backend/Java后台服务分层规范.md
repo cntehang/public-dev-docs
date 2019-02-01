@@ -74,11 +74,12 @@ utility层包含一些共用的辅助方法。
 - 对于比较复杂的项目，每个分层中可以根据模块再分成多个目录，以方便管理。
 - 事务应该在ApplicationService或DomainService中定义，具体位置根据情况决定。
 - 事务范围应尽量短，事务中不应包括远程服务调用及消息收发操作。
+
 - 关于消息的发送应遵守以下约定：
   - 消息发送应该封装成独立的类，类名类似于xxxMessageProducer, 类定义放在DomainService目录下。
   - xxxMessageProducer类似DomainService，可以由其他的DomainService或ApplicationService调用。
 
 - 关于消息接收应遵守以下约定：
-  - 消息接收的类应定义在Infrastructure层中，命名类似于xxxMessageConsumer;
+  - 消息接收的具体实现类应定义在最外层中，和Controller类似，并创建一个独立的目录，目录名为consumer，命名类似于xxxMessageConsumer;
   - xxxMessageConsumer调用ApplicationService来完成实际处理。
   - xxxMessageConsumer类似xxxController，都是由外部调用发起。
