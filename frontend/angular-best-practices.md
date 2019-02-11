@@ -42,7 +42,6 @@ A module whose class defined with the above constructor will throw an exception 
 
 It is not recommended that a module provides services and declares declarables. If that happens, such as the `RouterModule`, use `forRoot()` to provide and config services for the root module and `forChild()` for other modules.
 
-
 ### 解决 Module 冲突
 
 出现场景：
@@ -60,7 +59,7 @@ It is not recommended that a module provides services and declares declarables. 
   },
 ```
 
-那么就回会出现下面的错误提示：
+那么就会出现下面的错误提示：
 
 ```bash
 ERROR in Duplicated path in loadChildren detected: "./domestic-flight/domestic-flight.module#DomesticFlightModule" is used in2 loadChildren, but they point to different modules "(/Users/vm/Workspace/Webs/Angular/tehang-system/src/app/routes/order/domestic-flight/domestic-flight.module.ts and "/Users/vm/Workspace/Webs/Angular/tehang-system/src/app/routes/basic-resource/domestic-flight/domestic-flight.module.ts"). Webpack cannot distinguish on context and would fail to load the proper one.
@@ -143,7 +142,8 @@ createForm() {
   - 需要注意是否是最新的状态，因为可能某个表单项改变了验证规则，但是没有更新 from 状态.
   - 或者改变任意一项，请使用 `control.updateValueAndValidity()` 以保证 form 状态的正确性
 - 对于大范围改变表单验证规则的情况，可以考虑重新 init form, 但需要小心（注意 html 中需要用 ngif 把不需要的表单 remove 掉）.
-- 把定义和获取 control 的代码放到最后 `get controlName() { return this.form.get('controlName')}`, 以更方便 review .
+- `formGroup.value`属性是获得 `FormGroup`的 `value` 的最好方法，因为它排除了 `disabled controls`。
+- 如果特殊场景需要获得 `disabled controls` 的值，需要使用 `formGroup.getRawValue()` 。
 - 如果一个验证规则被重复多次使用，请使用类似 `const pattern = Validators.pattern(moneyRegex)` ,让代码变得更简洁.
 - 表单 `control` 统一使用 `touched` 进行错误提示。
 
@@ -223,4 +223,27 @@ this.service
       this.unsubscribe$.next()
     }
   }
+  ```
+
+## Components 风格指南
+
+### 成员顺序
+
+- 属性成员 => constructor => 生命周期钩子 => 自定义方法
+- 属性成员： @Input/Output =>  `public` 成员 => `private` 成员
+  - 相关的成员应该放在一起，例如： `spinTip` 和 `isSpinning` , `STData`、`STColumn` 和 `STComponent`
+- constructor中的依赖注入顺序： `default` => `public` => `private`
+- 生命周期钩子：按执行顺序排序
+- 自定义方法：关键的和 `public` 修饰的放在前面
+- 注意：当组件包含大量表单元素，需要使用 `getter` 时，请放到最后并使用 `// #region controls` 与 `// #endregion` 包裹
+
+  ```ts
+    // #region controls
+    get bunkCode() {
+      return this.form.get('bunkCode')
+    }
+    get discount() {
+      return this.form.get('discount')
+    }
+    // #endregion
   ```
