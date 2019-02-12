@@ -29,6 +29,9 @@ The following are some commons user settings for VS Code IDE.
 "html.format.wrapLineLength": 60,
 ```
 
+### Core Extensions
+- [Angular language service](https://marketplace.visualstudio.com/items?itemName=Angular.ng-template): Provide a rich editing experience for Angular templates.
+
 ### 常用的 Extensions
 
 - [Angular 6 Snippets](https://marketplace.visualstudio.com/items?itemName=johnpapa.Angular2): TypeScript and HTML 的 snippets.
