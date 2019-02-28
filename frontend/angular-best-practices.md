@@ -247,3 +247,16 @@ this.service
     }
     // #endregion
   ```
+
+## Templates 风格指南
+
+- **Template**保持足够简单，尽量避免计算以及表达式，如若需要，可将其移到**Component**里面使用计算属性表示：
+  ```ts
+  export class DemoComponent {
+    /// 此处略去其他代码
+    
+    get isVisible() {
+      return this.list.length > 0 && balabala……
+    }
+  }
+  ```
