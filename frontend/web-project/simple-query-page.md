@@ -7,86 +7,79 @@
 页面分 3 个部分：头部是一个页面名称，中部为搜索条件表单，下部分为数据展示表格，完整示例代码如下：
 
 ```html
-<page-header title="国内机票订单补录" class="page-header-small"></page-header>
+<page-header title="火车票任务处理" class="page-header-small"></page-header>
 <form
   nz-form
   [formGroup]="form"
   class="form-small"
-  se-container="3"
-  labelWidth="150"
+  (ngSubmit)="simpleTable.reset()"
 >
-  <se label="订单号">
-    <input nz-input formControlName="orderNoLike" />
-  </se>
-  <se label="航班号">
-    <input nz-input formControlName="flightNoLike" />
-  </se>
-  <se label="客户简称">
-    <input nz-input formControlName="corpShortNameLike" />
-  </se>
-  <se label="预订日期">
-    <nz-date-picker
-      formControlName="bookingDateStart"
-      class="width-45"
-    ></nz-date-picker>
-    ~
-    <nz-date-picker
-      formControlName="bookingDateEnd"
-      class="width-45"
-    ></nz-date-picker>
-  </se>
-  <se label="预订人">
-    <input nz-input formControlName="bookingEmployeeNameLike" />
-  </se>
-  <se label="乘机人">
-    <input nz-input formControlName="passengerNameLike" />
-  </se>
-  <se label="航空公司">
-    <input nz-input formControlName="airlineLike" />
-  </se>
-  <se label="出发日期">
-    <nz-date-picker
-      formControlName="flightDateStart"
-      class="width-45"
-    ></nz-date-picker>
-    ~
-    <nz-date-picker
-      formControlName="flightDateEnd"
-      class="width-45"
-    ></nz-date-picker>
-  </se>
-  <se label="状态">
-    <shared-dict-select
-      dictType="FlightManualOrderStatus"
-      formControlName="status"
-    ></shared-dict-select>
-  </se>
-  <se label="出票日期">
-    <nz-date-picker
-      formControlName="ticketingTimeStart"
-      class="width-45"
-    ></nz-date-picker>
-    ~
-    <nz-date-picker
-      formControlName="ticketingTimeEnd"
-      class="width-45"
-    ></nz-date-picker>
-  </se>
-  <se>
-    <button
-      nz-button
-      nzType="primary"
-      [disabled]="isSpinning"
-      (click)="simpleTable.reset()"
-    >
-      查询
-    </button>
-    <button nz-button type="reset">清空</button>
-  </se>
-  <se>
-    <button nz-button nzType="primary" [disabled]="isSpinning">新增</button>
-  </se>
+  <se-container [se-container]="3" [labelWidth]="150">
+    <se label="订单号">
+      <input nz-input formControlName="orderNoLike" />
+    </se>
+    <se label="客户编码">
+      <input nz-input formControlName="corpNoLike" />
+    </se>
+    <se label="预订日期">
+      <nz-date-picker
+        formControlName="bookingDateStart"
+        nzPlaceHolder="开始日期"
+        class="width-45"
+      >
+      </nz-date-picker>
+      ~
+      <nz-date-picker
+        formControlName="bookingDateEnd"
+        nzPlaceHolder="截止日期"
+        class="width-45"
+      >
+      </nz-date-picker>
+    </se>
+    <se label="出发日期">
+      <nz-date-picker
+        formControlName="trainDateStart"
+        nzPlaceHolder="开始日期"
+        class="width-45"
+      >
+      </nz-date-picker>
+      ~
+      <nz-date-picker
+        formControlName="trainDateEnd"
+        nzPlaceHolder="截止日期"
+        class="width-45"
+      >
+      </nz-date-picker>
+    </se>
+  </se-container>
+  <div nz-row nzGutter="8">
+    <div nz-col nzSpan="18">
+      <button
+        nz-button
+        type="button"
+        class="mx-lg"
+        nzType="primary"
+        [disabled]="!checkedRows.length"
+        (click)="onClick()"
+      >
+        调出任务
+      </button>
+    </div>
+    <div nz-col nzSpan="6" class="text-right">
+      <button
+        nz-button
+        type="submit"
+        nzType="primary"
+        class="width-40"
+        [disabled]="isSpinning"
+      >
+        查询
+      </button>
+      <button nz-button type="reset" class="width-40">清空</button>
+    </div>
+  </div>
 </form>
+
 <nz-spin [nzTip]="spinTip" [nzSpinning]="isSpinning">
   <st
     #simpleTable
@@ -103,22 +96,14 @@
       front: false
     }"
   >
-    <ng-template st-row="orderNo" let-i>
-      <a routerLink="../order-detail/{{ i.orderId }}">{{ i.orderNo }}</a>
+    <ng-template st-row="bigOrderNo" let-i>
+      <span class="text-blue point" click="'orderId'">{{ i.bigOrderNo }}</span>
     </ng-template>
-    <ng-template st-row="bookingTime" let-i>
-      <span>{{ i.bookingTime | date: 'yyyy-MM-dd HH:mm' }}</span>
+    <ng-template st-row="bookingDateTime" let-i>
+      <span>{{ i.bookingDateTime | date: 'yyyy-MM-dd HH:mm' }}</span>
     </ng-template>
-    <ng-template st-row="orderStatus" let-i>
-      <span>{{ i.orderStatus | dictValueTransform: 'FlightOrderStatus' }}</span>
-    </ng-template>
-    <ng-template st-row="ticketingTime" let-i>
-      <span>{{ i.ticketingTime | date: 'yyyy-MM-dd HH:mm' }}</span>
-    </ng-template>
-    <ng-template st-row="status" let-i>
-      <span
-        >{{ i.status | dictValueTransform: 'FlightManualOrderStatus' }}</span
-      >
+    <ng-template st-row="createTime" let-i>
+      <span>{{ i.createTime | date: 'yyyy-MM-dd HH:mm' }}</span>
     </ng-template>
   </st>
 </nz-spin>
@@ -126,132 +111,100 @@
 
 **_注意：_**
 
-- `se-container="3" labelWidth="150"` 根据实际原型调整
-- 统一使用 ReactiveForms 禁止使用 Template-driven forms
+- `[se-container]="3" [labelWidth]="150"` 为默认值 根据实际原型调整
+- 统一使用 `ReactiveForms` 禁止使用 `Template-driven forms`
+- 对于表单内的 `button` , 请使用符合 `html5` 规范的写法：
+  - 使用 `form` 的 `submit` 事件, 在 `Angular` 中即  `(ngSubmit)="onSubmit()"`
+  - 给每个 `button` 指定具体的 `type`
 
 ## 基本逻辑代码
 
 ```ts
-import {
-  Component,
-  OnInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  ViewChild,
-} from '@angular/core'
-import { FormBuilder, FormGroup } from '@angular/forms'
-import { finalize } from 'rxjs/operators'
-
-import { STColumn, STComponent } from '@delon/abc'
-
-import { HandleErrorService } from '@core/services/handle-error.service'
-import { Logger, LoggerService } from '@core/services/logger.service'
-import { AppError } from '@shared/models/app-error'
-
-import {
-  ManualOrderListHttpService,
-  FlightManualOrder,
-  FlightManualOrderQueryParam,
-} from './manual-order-list-http.service'
-import { DateUtils } from '@shared/utils/date.utils'
-
 @Component({
-  selector: 'manual-order-list',
-  templateUrl: './manual-order-list.component.html',
+  selector: 'processing-list',
+  templateUrl: './processing-list.component.html',
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ManualOrderListComponent implements OnInit {
-  form: FormGroup
-  spinTip = ''
+export class ProcessingListComponent implements OnInit, OnDestroy {
+  private unsubscribe$ = new Subject()
+  private refreshStaffInterval: NodeJS.Timer
+  private log: Logger
+  staffId: number
+  spinTip: string
   isSpinning = false
+  form: FormGroup
 
-  data: FlightManualOrder[]
+  data: AdminTrainTaskBo[] // 查询结果
+  checkedRows: AdminTrainTaskBo[] = [] //被选中的行
+  @ViewChild('simpleTable')
+  simpleTable: STComponent
   columns: STColumn[] = [
+    { title: '全选', index: 'id', type: 'checkbox' },
     {
       title: '订单号',
-      render: 'orderNo',
+      render: 'bigOrderNo',
       width: '90px',
       sort: {
-        compare: (a, b) => Number(a.orderNo) - Number(b.orderNo),
+        compare: (a, b) => Number(a.bigOrderNo) - Number(b.bigOrderNo),
       },
     },
     { title: '客户简称', index: 'corpShortName' },
-    {
-      title: '预订时间',
-      render: 'bookingTime',
-      width: '90px',
-      sort: {
-        compare: (a, b) =>
-          DateUtils.isBefore(a.bookingTime, b.bookingTime) ? 1 : -1,
-      },
-    },
-    {
-      title: '出发时间',
-      index: 'flightDate',
-      width: '90px',
-      sort: {
-        compare: (a, b) =>
-          DateUtils.isBefore(a.flightDate, b.flightDate) ? 1 : -1,
-      },
-    },
-    { title: '行程', index: 'cityNames' },
-    { title: '航班号', index: 'flightNo' },
-    { title: '预订人', index: 'bookingEmployeeName' },
-    { title: '乘机人', index: 'passengerNames', width: '90px' },
-    { title: '订单状态', render: 'orderStatus' },
-    { title: '出票时间', render: 'ticketingTime', width: '90px' },
-    { title: '金额(元)', index: 'paymentAmount' },
-    { title: '订单状态', render: 'status' },
-    {
-      title: '操作',
-
-      buttons: [
-        {
-          text: '添加',
-          type: 'none',
-          click: record => {
-            console.log(record)
-          },
-        },
-      ],
-    },
+    { title: '行程', index: 'stationNames' },
+    { title: '航班号', index: 'trainCode' },
+    { title: '预订人', index: 'bookingCustomerName' },
   ]
-  @ViewChild('simpleTable')
-  private simpleTable: STComponent
-  private log: Logger
+
   constructor(
     loggerService: LoggerService,
-    private changeDetectorRef: ChangeDetectorRef,
+    private authService: AuthCacheService,
+    private staffInfoService: StaffInfoService,
     private formBuilder: FormBuilder,
-    private httpService: ManualOrderListHttpService,
+    private httpService: ProcessingListHttpService,
+    private changeDetectorRef: ChangeDetectorRef,
     private handleErrorService: HandleErrorService,
   ) {
-    this.log = loggerService.getLogger('ManualOrderListComponent')
+    this.log = loggerService.getLogger('ProcessingListComponent')
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
+    this.authService
+      .getLoginStaff()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(staff => {
+        this.staffId = staff ? staff.id : undefined
+        this.log.debug('staff: ', this.staffId)
+      })
+
     this.createForm()
+
     this.query()
   }
 
-  onStChange(event: STChange) {
+  ngOnDestroy(): void {
+    this.unsubscribe$.next()
+  }
+
+  onStChange(event: STChange): void {
     const eventType = event.type
     if (eventType === 'pi' || eventType === 'ps') {
       this.query()
+    } else if (eventType === 'checkbox') {
+      this.onCheckboxChange(event.checkbox as AdminTrainTaskBo[])
     }
   }
 
-  private query() {
+  private query(): void {
     const methodName = 'query'
-    const queryParam = this.getQueryParam()
-    this.log.debug(methodName, queryParam)
+    const params = this.getQueryParams()
+    this.log.debug(methodName, params)
     this.startSpin('正在查询中,请稍候...')
     this.httpService
-      .getManualOrders(queryParam)
+      .getTrainTasks(params)
       .pipe(
         finalize(() => {
           this.stopSpin()
+          this.countDownConfig = { template: `$!s!秒`, leftTime: 30 }
           this.changeDetectorRef.markForCheck()
         }),
       )
@@ -260,8 +213,8 @@ export class ManualOrderListComponent implements OnInit {
           if (res instanceof AppError) {
             this.handleErrorService.handleAppError(this.log, res, methodName)
           } else {
-            this.data = res.content
             this.simpleTable.total = res.totalElements
+            this.data = res.content
           }
         },
         err =>
@@ -269,64 +222,52 @@ export class ManualOrderListComponent implements OnInit {
       )
   }
 
-  private getQueryParam(): FlightManualOrderQueryParam {
+  private onCheckboxChange(checkedRows: AdminTrainTaskBo[]): void {
+    this.checkedRows = checkedRows
+  }
+
+  private getQueryParams(): AdminTrainTaskQueryBo {
+    const formValue = this.form.value
     return {
-      ...this.form.value,
-      ...this.formatDate(),
+      ...formValue,
+      bookingDateStart: DateUtils.startOfDay(formValue.bookingDateStart),
+      bookingDateEnd: DateUtils.startOfDay(
+        DateUtils.addDays(formValue.bookingDateEnd, 1),
+      ),
+      trainDateStart: DateUtils.format(formValue.trainDateStart),
+      trainDateEnd: DateUtils.format(
+        DateUtils.addDays(formValue.trainDateEnd, 1),
+      ),
       pageNumber: this.simpleTable.pi,
       pageSize: this.simpleTable.ps,
     }
   }
 
-  private formatDate() {
-    const formValue = this.form.value
-
-    return {
-      bookingDateStart: DateUtils.startOfDay(formValue.bookingDateStart),
-      bookingDateEnd: DateUtils.startOfDay(
-        DateUtils.addDays(formValue.bookingDateEnd, 1),
-      ),
-      flightDateStart: DateUtils.format(formValue.flightDateStart),
-      flightDateEnd: DateUtils.format(
-        DateUtils.addDays(formValue.flightDateEnd, 1),
-      ),
-      ticketingTimeStart: DateUtils.startOfDay(formValue.ticketingTimeStart),
-      ticketingTimeEnd: DateUtils.startOfDay(
-        DateUtils.addDays(formValue.ticketingTimeEnd, 1),
-      ),
-    }
-  }
-
-  private createForm() {
+  private createForm(): void {
     this.form = this.formBuilder.group({
       orderNoLike: [''],
-      flightNoLike: [''],
-      corpShortNameLike: [''],
+      corpNoLike: [''],
       bookingDateStart: [''],
       bookingDateEnd: [''],
-      bookingEmployeeNameLike: [''],
-      passengerNameLike: [''],
-      airlineLike: [''],
-      flightDateStart: [''],
-      flightDateEnd: [''],
-      status: ['WaitReview'],
-      ticketingTimeStart: [''],
-      ticketingTimeEnd: [''],
+      trainDateStart: [''],
+      trainDateEnd: [''],
     })
   }
 
-  private startSpin(spinTip: string) {
+  private startSpin(spinTip: string) : void{
     this.spinTip = spinTip
     this.isSpinning = true
   }
 
-  private stopSpin() {
+  private stopSpin() : void{
     this.isSpinning = false
   }
 }
+
 ```
 
 ## 页面样式
 
+注意：这里的样式是 `tehang-system` 的，其他项目请自定义  
 为了保持系统的整体性和统一行，非特殊的查询展示页统一使用: `class="page-header-small"` `class="form-small"` `class="table-text-center table-small"`  
 以上样式定义在 `index.less` 中 便于统一修改

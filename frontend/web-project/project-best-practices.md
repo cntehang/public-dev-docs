@@ -7,9 +7,9 @@
 ## Suggestion
 
 - 简单查询条件 `form` 统一使用 `se` 组件，较复杂（需要我们自己控制布局 长短的）统一使用 `nz row + nz col`
-
 - `Component` 中 方法名可以简单 `query add update delete` ，但是必须有注释
-
 - `Http Service` 中方法名参照 Api 命名， 且必须有注释。命名风格 `const getXxxApi = admin/xxx/getXxx`
-
 - 统一使用 `Router Service` 进行页面跳转，并且保证 一个 module 一个 router
+- 针对 `SharedModule` (无论全局 shared 还是 子模块的 shared )中的 `models` `utils` 等不在 `SharedModule`  中导出的内容，请添加相应的 `index.ts` 索引。
+  - `CoreModule` 中的 `services` `guards` 同理
+  - 这样做的好处是，当目录结构发生改变或者文件名发生变化，但相应的 `model` `util` 导出的内容不变的时候，对于外部使用的 `import` 路径不会发生改变，不会出现牵一发而动全身的情况。
