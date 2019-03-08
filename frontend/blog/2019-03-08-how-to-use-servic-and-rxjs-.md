@@ -1,4 +1,4 @@
-## 实战演练
+# Service + Rxjs 在我们项目中的实际应用
 
 产品原型图以及前端组件结构如下所示：
 ![产品原型图](https://ws1.sinaimg.cn/large/006tKfTcgy1g0ppsonpmpj31y40qbjwt.jpg)
@@ -6,7 +6,7 @@
 经过分析后，数据状态流向示意图如下：
 ![数据状态流向示意图](https://ws1.sinaimg.cn/large/006tKfTcgy1g0pptuszkuj30z108uwfr.jpg)
 
-### 状态改变的几个节点
+## 状态改变的几个节点
 
 - 发起 Http 请求获取源数据：
   - SearchBar 组件点击查询按钮
@@ -22,7 +22,7 @@
 - 最终数据，也就是排序后的数据
   - List 组件订阅数据, 每次得到新数据，就重新渲染。
 
-### Service 的核心结构
+## Service 的核心结构
 
 ```ts
 // data.service.ts
@@ -43,7 +43,7 @@ export class DataService {
   }
 
   private initShowTrains(): void {
-    const trains$ = this.searchParams$.pipe(siwthMap(params => this.httpService.search(params)))
+    const trains$ = this.searchParams$.pipe(switchMap(params => this.httpService.search(params)))
 
     const filteredTrains$ = combineLatest(
       trains$,
@@ -91,11 +91,11 @@ export class DataService {
 
 - 利用 [Subject](https://www.learnrxjs.io/subjects/subject.html) 的特点, 将**查询参数**、**过滤条件**和**排序条件**转换为3个可观察对象 (observable)。
 - 利用 [combineLatest](https://www.learnrxjs.io/operators/combination/combinelatest.html) 操作符，将上述的3个 observable 组合起来，等到每一个 observable 都发出一个值后，combineLatest 首次发出初始值。之后任意一个 observable 发出值，combineLatest 都会发出每个 observable 的最新值。
-- 利用 [siwthMap](https://www.learnrxjs.io/operators/transformation/switchmap.html) 操作符拿到参数发起 http 请求获取源数据。
+- 利用 [switchMap](https://www.learnrxjs.io/operators/transformation/switchmap.html) 操作符拿到参数发起 http 请求获取源数据。
 - 利用 [map](https://www.learnrxjs.io/operators/transformation/map.html) 操作符根据过滤条件和排序条件对源数据进行处理，发出最终数据。
 - 利用 [BehaviorSubject](https://www.learnrxjs.io/subjects/behaviorsubject.html) 的特点, 在保存数据的同时，还可以对外提供一个可订阅的对象用于获取数据，用于 SearchBar 和 DateTabs 进行通信。
 
-### Components 的核心结构
+## Components 的核心结构
 
 ```ts
 // search-bar.component.ts
