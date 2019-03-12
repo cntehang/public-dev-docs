@@ -20,19 +20,39 @@
 - 如果生效，这个提交（commit）“fix bug"
 - 如果生效，这个提交（commit）"user group"
 
+#### 标题行的基本规范
+```html
+<type>(<scope>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
+
+对格式的说明如下：
+
+type代表某次提交的类型，比如是修复一个bug还是增加一个新的feature。所有的type类型如下：
+- feature： 新增feature
+- fix: 修复bug
+- docs: 仅仅修改了文档，比如README, CHANGELOG, CONTRIBUTE等等
+- style: 仅仅修改了空格、格式缩进、都好等等，不改变代码逻辑
+- refactor: 代码重构，没有加新功能或者修复bug
+- performance: 优化相关，比如提升性能、体验
+- test: 测试用例，包括单元测试、集成测试等
+- chore: 改变构建流程、或者增加依赖库、工具等
+- revert: 回滚到上一个版本
+
 建议标题的尽可能用英文，可以参考如下类别：
 
-- Add = Create a capability e.g. feature, test, dependency.
-- Cut = Remove a capability e.g. feature, test, dependency.
-- Fix = Fix an issue e.g. bug, typo, accident, misstatement.
-- Bump = Increase the version of something e.g. dependency.
-- Make = Change the build process, or tooling, or infra.
-- Start = Begin doing something; e.g. create a feature flag.
-- Stop = End doing something; e.g. remove a feature flag.
-- Refactor = A code change that MUST be just a refactoring.
-- Reformat = Refactor of formatting, e.g. omit whitespace.
-- Optimize = Refactor of performance, e.g. speed up code.
-- Document = Refactor of documentation, e.g. help files.
+- feature: Create a capability e.g. feature, test, dependency.
+- fix: Fix an issue e.g. bug, typo, accident, misstatement.
+- chore: Change the build process, or tooling, or infra.
+- refactor: A code change that MUST be just a refactoring.
+- style: Refactor of formatting, e.g. omit whitespace.
+- performance: Refactor of performance, e.g. speed up code.
+- docs: Refactor of documentation, e.g. help files.
+
+示例：`feat(addition): big integer addition function`
 
 ### 主体
 
