@@ -136,6 +136,79 @@ createForm() {
 }
 ```
 
+### 普通表单
+
+对于一些有一定交互的表单，我们建议使用普通的表单去构建，通过在对应的`component`里面去写交互逻辑，推荐使用ng-alain提供的`se`组件，需要注意的是`se`组件需要搭配指令`se-container`使用，否则会在运行时报错。
+
+`se`的用法如下：
+
+```ts
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'components-edit-horizontal',
+  template: `
+  <form nz-form #f="ngForm" se-container="1" labelWidth="150">
+    <se label="App Key" error="请填写" optional="(选填)" optionalHelp="通过控制台-查看KEY获取" extra="额外提示信息">
+      <input type="text" nz-input [(ngModel)]="i.ak" name="ak" required>
+    </se>
+    <se label="App Secret" error="请填写，最多32位">
+      <input type="text" nz-input [(ngModel)]="i.sk" name="sk" required maxlength="32">
+    </se>
+    <se>
+      <button nz-button nzType="primary" [disabled]="f.invalid">Save</button>
+    </se>
+  </form>`,
+})
+export class ComponentsEditHorizontalComponent {
+  i: any = {};
+}
+```
+
+### 动态表单
+
+> [参考资料](https://ng-alain.com/form/getting-started/zh)
+
+对于后台系统的查询页面而言，大部分都是比较规整，为了减少重复编写模板代码，我们建议采用动态表单，详细资料可以参考angular[官方文档](https://angular.cn/guide/dynamic-form)和[ng-alain](https://ng-alain.com/form/getting-started/zh)。因为我们决定大量使用ng-alain所带来的特性，同样我们也决定采用有它提供的基于[JSON Schema](http://json-schema.org/)标准构建的动态表单
+
+**基本原则：**
+
+没有复杂交互的表单都可以采用这种动态表单，如果涉及复杂的交互建议还是使用普通的表单，另外，禁止在动态表单中去写`if...else...`或者其他逻辑性代码，只能写声明式代码。
+
+用法如下：
+
+```ts
+@Component({
+    selector: 'app-home',
+    template: `
+      <sf [schema]="schema" (formSubmit)="submit($event)"></sf>
+    `
+})
+export class HomeComponent {
+  schema: SFSchema = {
+    properties: {
+      email: {
+        type: 'string',
+        title: '邮箱',
+        format: 'email',
+        maxLength: 20
+      },
+      name: {
+        type: 'string',
+        title: '姓名',
+        minLength: 3
+      }
+    }
+  };
+
+  submit(value: any) {
+
+  }
+}
+```
+
+
+
 一些建议：
 
 - 针对复杂表单（表单项的验证规则是可变的情况），使用 `from.valid/invalid` 判断时，
@@ -146,6 +219,51 @@ createForm() {
 - 如果特殊场景需要获得 `disabled controls` 的值，需要使用 `formGroup.getRawValue()` 。
 - 如果一个验证规则被重复多次使用，请使用类似 `const pattern = Validators.pattern(moneyRegex)` ,让代码变得更简洁.
 - 表单 `control` 统一使用 `touched` 进行错误提示。
+
+## 表格
+
+表格是后台经常会使用的功能，为了简化表格的写法，增加可维护性，我们推荐使用ng-alain提供的[st组件](https://ng-alain.com/components/table/zh)
+
+简单示例如下：
+
+```ts
+import { Component } from '@angular/core';
+import { STColumn } from '@delon/abc';
+
+@Component({
+  selector: 'components-table-basic',
+  template: `
+  <st [data]="url" [req]="{params: params}" [columns]="columns"></st>`,
+})
+export class ComponentsTableBasicComponent {
+  url = `/users?total=2&field=list`;
+  params = { a: 1, b: 2 };
+  columns: STColumn[] = [
+    { title: '编号', index: 'id' },
+    { title: '头像', type: 'img', width: '50px', index: 'picture.thumbnail' },
+    { title: '邮箱', index: 'email' },
+    { title: '电话', index: 'phone' },
+    { title: '注册时间', type: 'date', index: 'registered' },
+  ];
+}
+```
+
+表格中需要用到的CheckBox，RadioButton, 点击, 分页等等都由`change`事件统一管理，通过`eventType`去判断对应的类型，切记组件里面要去定义change的处理回调把一些不需要的事件排除，避免发不需要的请求。
+
+示例如下：
+
+```ts
+class DemoTable {
+  onChange(e: STChange) {
+    const eventType = e.eventType
+    if(eventType === 'ps' || eventType === 'pi') {
+      this.query()
+    } else if(eventType === 'checkbox') {
+      // do something
+    }
+  }
+}
+```
 
 ## Dependency Injection
 
