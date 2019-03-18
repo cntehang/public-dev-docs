@@ -11,7 +11,6 @@
 
 ## 任务指南
 
-- [如何写日志](./how-to/如何写日志.md)
 - [如何报告 Bug](./how-to/how-to-report-bug.md)
 - [如何写提交信息](./process/git-workflow.md#3-如何写好-commit-message)
 - [如何发布](./how-to/how-to-publish.md)
