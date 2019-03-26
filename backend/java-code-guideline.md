@@ -243,3 +243,10 @@ HTTP/1.1 200
 ## 18. 锁的使用
 
 尽可能避免表级别的锁。如果很多需要串行处理的操作，可以建立一个辅助的只有一行的semaphore（信号）表，事物开始时先修改这个表，然后进行其他业务处理。
+
+## 19. java中使用swagger
+
+针对`io.springfox:springfox-swagger2`的使用，我们要注意：
+
+1. @ApiModel注解value属性值不能写中文，会导致swagger导出json时会报错。建议直接不写参数。
+2. 任何swagger注解的属性值都不要有单引号，json不认识单引号，swagger导出json会报错。比如@ApiModelProperty注解example属性值我们有时候希望给复杂类型（比如"['111','222']"）。遇到这种情况，我们不写example。

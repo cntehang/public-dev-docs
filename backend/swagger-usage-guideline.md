@@ -14,8 +14,8 @@
 
 ```java
 @ApiOperation(
-    value = "员工登陆",
-    notes = "根据用户名和密码进行登陆认证</br>"
+    value = "员工登录",
+    notes = "根据用户名和密码进行登录认证</br>"
         + "code = 1: 密码错误</br>"
         + "code = 2: 用户名不存在"
     )
@@ -36,15 +36,16 @@
 
 - 参数若为类对象：
 
-  - 类名上需加如下注释，用于说明此对象参数的名称：
+  - 类名上需加如下注释，用于说明此对象参数的名称：（这个注解完全没必要用）
+    - value：对象参数名。特别注意：**value不要用中文**，会导致swagger导出json失败
 
-  ```java
-  @ApiModel(value = "登陆信息")
-  ```
+    ```java
+    @ApiModel(value = "xxx")
+    ```
 
   - 类中字段需在 @ApiModelProperty 注解中加如下说明：
     - value：表示字段名
-    - example：表示该字段的示例值，在测试时很有帮助
+    - example：表示该字段的示例值，在测试时很有帮助，但是，千万不要有单引号，遇到复杂类型，宁可不写example
     - required: 若为必携带的参数，则为true
   
     ```java
