@@ -113,10 +113,12 @@ HTTP/1.1 200
   - 若该字段必须被初始化，使用 Primitive Class
 - **举例**：
   - Employee 类中的 corpId
-    - 如果员工定义时可以不指定所属公司，则用 Integer
-    - 若定义员工时必须定义公司，则用 int
+    - 如果员工定义时可以不指定所属公司，则用 Long
+    - 若定义员工时必须定义公司，则用 long
 
 ## 6. 实体类字段不赋默认值
+
+- POJO 类属性没有初值是醒使用者在需要使用时，必须自己显式地进行赋值，任何 NPE 问题，或者入库检查，都由使用者来保证。
 
 ## 7. 方法（Method）风格
 
@@ -250,3 +252,100 @@ HTTP/1.1 200
 
 1. @ApiModel注解value属性值不能写中文，会导致swagger导出json时会报错。建议直接不写参数。
 2. 任何swagger注解的属性值都不要有单引号，json不认识单引号，swagger导出json会报错。比如@ApiModelProperty注解example属性值我们有时候希望给复杂类型（比如"['111','222']"）。遇到这种情况，我们不写example。
+
+## 20. 对同一服务下的接口文档进行分类
+
+如 [swagger-usage-guideline](https://github.com/cntehang/public-dev-docs/blob/master/backend/swagger-usage-guideline.md) 中说明的那样，我们使用 swagger 用来作为前后端交流接口约定的工具。
+
+随着接口数量的增长，Controller 数量的变多，建议对 API 文档按照 controller 所属的业务范畴进行分类（即 swagger 中的 spec）。Swagger 会根据 Swagger 配置类中定义的 Bean 生成不同的 spec，如下 Bean 配置会扫描包路径 com.tehang.tmc.services.application.rest 下的所有 Controller 并将其归属于一类。
+
+```java
+  /**
+   * swagger配置
+   *
+   * @return swagger相关配置
+   */
+  @Bean
+  public Docket createRestApi() {
+    return new Docket(DocumentationType.SWAGGER_2)
+        .forCodeGeneration(true)// 解决泛型转json错误的问题
+        .useDefaultResponseMessages(false)
+        .apiInfo(this.getApiInfo())
+        .globalOperationParameters(this.getParams())
+        .select()
+        .apis(RequestHandlerSelectors.basePackage("com.tehang.tmc.services.application.rest"))
+        .paths(PathSelectors.any())
+        .build();
+  }
+```
+
+## 21. 更多地使用官方工具包中定义好的 API，以一种更易读的方式对空、null 进行判断
+
+- 判断集合是否非空使用 org.apache.commons.collections4.CollectionUtils.isNotEmpty
+- 判断字符串非空使用 org.apache.commons.lang3.StringUtils.isNotEmpty，若还需非空格则使用 org.apache.commons.lang3.StringUtils.isNotBlank
+- 判断对象为非 null 使用 java.util.Objects.nonnull
+- 判断 Boolean 类型是否为 true 使用 org.apache.commons.lang3.BooleanUtils.isTrue
+
+## 22. 日志记录应当涵盖所有代码分支
+
+日志记录是为追踪业务流程，排查系统 BUG 服务的，所以日志记录应该涵盖代码执行的所有分支。如：
+
+- while 语句代码快
+- if-else 语句的 if 代码块和 else 代码块
+- throw exception 代码前
+
+## 23. 所有集成测试用例使用统一的外部服务模拟器
+
+集成测试中需要对当前服务调用到的外部服务进行模拟（使用 WireMock 等工具），如下代码定义了一个运行在 10098 端口的模拟服务器：
+
+```java
+ /**
+  * wire mock, 10098是配置中指定的端口
+  */
+ @Shared
+ WireMockRule wireMockRule = new WireMockRule(10098)
+```
+
+如果为每个 IntegrationTest 类创建一个模拟服务器，一方面会降低集成测试运行的效率（考虑模拟服务器开闭消耗的时间），另一方面会给包含异步方法调用的集成测试带来访问不到目标地址的风险（进行访问拦截的模拟服务器此时可能已经关闭）。故推荐为所有的集成测试启动一个唯一的外部服务模拟器，统一加载需要拦截的 URL，在所有集成测试运行之始，在所有集成测试运行结束后关闭。
+
+## 24. 统一服务的错误处理
+
+这里的统一是指形式上的统一，如同本文第三点中所述 API 返回体数据结构定义的那样，错误信息也应该在这样的数据结构中返回。
+要想做到这一点，我们需要一个统一的异常拦截器对程序中抛出的异常进行包装，以兼容定义好的数据结构。要想实现这一点，可使用自定义 ExceptionResolver（Spring 3.2 以下），或者使用 ControllerAdvice（Spring 3.2 及以上）。一个可能的最佳异常处理器形式如下：
+
+```java
+/**
+ * 微服务异常集中处理器
+ */
+@RestControllerAdvice
+public class BestExceptionHandler {
+
+  /**
+   * 处理异常
+   */
+  @ExceptionHandler
+  @ResponseBody
+  @ResponseStatus(HttpStatus.OK)
+  public DataContainer handle(Exception ex) {
+
+    DataContainer container;
+
+    if (ex instanceof ApplicationException) {
+      container = new DataContainer(((ApplicationException) ex).getCode(), ex.getMessage());
+    } else if (ex instanceof ParameterException || ex instanceof ConstraintViolationException || ex instanceof MethodArgumentNotValidException) {
+      container = new DataContainer(CommonCode.PARAMETER_ERROR_CODE, ex.getMessage());
+    } else if (ex instanceof DataAccessException) {
+      container = new DataContainer(CommonCode.SQL_ERROR_CODE, CommonCode.SQL_ERROR_MESSAGE);
+      //other debug message setting
+    } else {
+      container = new DataContainer(CommonCode.COMMON_ERROR_CODE, ex.getMessage());
+    }
+
+    return container;
+  }
+}
+```
+
+相较于自定义 ExceptionResolver 实现，使用 ControllerAdvice 的优点在于屏蔽了 Respon/Request 等对象，以及丑陋的写输出流的操作。需要注意的是，这里限制了返回的所有错误形式都是我们约定好的 API 响应数据结构。
+
+目前我们项目中混用了 ExceptionResolver 和 ControllerAdvice，实际上选用一种即可。
