@@ -30,30 +30,31 @@
   })
 ```
 
-
-
 ## 请求参数说明
 
 - 参数若为类对象：
 
   - 类名上需加如下注释，用于说明此对象参数的名称：（这个注解完全没必要用）
-    - value：对象参数名。特别注意：**value不要用中文**，会导致swagger导出json失败
+
+    - value：对象参数名。特别注意：**value 不要用中文**，会导致 swagger 导出 json 失败
 
     ```java
     @ApiModel(value = "xxx")
     ```
 
   - 类中字段需在 @ApiModelProperty 注解中加如下说明：
+
     - value：表示字段名
-    - example：表示该字段的示例值，在测试时很有帮助，但是，千万不要有单引号，遇到复杂类型，宁可不写example
-    - required: 若为必携带的参数，则为true
-  
+    - example：表示该字段的示例值，在测试时很有帮助，但是，千万不要有单引号，遇到复杂类型，宁可不写 example
+    - required: 若为必携带的参数，则为 true
+
     ```java
       @ApiModelProperty(value = "用户名，可以为手机/邮箱", example = "709091988@qq.com", required = true)
     ```
 
 - 若为普通参数：
-  - 在方法的请求参数前，与 @RequestParam并列
+
+  - 在方法的请求参数前，与 @RequestParam 并列
 
   ```java
   @ApiParam(value = “用户ID”, example = "1100020")
@@ -98,4 +99,5 @@ public class SwaggerConfig {
 ```
 
 ## Swagger 文档界面说明
-![swagger文档界面说明](./resources/swagger.jpg)
+
+![swagger文档界面说明](../resources/swagger.jpg)
