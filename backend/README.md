@@ -18,7 +18,7 @@
 - [java 编码指南](./code/java-code-guideline.md): 关于 java 编码的规约
 - [后端如何写日志](./code/如何写日志.md): 关于后端记日志的详细说明
 - [Java 命名规范](./code/Java命名规范.md): 关于后端 Java 代码的命名规范
-- [Java 后台项目如何分层](./code/database/Java后台服务分层规范.md): 关于 Java 后台服务项目如何分层的一些标准
+- [Java 后台项目如何分层](./code/Java后台服务分层规范.md): 关于 Java 后台服务项目如何分层的一些标准
 
 ## 数据库
 
