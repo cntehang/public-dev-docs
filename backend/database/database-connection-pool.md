@@ -1,10 +1,12 @@
 # 数据库连接池
 
-几乎所有的商业应用都有大量数据库访问，通常这些应用会采用数据库连接池。理解问什么需要连接池，连接池的实现原理和参数设置对于写出正确、高效的程序很有帮助。理解这些概念对于理解分布式计算也很有帮助。
+几乎所有的商业应用都有大量数据库访问，通常这些应用会采用数据库连接池。理解为什么需要连接池，连接池的实现原理和参数设置对于写出正确、高效的程序很有帮助。这些概念可以用于系统运行参数的配置，同时对于理解并发和分布式处理也很有帮助。
+
+说句题外话，没有想到这么简单的一个数据库连接池配置问题竟然多数人都不清楚甚至搞错。犯糊涂的人甚至包括负责连接池实现的程序员。[About Pool Sizing](https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing)的作者是广泛使用的 HikariCP 的程序员。很不幸，有实现连接池的编码经验，面对很多数据，他给出里错误的结论和公式。不过不很意外，他的糟糕的代码风格也预示着他的条理性不好。
 
 ## 为什么需要连接池
 
-任何数据库的访问都需要建立连接。这是一个复杂、缓慢的处理。牵涉到通信连接建立（包括 TCP 的三次握手）、认证、授权、资源的初始化和分配等一系列任务。而且数据库服务器通常和应用服务器是分开的，所有的操作都是分布式网络请求和处理。[建立数据库连接时间](https://stackoverflow.com/questions/2188611/how-long-does-it-take-to-create-a-new-database-connection-to-sql)通常在 100ms 或更长。而通常小数据的 CRUD 数据库操作是 ms 级或更短，加上网络延迟一般 10 到 50 个 ms 就可以返回多数请求处理结果。在应用启动时预先建立一些数据库连接，应用程序使用已有的连接可以极大提高相应速度。另外，Web 服务应用当客户很多时，有很多线程，连接数目过多以及频繁创建/删除连接也会影响数据库的性能。
+任何数据库的访问都需要首先建立数据库连接。这是一个复杂、缓慢的处理。牵涉到通信建立（包括 TCP 的三次握手）、认证、授权、资源的初始化和分配等一系列任务。而且数据库服务器通常和应用服务器是分开的，所有的操作都是分布式网络请求和处理。[建立数据库连接时间](https://stackoverflow.com/questions/2188611/how-long-does-it-take-to-create-a-new-database-connection-to-sql)通常在 100ms 或更长。而通常小数据的 CRUD 数据库操作是 ms 级或更短，加上网络延迟一般 10 到 50 个 ms 就可以完成多数数据库处理结果。在应用启动时预先建立一些数据库连接，应用程序使用已有的连接可以极大提高响应速度。另外，Web 服务应用当客户很多时，有很多线程，连接数目过多以及频繁创建/删除连接也会影响数据库的性能。
 
 总结起来，采用数据库连接有如下好处：
 
@@ -22,11 +24,67 @@
 - 多余的连接不会立即关闭，而是会等待一段空闲时间（idle time）再关闭。
 - 连接有最长生命时间限制，即使连接池不管，数据库也会自动关闭超过生命时间的连接。在 MySql 里面，连接最长生命时间是 8 个小时。连接池需要定期监控清理无效的连接。
 - 当连接数小于最大数目而需要为新线程创建连接时，新线程应该等待池里第一个可用的连接而不必等待因它而创建的线程。HikariCP 的文档[Welcome to the Jungle](https://github.com/brettwooldridge/HikariCP/blob/dev/documents/Welcome-To-The-Jungle.md) 比较了这种实现的优点：可以避免创建很多不必要的连接并且有更好的性能。
-- 数据库各种异常的处理。[Bad Behavior: Handling Database Down](https://github.com/brettwooldridge/HikariCP/wiki/Bad-Behavior:-Handling-Database-Down) 给出里不同连接池构件实现对于线程阻塞 timeout 的不同处理方式。很多不能正确处理。
-- 线程池的监控监测。[HikariCP Dropwizard HealthChecks](https://github.com/brettwooldridge/HikariCP/wiki/Dropwizard-HealthChecks)是一个例子。
-- 线程池的性能检测。[HikariCP Dropwizard Metrics](https://github.com/brettwooldridge/HikariCP/wiki/Dropwizard-Metrics) 给出了检测的性能指标。
-- 线程阻塞的机制以及相关数据结构对连接池的性能有很大影响。[Down the Rabbit Hole](https://github.com/brettwooldridge/HikariCP/wiki/Down-the-Rabbit-Hole)给出了 Java 里的优化方法。当然，里面有很多优化过于琐碎使得代码晦涩难懂而且需要很多维护。
+- 数据库各种异常的处理。[Bad Behavior: Handling Database Down](https://github.com/brettwooldridge/HikariCP/wiki/Bad-Behavior:-Handling-Database-Down) 给出里不同连接池构件实现对于线程阻塞 timeout 的不同处理方式。很多连接池构件不能正确处理。
+- 线程池的健康监控。[HikariCP Dropwizard HealthChecks](https://github.com/brettwooldridge/HikariCP/wiki/Dropwizard-HealthChecks)是一个例子。
+- 线程池的性能监视。[HikariCP Dropwizard Metrics](https://github.com/brettwooldridge/HikariCP/wiki/Dropwizard-Metrics) 给出了监视的性能指标。
+- 线程阻塞的机制以及相关数据结构对连接池的性能有很大影响。[Down the Rabbit Hole](https://github.com/brettwooldridge/HikariCP/wiki/Down-the-Rabbit-Hole)给出了 Java 里的优化方法。坏处是里面有些优化过于琐碎，使得代码晦涩难懂而且需要额外维护工作。
+
+## 数据库连接池的系统架构
+
+连接池的本质是一个共享的数据结构。其核心管理功能是从池中分配一个数据库连接给需要的线程，线程用完后回收连接到池中。由于连接池有限，可以并行进行数据库访问的线程数量最多是连接池的最大尺寸。如果考虑到一个应用线程可能会用到多个数据库连接的可能性，则可以并发访问数据库的线程数目会更少。
+
+连接池的使用者是业务应用程序。通常有二种：一种是基于用户/服务请求的 HTTP 服务线程，通常采用线程池。特点是线程数目动态变化很大，数据库的访问模式比较多样，处理时间也有长有短，可能有很大差别。另一种是后台服务，其线程数目比较固定，数据库访问模式和处理时间也比较稳定。
+
+连接池只是给业务应用提供已建立的连接，所有的访问请求都通过连接转发到后台数据库服务器。数据库服务器通常也采用线程（PostfreSQL 用进程）池处理所有的访问请求。
+
+具体来说，连接池是两个线程池的中间通道。连接池和应用服务线程池在同一个进程里面。数据库的访问则一般通过网络进行。可以看成下面的结构：
+
+应用服务线程池 <-> 数据库连接池 <======> 数据库服务器线程（或进程）池
+
+需要说明，每个访问数据库的应用服务进程都有自己的线程池和对应的数据库连接池。数据库服务器可能需要处理来自一个或多个服务器的多个应用服务进程内的数据库连接池数据访问请求。
 
 ## 配置数据库连接池
 
-先说句题外话，老刘没有想到这么简单的一个配置问题竟然多数人都不清楚甚至搞错，这些糊涂的人甚至包括负责连接池编码的程序员。[About Pool Sizing](https://github.com/brettwooldridge/HikariCP/wiki/About-Pool-Sizing)的作者是广泛使用的 HikariCP 的程序员。很不幸，有实现连接池的编码经验，面对很多数据，他给出里错误的结论。不过，他的糟糕的代码风格也预示着他的条理性不好。
+### 配置目标
+
+当提到数据库连接池的配置，一个常见也是严重的错误是把连接池和线程池的概念混淆了。前面提到的 HikariCP 的程序员给出的建议就犯了这种错误。
+
+如上面系统架构所示，数据库连接池并不控制应用端和数据库端的线程池的大小。每个数据库连接池的配置只是针对自己所在的应用服务进程，限制的是同一个进程内可以访问数据库的并行线程数目。应用服务进程单独管理自己的线程池，除了数据库访问还有处理其他业务逻辑，并行的线程数目基本取决于服务的负载。当应用服务线程需要访问数据库时，其并发度和阻塞数目才收到连接池尺寸的影响。
+
+做为应用服务和数据库的桥梁，连接池参数配置的目标是全局优化。具体的优化目的有三个：尽可能满足所有的应用服务并发数据库访问，不让数据库服务器过载，不浪费系统资源。
+
+尽可能满足所有的应用服务并发数据库访问的意思很简单：所有需要访问数据库的线程都可以得到需要的数据库连接。如果一个线程用到多个连接，那么需要的连接数目也会成倍增加。这时，需要的连接池最大尺寸应该是最大的并发数据库访问线程数目乘以每个线程需要的连接数目。
+
+不让数据库服务器过载是个全局的考虑。因为可能有多个应用服务器的多个连接池会同时发出请求。这个[OLTP performance -- Concurrent Mid-tier connections](https://youtu.be/xNDnVOCdvQ0)录像用一个应用服务线程池进行了模拟。应用服务线程池有 9600 个不断访问数据库的线程，当连接池尺寸为 2048 和 1024 时，数据库处于过载状态，有很多数据库的的等待事件，数据库 CPU 利用率高达 95%。当连接池减少到 96，数据库服务器没有等待事件，CPU 利用率 20%，数据库访问请求等待时间从 33ms 降低到 1ms，数据库 SQL 执行时间从 77ms 降低到 2ms。数据库访问整体响应时间从 100ms 降低到 3ms。这时一个应用服务线程池对一个数据库服务线程池的情况，总共 96 个连接池的数据库处理性能远远超过 1000 个连接池的性能。数据库服务器需要为每个连接分配资源。比如按照 PostgreSQL V11 文档[18.4.3. Resource Limits](https://www.postgresql.org/docs/11/kernel-resources.html)，每个连接都需要一个单独进程来处理。每个进程即使空闲，都会消耗不少诸如内存，semapho 等的系统资源。
+
+不浪费系统资源是指配置过大的连接池会浪费系统资源，包括内存，网络端口，同步信号等。同时线程池的重启和操作都会响应变慢。不过应用端线程池的开销不是很大，资源的浪费通常不是太大问题。
+
+### 配置方法
+
+概念清楚，目标明确之后，配置方法就比较容易了。思路有二种：按二端线程（进程）池尺寸估算或按照吞吐量估算。综合考虑二种方法的结果会是比较合理的。
+
+方法 1: 找出二端的最大值，其中小的那个值就是连接池上限。应用服务线程池尺寸，比如 Tomcat 最大线程池尺寸缺省值为 200。如果每个线程只用一个数据库连接，那么连接池最大数目应该小于等于 200。如果有些请求用到多于一个连接，则适当增加。如果数据库线程（进程）池的最大尺寸为 151, 参考[MySQL Too many connections](https://dev.mysql.com/doc/refman/5.5/en/too-many-connections.html)， 此时连接池最大尺寸应该小于等于 151。取二个值（200， 151）中的那个小的，那么连接池最大尺寸应该小于等于 151。如果还有其他连接池，则还要全局考虑。这个值是连接池的上线。
+
+方法 2: 考虑应用服务的负载性质。如果是数量变化很大的 Web 应用服务线程池，那么连接池也可以配置成动态的，配置相应的最小值和最大值。对于想邮件服务这种固定负载的业务应用，可以配置固定尺寸的进程池。
+
+仅仅考虑二端线程（进程）池的尺寸会配置过大的连接池，因为这是系统的上限。另一种思路是按照数据库访问的复杂度和响应时间进行估算。这里用到[Little's Law](https://en.wikipedia.org/wiki/Little%27s_law)：`并发量 = 每秒请求数量 * 数据库请求响应时间`。
+
+如果每秒有 100 个客户请求，每个请求需要 20ms，那么并行量是 `100 * 0.02 = 2`,2 个并发数据库连接就可以了。同理，如果每个请求需要 100ms，那么就需要 10 个并发连接。
+
+### 一个无关的计算公式
+
+因为是混淆的根源，还是有必要介绍另外一个经常提到但是无关的线程数目计算公式。这个公式来自著名的[Java Concurrency in Practice](http://jcip.net/)。在原著 8.2 节, 第 171 页作者给出了同样著名的线程数目计算公式：`线程数目 = CPU核数 * CPU 利用率 * (1 + 等待时间 / CPU计算时间)`。这个公式考虑了计算密集（计算时间）和 I/O 密集（等待时间）的不同处理模式。可是这个公式可以用于应用服务线程池的尺寸估算，与数据库连接池的估算无关。因为进程池并不能控制线程数目，它控制的是可并发的数据库访问线程数目。这些线程用数据库连接完成网络服务和远程数据库的异步操作，基本没有 CPU 计算时间。套用公式会得出非常大的数字，基本没有实际意义。
+
+## Spring 应用的连接池配置
+
+如上所述，配置 Spring 连接池首先要考虑到其使用的 HTTP 服务的线程池配置和后端数据库服务器的连接数配置。其次是应用的特点。
+
+Spring 缺省使用[HikariCP](https://github.com/brettwooldridge/HikariCP)。HikariCP 有相关的[MySQL 配置](https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration) 和[Hiberate 配置](https://github.com/brettwooldridge/HikariCP/wiki/Hibernate4)的建议。
+
+## 一些参考缺省配置
+
+[HikariCP](https://github.com/brettwooldridge/HikariCP): DEFAULT_POOL_SIZE = 10
+
+[DBCP](https://wiki.apache.org/commons/DBCP): Max pool size : 8
+
+[c3p0](https://github.com/swaldman/c3p0): MIN_POOL_SIZE = 3, MAX_POOL_SIZE = 15
