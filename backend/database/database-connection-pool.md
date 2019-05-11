@@ -111,6 +111,8 @@ HikariCP 建议的[MySQL 配置](https://github.com/brettwooldridge/HikariCP/wik
 
 [c3p0](https://github.com/swaldman/c3p0): MIN_POOL_SIZE = 3, MAX_POOL_SIZE = 15
 
+[JIRA Tuning database connections](https://confluence.atlassian.com/adminjiraserver070/tuning-database-connections-749382655.html)：pool-max-size = 20. 和前三个不同，这是一个应用程序。里面讨论了数据库的连接数目。里面提到一方面数据库可以支持数百连接，另一方面应用服务端连接比较耗费资源，建议在允许的情况下尽可能设成小的数字。
+
 ### 题外话
 
 网上搜了很多，没有想到这么简单的一个数据库连接池配置问题竟然很多人都不清楚。把连接池和线程池搞混的的人很多。甚至实施 HikariCP 的程序员在初始化连接池的时候使用了错误的线程池数目。创建线程池的任务主要是网络和远程数据库服务请求的延迟，几乎不耗费 CPU 资源。按照线程计算公式，此时线程池可以很大。可是 HikariCP 的程序员还是仅仅用了`Runtime.getRuntime().availableProcessors()`数目的线程用于创建连接池。正确的数目应该是配置的最小连接池数目。参考这个 Issue：[Change the thread pool size to minimumIdle on blocked initialization](https://github.com/brettwooldridge/HikariCP/issues/1375)。 这个不难想象，因为他的代码风格比较糟糕。
