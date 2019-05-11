@@ -19,7 +19,7 @@
 
 原理上，在应用开始时创建一组数据库的连接。也可以动态创建但是复用已有的连接。这些连接被存储到一个共享的资源数据结构，称为连接池。这是典型的生产者-消费者并发模型。每个线程在需要访问数据库时借用（borrow）一个连接，使用完成则释放（release）连接回到连接池供其他线程使用。比较好的线程池构件会有二个参数动态控制线程池的大小：最小数量和最大数量。最小数量指即使负载很轻，也保持一个最小数目的数据库连接以备不时之需。当同时访问数据库的线程数超过最小数量时，则动态创建更多连接。最大数量则是允许的最大数据库连接数量，当最大数目的连接都在使用而有新的线程需要访问数据库时，则新的线程会被阻塞直到有连接被释放回连接池。当负载变低，池里的连接数目超过最小数目而只有低于或等于最小数目的连接被使用时，超过最小数目的连接会被关闭和删除以便节省系统资源。
 
-连接池的实际应用中，最担心的问题就是用了不还。编码逻辑错误或者释放连接放代码没有放到 `finally` 部分都会导致连接池资源枯竭从而造成系统变慢甚至完全阻塞的情况。这种情况类似于内存泄露，因而也叫连接泄露，是常常发生而且难以发现的问题。因而，检测连接泄露并报警是线程池实现的基本需要。
+连接池的实际应用中，最担心的问题就是借了不还的这种让其他人无资源可用的人品问题。编码逻辑错误或者释放连接放代码没有放到 `finally` 部分都会导致连接池资源枯竭从而造成系统变慢甚至完全阻塞的情况。这种情况类似于内存泄露，因而也叫连接泄露，是常常发生而且难以发现的问题。因此检测连接泄露并报警是线程池实现的基本需要。
 
 连接在被使用时运行在借用它的线程里面，并不是运行在新的线程里面。但是因为每个连接在使用中要实现超时 timeout 机制，官方的 [Java.sql.Connection.setNetworkTimeout API](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)的接口定义是 `setNetworkTimeoutExecutor executor, int milliseconds)`。此出需要指定一个线程池来处理超时的错误报告。也就是每一个连接运行数据库访问时，都会有一个后台线程监控响应超时状态。很多连接池实现会使用 Cached Thread Pool 或 Fixed Thread Pool。Chached Thread Pool 没有线程数目限制，动态创建和回收，适合很多动态的短小请求应用。Fixed Thread Pool 则适合比较固定的连接请求。
 
@@ -51,9 +51,9 @@
 
 尽可能满足所有的应用服务并发数据库访问的意思很简单：所有需要访问数据库的线程都可以得到需要的数据库连接。如果一个线程用到多个连接，那么需要的连接数目也会成倍增加。这时，需要的连接池最大尺寸应该是最大的并发数据库访问线程数目乘以每个线程需要的连接数目。
 
-不让数据库服务器过载是个全局的考虑。因为可能有多个应用服务器的多个连接池会同时发出请求。按照 PostgreSQL V11 文档[18.4.3. Resource Limits](https://www.postgresql.org/docs/11/kernel-resources.html)，每个连接都需要一个单独进程来处理。每个进程即使空闲，都会消耗不少诸如内存，semapho 等的系统资源。[Number Of Database Connections](https://wiki.postgresql.org/wiki/Number_Of_Database_Connections#How_to_Find_the_Optimal_Database_Connection_Pool_Size) 这篇文章讨论了 PostgreSQL V9.2 的连接数目。给出的建议公式是 `((core_count * 2) + effective_spindle_count)`，也就是 CPU 核数的二倍加上硬盘轴数。MySQL 采用了不同的服务架构，[MySQL Too many connections](https://dev.mysql.com/doc/refman/5.5/en/too-many-connections.html)给出的缺省连接数目为 151。
+不让数据库服务器过载是个全局的考虑。因为可能有多个应用服务器的多个连接池会同时发出请求。按照 PostgreSQL V11 文档[18.4.3. Resource Limits](https://www.postgresql.org/docs/11/kernel-resources.html)，每个连接都由一个单独进程来处理。每个进程即使空闲，都会消耗不少诸如内存，信号（semaphore), 文件/网络句柄（handler），队列等各种系统资源。这篇文章[Number Of Database Connections](https://wiki.postgresql.org/wiki/Number_Of_Database_Connections#How_to_Find_the_Optimal_Database_Connection_Pool_Size) 讨论了 PostgreSQL V9.2 的连接数目。给出的建议公式是 `((core_count * 2) + effective_spindle_count)`，也就是 CPU 核数的二倍加上硬盘轴数。MySQL 采用了不同的服务架构，[MySQL Too many connections](https://dev.mysql.com/doc/refman/5.5/en/too-many-connections.html)给出的缺省连接数目为 151。这二个系统从具体实现机理、计算办法和建议数值都有很大差别，做为应用程序员应该有基本的理解。
 
-这个[OLTP performance -- Concurrent Mid-tier connections](https://youtu.be/xNDnVOCdvQ0)录像用一个应用服务线程池进行了模拟。应用服务线程池有 9600 个不断访问数据库的线程，当连接池尺寸为 2048 和 1024 时，数据库处于过载状态，有很多数据库的的等待事件，数据库 CPU 利用率高达 95%。当连接池减少到 96，数据库服务器没有等待事件，CPU 利用率 20%，数据库访问请求等待时间从 33ms 降低到 1ms，数据库 SQL 执行时间从 77ms 降低到 2ms。数据库访问整体响应时间从 100ms 降低到 3ms。这时一个应用服务线程池对一个数据库服务线程池的情况，总共 96 个连接池的数据库处理性能远远超过 1000 个连接池的性能。数据库服务器需要为每个连接分配资源。
+这个[OLTP performance -- Concurrent Mid-tier connections](https://youtu.be/xNDnVOCdvQ0)视频用一个应用服务线程池进行了模拟。应用服务线程池有 9600 个不断访问数据库的线程，当连接池尺寸为 2048 和 1024 时，数据库处于过载状态，有很多数据库的的等待事件，数据库 CPU 利用率高达 95%。当连接池减少到 96，数据库服务器没有等待事件，CPU 利用率 20%，数据库访问请求等待时间从 33ms 降低到 1ms，数据库 SQL 执行时间从 77ms 降低到 2ms。数据库访问整体响应时间从 100ms 降低到 3ms。这时一个应用服务线程池对一个数据库服务线程池的情况，总共 96 个连接池的数据库处理性能远远超过 1000 个连接池的性能。数据库服务器需要为每个连接分配资源。
 
 不浪费系统资源是指配置过大的连接池会浪费应用服务器的系统资源，包括内存，网络端口，同步信号等。同时线程池的重启和操作都会响应变慢。不过应用端连接池的开销不是很大，资源的浪费通常不是太大问题。
 
@@ -125,4 +125,4 @@ HikariCP 建议的[MySQL 配置](https://github.com/brettwooldridge/HikariCP/wik
 
 ### 题外话
 
-网上搜了很多，没有想到这么简单的一个数据库连接池配置问题竟然没有比较全面、明确的文档。把连接池和线程池搞混的的人很多。甚至实施 HikariCP 的程序员在初始化连接池的时候使用了错误的线程池数目。创建线程池的任务主要是网络和远程数据库服务请求的延迟，几乎不耗费 CPU 资源。按照线程计算公式，此时线程池可以很大。可是 HikariCP 的程序员还是仅仅用了`Runtime.getRuntime().availableProcessors()`数目的线程用于创建连接池。正确的数目应该是配置的最小连接池数目，这样既不浪费，也有最好的性能。参考这个 Issue：[Change the thread pool size to minimumIdle on blocked initialization](https://github.com/brettwooldridge/HikariCP/issues/1375)。 这个不难想象，因为 HikariCP 的代码风格比较糟糕。
+网上搜了很多，没有想到这么简单的一个数据库连接池配置问题竟然没有比较全面、明确的文档。把连接池和线程池搞混的的人很多。甚至实施 HikariCP 的程序员在初始化连接池的时候使用了错误的线程池数目。创建线程池的任务主要是网络和远程数据库服务请求的延迟，几乎不耗费 CPU 资源。按照线程计算公式，此时线程池可以很大。可是 HikariCP 的程序员还是仅仅用了`Runtime.getRuntime().availableProcessors()`数目的线程用于创建连接池。正确的数目应该是配置的最小连接池数目，这样既不浪费，也有最好的性能。参考这个 Issue：[Change the thread pool size to minimumIdle on blocked initialization](https://github.com/brettwooldridge/HikariCP/issues/1375)。 这种错误并不奇怪，因为 HikariCP 的代码风格比较糟糕。很多广泛使用的开源软件其实代码质量并不高，每个人都应该搞清楚概念和问题的本质，多理解其他人的想法但是保持怀疑态度和独立思考能力。
