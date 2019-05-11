@@ -1,6 +1,6 @@
 # java异步编程规范
 
-## async使用规范
+## Async使用规范
 
 在java中推荐的异步编程方式是使用Spring的Async注解，该方式的优点是简单易用，当方法标注了Async注解以后，将在异步线程中执行该方法，但有以下限制：
 
@@ -12,8 +12,9 @@
 
 ### 1. 日志记录
 
-由于Sync方法并非通过Controller进入，绕开了我们的通用异常拦截层，即CommonExceptionHandler，所以对于异步方法发生的异常没有进行日志记录，
-为解决此问题，我们编写了 @AsyncExceptionLogger注解，在所有@Async方法同时加上此注解，即可保证异常得到记录。
+由于Sync方法并非通过Controller进入，绕开了我们的通用异常拦截层，即CommonExceptionHandler，所以对于异步方法发生的异常没有进行日志记录。
+
+为解决此问题，我们编写了**AsyncExceptionLogger**注解，在所有@Async方法加上此注解，即可保证异常得到记录。
 
 例如：
 
@@ -27,7 +28,9 @@ public void asyncMethod() {
 
 ### 2. 与JPA整合
 
-由于Async方法在新的异步线程中执行，JPA的OpenSessionInView无效，导致执行上下文中并不存在对应的EnitityManager，这会产生一系列问题，典型场景就是导致lazyLoading无效。为解决此问题，我们编写了@OpenJpaSession注解，在需要访问数据库的@Async方法中加此注解，即可实现与OpenSessionInView类似的效果。
+由于Async方法在新的异步线程中执行，JPA的OpenSessionInView无效，导致执行上下文中并不存在对应的EnitityManager，这会产生一系列问题，典型场景就是导致lazyLoading无效。
+
+为解决此问题，我们编写了**OpenJpaSession**注解，在需要访问数据库的@Async方法中加此注解，即可实现与OpenSessionInView类似的效果。
 
 示例代码：
 
@@ -42,7 +45,9 @@ public void asyncMethod() {
 
 ### 3. 使用事务
 
-我们当前使用事务的方式是使用@Transactional注解，但由于@Transational只能用在对象被调用的的第一个公有方法上，使用起来多有不便（为了事务而创建一个类实在不能接受），而且在很多情况下，我们都需要更加灵活地进行事务范围的控制。为此，我们编写了一个辅助类**TransactionHelper**，使用方式如下：
+我们当前使用事务的方式是使用@Transactional注解，但由于@Transational只能用在对象被调用的的第一个公有方法上，使用起来多有不便（为了事务而创建一个类实在不能接受），而且在很多情况下，我们都需要更加灵活地进行事务范围的控制。
+
+为此，我们编写了一个辅助类**TransactionHelper**，使用方式如下：
 
 ```java
 //事务辅助对象，需要注入
