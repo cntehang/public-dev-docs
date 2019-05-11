@@ -15,7 +15,15 @@
 
 如同多数分布式基础构件，连接池的原理比较简单，但是牵涉到数据库，操作系统，编程语言，运维以及应用场景的不同特点，具体实现比较复杂。从数据库诞生就有的广泛需求，半个世纪后还有不断改进提高的余地。
 
-原理上，在应用开始时创建一组数据库的连接。也可以动态创建但是复用已有的连接。这些连接被存储到一个共享的资源数据结构，称为连接池。这是典型的生产者-消费者并发模型。每个线程在需要访问数据库时借用（borrow）一个连接，使用完成则释放（release）连接回到连接池供其他线程使用。比较好的线程池构件会有二个参数动态控制线程池的大小：最小数量和最大数量。最小数量指即使负载很轻，也保持一个最小数目的数据库连接以备不时之需。当同时访问数据库的线程数超过最小数量时，则动态创建更多连接。最大数量则是允许的最大数据库连接数量，当最大数目的连接都在使用而有新的线程需要访问数据库时，则新的线程会被阻塞直到有连接被释放回连接池。当负载变低，池里的连接数目超过最小数目而只有低于或等于最小数目的连接被使用时，超过最小数目的连接会被关闭和删除以便节省系统资源。当然具体的实现需要考虑很多细节，但是不太影响应用接口，放在文章结尾再讨论。
+原理上，在应用开始时创建一组数据库的连接。也可以动态创建但是复用已有的连接。这些连接被存储到一个共享的资源数据结构，称为连接池。这是典型的生产者-消费者并发模型。每个线程在需要访问数据库时借用（borrow）一个连接，使用完成则释放（release）连接回到连接池供其他线程使用。比较好的线程池构件会有二个参数动态控制线程池的大小：最小数量和最大数量。最小数量指即使负载很轻，也保持一个最小数目的数据库连接以备不时之需。当同时访问数据库的线程数超过最小数量时，则动态创建更多连接。最大数量则是允许的最大数据库连接数量，当最大数目的连接都在使用而有新的线程需要访问数据库时，则新的线程会被阻塞直到有连接被释放回连接池。当负载变低，池里的连接数目超过最小数目而只有低于或等于最小数目的连接被使用时，超过最小数目的连接会被关闭和删除以便节省系统资源。
+
+连接池的实际应用中，最担心的问题就是用了不还。编码逻辑错误或者释放连接放代码没有放到 `finally` 部分都会导致连接池资源枯竭从而造成系统变慢甚至完全阻塞的情况。这种情况类似于内存泄露，因而也叫连接泄露，是常常发生而且难以发现的问题。因而，检测连接泄露并报警是线程池实现的基本需要。
+
+连接在被使用时运行在借用它的线程里面，并不是运行在新的线程里面。但是因为每个连接在使用中要实现超时 timeout 机制，官方的 [Java.sql.Connection.setNetworkTimeout API](https://docs.oracle.com/javase/8/docs/api/java/sql/Connection.html)的接口定义是 `setNetworkTimeoutExecutor executor, int milliseconds)`。此出需要指定一个线程池来处理超时的错误报告。也就是每一个连接运行数据库访问时，都会有一个后台线程监控响应超时状态。很多连接池实现会使用 Cached Thread Pool 或 Fixed Thread Pool。Chached Thread Pool 没有线程数目限制，动态创建和回收，适合很多动态的短小请求应用。Fixed Thread Pool 则适合比较固定的连接请求。
+
+另外，网络故障和具体数据库实现的限制会使得连接池的连接失效。比如，MySQL 允许一个连接，无论状态正常与否，都不能超过 8 个小时的生命。因此，虽然连接在被使用时运行在调用的线程里面，但是连接池的管理通常需要一个或多个后台线程来管理、维护、和检测连接池的连接状态，保证有指定数目的连接可用。
+
+可以看的，虽然数据库连接在执行数据库访问使用调用者的线程，但是连接池的实现通常需要二个或更多的线程池做管理和超时处理。当然连接池的具体实现还要考虑很多细节，但是不直接影响应用接口，放在文章结尾再讨论。
 
 ## 数据库连接池的系统架构
 
@@ -61,9 +69,9 @@
 
 仅仅配置最小和最大连接数目仅仅是开始，根据具体实现不同，还需要配置连接生命周期，连接超时，未释放连接以及健康监控等其他参数。具体需要参考连接池的正式文档。
 
-### 一个其实无关的相关计算公式
+### 一个表面相关，其实无关的计算公式
 
-因为是经常混淆连接池和线程池，这里有必要介绍另外一个经常提到但是无关的线程数目计算公式。这个公式来自著名的[Java Concurrency in Practice](http://jcip.net/)。在原著 8.2 节, 第 171 页作者给出了同样著名的线程数目计算公式：`线程数目 = CPU核数 * CPU 利用率 * (1 + 等待时间 / CPU计算时间)`。这个公式考虑了计算密集（计算时间）和 I/O 密集（等待时间）的不同处理模式。可是这个公式可以用于应用服务线程池的尺寸估算，与数据库连接池的估算无关。因为进程池并不能控制线程数目，它控制的是可并发的数据库访问线程数目。这些线程用数据库连接完成网络服务和远程数据库的异步操作，基本没有 CPU 计算时间。套用公式会得出非常大的数字，基本没有实际意义。
+因为连接池和线程池经常被混淆，这里有必要介绍另外一个经常提到但是无关的线程数目计算公式。这个公式来自每个 Java 程序员都应该阅读的[Java Concurrency in Practice](http://jcip.net/)。在原著 8.2 节, 第 171 页作者给出了著名的线程数目计算公式：`线程数目 = CPU核数 * CPU 利用率 * (1 + 等待时间 / CPU计算时间)`。这个公式考虑了计算密集（计算时间）和 I/O 密集（等待时间）的不同处理模式。可是这个公式可以用于应用服务线程池或任何线程池的尺寸估算，但是与数据库连接池的大小估算无关。因为进程池并不能控制应用服务的线程数目，它控制的是可并发的数据库访问线程数目。这些线程使用数据库连接完成网络服务和远程数据库的异步操作，此时基本没有使用本机的 CPU 计算时间。套用公式会得出非常大的数字，没有太大实际意义。
 
 ## Spring + MySQL 的应用的连接池配置
 
@@ -75,31 +83,31 @@ MySQL 数据库用`max_connections`环境变量设置最大连接数，缺省值
 
 Spring 缺省使用[HikariCP](https://github.com/brettwooldridge/HikariCP)。
 
-需要配置的参数如下。
+需要配置的基本参数如下。
 
 - maximumPoolSize： 最大的连接数目。超过这个数目，新的数据库访问线程会被阻塞。缺省值是 10。
 - minimumIdle： 最小的连接数目。缺省值是最大连接数目。
+- leakDetectionThreshold： 未返回连接报警时间。缺省值是 0，不启用。这个值如果大于 0，如果一个连接被使用的时间超过这个值则会日志报警（warn 级别的 log 信息）。考虑到网络负载情况，可以设置为最大数据库请求时长的 3 倍或 5 倍。如果没有这个报警，程序的正确性很难保证。
 - maxLifetime：最大的连接生命时间。缺省值是 30 分钟。官方文档建议设置这个值为稍小于数据库的最大连接生命时间。MySQL 的缺省值为 8 小时。可以设置为 7 小时 59 分钟以避免每半个小时重建一次连接。
-- leakDetectionThreshold： 未返回连接报警时间。缺省值是 0，不启用。这个值如果大于 0，如果一个连接被使用的时间超过这个值则会日志报警（warn 级别的 log 信息）。考虑到网络负载情况，可以设置为最大数据库请求时长的 3 倍或 5 倍。
 
-HikariCP 建议的[MySQL 配置](https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration)：
+HikariCP 建议的[MySQL 配置](https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration)参数和建议值如下，这些配置有助于提高数据库访问的性能：
 
 - prepStmtCacheSize： 250-500
-  prepStmtCacheSqlLimit： 2048
-  cachePrepStmts： true
-  useServerPrepStmts： true
+- prepStmtCacheSqlLimit： 2048
+- cachePrepStmts： true
+- useServerPrepStmts： true
 
 ## 其他
 
-### 连接池实现细节
+### 连接池其他实现细节
 
 具体的连接池实现需要考虑很多应用细节。
 
 - 多余的连接不会立即关闭，而是会等待一段空闲时间（idle time）再关闭。
 - 连接有最长生命时间限制，即使连接池不管，数据库也会自动关闭超过生命时间的连接。在 MySql 里面，连接最长生命时间是 8 个小时。连接池需要定期监控清理无效的连接。
-- 当连接数小于最大数目而需要为新线程创建连接时，新线程应该等待池里第一个可用的连接而不必等待因它而创建的线程。HikariCP 的文档[Welcome to the Jungle](https://github.com/brettwooldridge/HikariCP/blob/dev/documents/Welcome-To-The-Jungle.md) 比较了这种实现的优点：可以避免创建很多不必要的连接并且有更好的性能。
+- 连接池需要定期检查数据库的可用状态甚至响应时间，及时报告健康状态。[HikariCP Dropwizard HealthChecks](https://github.com/brettwooldridge/HikariCP/wiki/Dropwizard-HealthChecks)是一个例子。
+- 当需要为新线程访问创建连接时，新线程应该等待池里第一个可用的连接而不必等待因它而创建的线程。HikariCP 的文档[Welcome to the Jungle](https://github.com/brettwooldridge/HikariCP/blob/dev/documents/Welcome-To-The-Jungle.md) 描述了这种实现的优点：可以避免创建很多不必要的连接并且有更好的性能。Hikari 用 5 个连接处理了 50 个突发的数据库短时访问请求，即提高了响应速度，也避免了创建额外的连接。
 - 数据库各种异常的处理。[Bad Behavior: Handling Database Down](https://github.com/brettwooldridge/HikariCP/wiki/Bad-Behavior:-Handling-Database-Down) 给出里不同连接池构件实现对于线程阻塞 timeout 的不同处理方式。很多连接池构件不能正确处理。
-- 线程池的健康监控。[HikariCP Dropwizard HealthChecks](https://github.com/brettwooldridge/HikariCP/wiki/Dropwizard-HealthChecks)是一个例子。
 - 线程池的性能监视。[HikariCP Dropwizard Metrics](https://github.com/brettwooldridge/HikariCP/wiki/Dropwizard-Metrics) 给出了监视的性能指标。
 - 线程阻塞的机制以及相关数据结构对连接池的性能有很大影响。[Down the Rabbit Hole](https://github.com/brettwooldridge/HikariCP/wiki/Down-the-Rabbit-Hole)给出了 Java 里的优化方法。坏处是里面有些优化过于琐碎，使得代码晦涩难懂而且需要额外维护工作。
 
@@ -115,4 +123,4 @@ HikariCP 建议的[MySQL 配置](https://github.com/brettwooldridge/HikariCP/wik
 
 ### 题外话
 
-网上搜了很多，没有想到这么简单的一个数据库连接池配置问题竟然很多人都不清楚。把连接池和线程池搞混的的人很多。甚至实施 HikariCP 的程序员在初始化连接池的时候使用了错误的线程池数目。创建线程池的任务主要是网络和远程数据库服务请求的延迟，几乎不耗费 CPU 资源。按照线程计算公式，此时线程池可以很大。可是 HikariCP 的程序员还是仅仅用了`Runtime.getRuntime().availableProcessors()`数目的线程用于创建连接池。正确的数目应该是配置的最小连接池数目。参考这个 Issue：[Change the thread pool size to minimumIdle on blocked initialization](https://github.com/brettwooldridge/HikariCP/issues/1375)。 这个不难想象，因为他的代码风格比较糟糕。
+网上搜了很多，没有想到这么简单的一个数据库连接池配置问题竟然没有比较全面、明确的文档。把连接池和线程池搞混的的人很多。甚至实施 HikariCP 的程序员在初始化连接池的时候使用了错误的线程池数目。创建线程池的任务主要是网络和远程数据库服务请求的延迟，几乎不耗费 CPU 资源。按照线程计算公式，此时线程池可以很大。可是 HikariCP 的程序员还是仅仅用了`Runtime.getRuntime().availableProcessors()`数目的线程用于创建连接池。正确的数目应该是配置的最小连接池数目，这样既不浪费，也有最好的性能。参考这个 Issue：[Change the thread pool size to minimumIdle on blocked initialization](https://github.com/brettwooldridge/HikariCP/issues/1375)。 这个不难想象，因为 HikariCP 的代码风格比较糟糕。
