@@ -81,7 +81,7 @@ private Long doCreateTicketConfirmTaskIfRequired(long orderId) {
 
 有些场景中，我们需要在主线程中的事务尚未完成的情况下发起一个异步方法调用，在异步方法执行时，又希望在主线程的事务成功提交以后再开始。
 
-例如, 我们需要在机票的所有子订单都出票成功的情况下，才开始发送短信通知，代码如下：
+例如, 我们需要在机票的所有子订单都出票成功的情况下，才开始发送短信通知，代码如下（以下代码仅用来演示）：
 
 ```java
 //事务辅助对象，需要注入
@@ -138,6 +138,8 @@ private void sendNotifyAsync(long orderId, long ticketId, AsyncEvent asyncEvent)
 ```
 
 为实现线程间的同步，我们设计了一个AsyncEvent类，该类内部包含一个CountDownLatch对象，初值为1。异步线程等待这个CountDownLatch对象，当主线程事务完成以后，调用CountDownLatch的countDown()方法，从而触发异步线程的执行。
+
+AsyncEvent的代码如下（只列出了主要实现细节）：
 
 ```java
 public class AsyncEvent {
