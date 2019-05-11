@@ -63,17 +63,35 @@
 
 如果每秒有 100 个客户请求，每个请求需要 20ms，那么并行量是 `100 * 0.02 = 2`,2 个并发数据库连接就可以了。同理，如果每个请求需要 100ms，那么就需要 10 个并发连接。
 
-仅仅配置最小和最大连接数目仅仅是开始，根据具体实现不同，还需要配置连接生命周期，响应的超时，以及健康监控等其他参数。具体需要参考连接池的正式文档。
+仅仅配置最小和最大连接数目仅仅是开始，根据具体实现不同，还需要配置连接生命周期，连接超时，未释放连接以及健康监控等其他参数。具体需要参考连接池的正式文档。
 
 ### 一个无关的计算公式
 
 因为是混淆的根源，还是有必要介绍另外一个经常提到但是无关的线程数目计算公式。这个公式来自著名的[Java Concurrency in Practice](http://jcip.net/)。在原著 8.2 节, 第 171 页作者给出了同样著名的线程数目计算公式：`线程数目 = CPU核数 * CPU 利用率 * (1 + 等待时间 / CPU计算时间)`。这个公式考虑了计算密集（计算时间）和 I/O 密集（等待时间）的不同处理模式。可是这个公式可以用于应用服务线程池的尺寸估算，与数据库连接池的估算无关。因为进程池并不能控制线程数目，它控制的是可并发的数据库访问线程数目。这些线程用数据库连接完成网络服务和远程数据库的异步操作，基本没有 CPU 计算时间。套用公式会得出非常大的数字，基本没有实际意义。
 
-## Spring +MySQL 的应用的连接池配置
+## Spring + MySQL 的应用的连接池配置
 
 如上所述，配置 Spring 连接池首先要考虑到其使用的 HTTP 服务的线程池配置和后端数据库服务器的连接数配置。其次是应用的特点。
 
-Spring 缺省使用[HikariCP](https://github.com/brettwooldridge/HikariCP)。HikariCP 有相关的[MySQL 配置](https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration) 和[Hiberate 配置](https://github.com/brettwooldridge/HikariCP/wiki/Hibernate4)的建议。
+Spring 的 `server.tomcat.max-threads` 参数给出了最大的并行线程数目，缺省值是 200. 由于才有特殊处理，这些线程可以处理的更大的 HTTP 连接数目 `server.tomcat.max-connections`，缺省值是 10000. `spring.task.execution.pool.max-threads`则控制使用`@Async`的最大线程数目, 缺省值没有限制。最好按应用特点配置一个范围。
+
+MySQL 数据库用`max_connections`环境变量设置最大连接数，缺省值是 151. 多数建议都是根据内存大小或应用负载来设置这个值。
+
+Spring 缺省使用[HikariCP](https://github.com/brettwooldridge/HikariCP)。
+
+需要配置的参数如下。
+
+- maximumPoolSize： 最大的连接数目。超过这个数目，新的数据库访问线程会被阻塞。缺省值是 10。
+- minimumIdle： 最小的连接数目。缺省值是最大连接数目。
+- maxLifetime：最大的连接生命时间。缺省值是 30 分钟。官方文档建议设置这个值为稍小于数据库的最大连接生命时间。MySQL 的缺省值为 8 小时。可以设置为 7 小时 59 分钟以避免每半个小时重建一次连接。
+- leakDetectionThreshold： 未返回连接报警时间。缺省值是 0，不启用。这个值如果大于 0，如果一个连接被使用的时间超过这个值则会日志报警（warn 级别的 log 信息）。考虑到网络负载情况，可以设置为最大数据库请求时长的 3 倍或 5 倍。
+
+HikariCP 建议的[MySQL 配置](https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration)：
+
+- prepStmtCacheSize： 250-500
+  prepStmtCacheSqlLimit： 2048
+  cachePrepStmts： true
+  useServerPrepStmts： true
 
 ## 其他
 
@@ -99,4 +117,4 @@ Spring 缺省使用[HikariCP](https://github.com/brettwooldridge/HikariCP)。Hik
 
 ### 题外话
 
-没有想到这么简单的一个数据库连接池配置问题竟然多数人都不清楚甚至搞错。把连接池和线程池搞混的的人甚至包括实施 HikariCP 的程序员。在初始化连接池的时候使用了线程池，按照线程计算公式，创建线程池的任务主要是网络和远程数据库服务请求的延迟，几乎不耗费 CPU 资源，此时线程池可以很大。可是 HikariCP 的程序员还是仅仅用了`Runtime.getRuntime().availableProcessors()`数目的线程用于创建连接池。正确的数目应该是配置的最小连接池数目。参考这个 Issue：[Change the thread pool size to minimumIdle on blocked initialization](https://github.com/brettwooldridge/HikariCP/issues/1375)。 情理之中，他的糟糕的代码风格比较糟糕。
+网上搜了很多，没有想到这么简单的一个数据库连接池配置问题竟然很多人都不清楚。把连接池和线程池搞混的的人很多。甚至实施 HikariCP 的程序员在初始化连接池的时候使用了错误的线程池数目。创建线程池的任务主要是网络和远程数据库服务请求的延迟，几乎不耗费 CPU 资源。按照线程计算公式，此时线程池可以很大。可是 HikariCP 的程序员还是仅仅用了`Runtime.getRuntime().availableProcessors()`数目的线程用于创建连接池。正确的数目应该是配置的最小连接池数目。参考这个 Issue：[Change the thread pool size to minimumIdle on blocked initialization](https://github.com/brettwooldridge/HikariCP/issues/1375)。 这个不难想象，因为他的代码风格比较糟糕。
