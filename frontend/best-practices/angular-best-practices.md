@@ -369,12 +369,15 @@ this.service
 ## Templates 风格指南
 
 - **Template**保持足够简单，尽量避免计算以及表达式，如若需要，可将其移到**Component**里面使用计算属性表示：
+
   ```ts
   export class DemoComponent {
     /// 此处略去其他代码
-    
+
     get isVisible() {
       return this.list.length > 0 && balabala……
     }
   }
   ```
+
+- 对于后端返回的时间格式，不要滥用 date pipe 来对时间进行格式转换，只有在标准[ISO 8601]格式下才能使用 date pipe, 如果是其他格式的字符串（例如： yyyy-MM-dd HH:mm）, 直接使用 date pipe 的话在 IE 和 Safari 上会存在兼容性问题。
