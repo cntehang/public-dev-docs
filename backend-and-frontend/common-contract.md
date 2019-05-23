@@ -6,6 +6,7 @@
 
 - 系统自己生成的时间：前后端交互过程中统一转为 [UTC 时间](https://zh.wikipedia.org/wiki/%E5%8D%8F%E8%B0%83%E4%B8%96%E7%95%8C%E6%97%B6)，格式上采用 [ISO 8601](https://zh.wikipedia.org/wiki/ISO_8601) 规定的 yyyy-MM-dd'T'HH:mm:ss.SSS'Z' 标准格式。
 - 第三方传入的时间：前后端交互过程中不对日期格式做转换处理。
+- 需要在接口文档中注明是标准格式的字符串还是其他格式，如果是其他格式，则注明具体格式（例如：yyyy-MM-dd)。
 
 ## 大数字传输规范
 
