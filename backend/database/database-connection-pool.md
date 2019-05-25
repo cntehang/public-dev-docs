@@ -55,7 +55,7 @@
 
 尽可能满足所有的应用服务并发数据库访问的意思很简单：所有需要访问数据库的线程都可以得到需要的数据库连接。如果一个线程用到多个连接，那么需要的连接数目也会成倍增加。这时，需要的连接池最大尺寸应该是最大的并发数据库访问线程数目乘以每个线程需要的连接数目。
 
-不让数据库服务器过载是个全局的考虑。因为可能有多个应用服务器的多个连接池会同时发出请求。按照 PostgreSQL V11 文档[18.4.3. Resource Limits](https://www.postgresql.org/docs/11/kernel-resources.html)，每个连接都由一个单独进程来处理。每个进程即使空闲，都会消耗不少诸如内存，信号（semaphore), 文件/网络句柄（handler），队列等各种系统资源。这篇文章[Number Of Database Connections](https://wiki.postgresql.org/wiki/Number_Of_Database_Connections#How_to_Find_the_Optimal_Database_Connection_Pool_Size) 讨论了 PostgreSQL V9.2 的连接数目。给出的建议公式是 `((core_count * 2) + effective_spindle_count)`，也就是 CPU 核数的二倍加上硬盘轴数。MySQL 采用了不同的服务架构，[MySQL Too many connections](https://dev.mysql.com/doc/refman/5.5/en/too-many-connections.html)给出的缺省连接数目为 151。这二个系统从具体实现机理、计算办法和建议数值都有很大差别，做为应用程序员应该有基本的理解。
+不让数据库服务器过载是个全局的考虑。因为可能有多个应用服务器的多个连接池会同时发出请求。按照 PostgreSQL V11 文档[18.4.3. Resource Limits](https://www.postgresql.org/docs/11/kernel-resources.html)，每个连接都由一个单独进程来处理。每个进程即使空闲，都会消耗不少诸如内存，信号（semaphore), 文件/网络句柄（handler），队列等各种系统资源。这篇文章[Number Of Database Connections](https://wiki.postgresql.org/wiki/Number_Of_Database_Connections#How_to_Find_the_Optimal_Database_Connection_Pool_Size) 讨论了 PostgreSQL V9.2 的并发连接数目。给出的建议公式是 `((core_count * 2) + effective_spindle_count)`，也就是 CPU 核数的二倍加上硬盘轴数。值得注意的是，这个并发连接数目并非数据库这面的连接池尺寸。实际上 PostgreSQL 内部并没有连接池,只有允许的最大连接数目 [max_connections](https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-MAX-CONNECTIONS),缺省值为 100。MySQL 采用了不同的服务架构，[MySQL Too many connections](https://dev.mysql.com/doc/refman/5.5/en/too-many-connections.html)给出的缺省连接数目为 151。这二个系统从具体实现机理、计算办法和建议数值都有很大差别，做为应用程序员应该有基本的理解。
 
 这个[OLTP performance -- Concurrent Mid-tier connections](https://youtu.be/xNDnVOCdvQ0)视频用一个应用服务线程池进行了模拟。应用服务线程池有 9600 个不断访问数据库的线程，当连接池尺寸为 2048 和 1024 时，数据库处于过载状态，有很多数据库的的等待事件，数据库 CPU 利用率高达 95%。当连接池减少到 96，数据库服务器没有等待事件，CPU 利用率 20%，数据库访问请求等待时间从 33ms 降低到 1ms，数据库 SQL 执行时间从 77ms 降低到 2ms。数据库访问整体响应时间从 100ms 降低到 3ms。这时一个应用服务线程池对一个数据库服务线程池的情况，总共 96 个连接池的数据库处理性能远远超过 1000 个连接池的性能。数据库服务器需要为每个连接分配资源。
 
@@ -106,12 +106,12 @@ Spring 缺省使用[HikariCP](https://github.com/brettwooldridge/HikariCP)。
 
 ### 4.4 针对数据库的优化设置
 
-HikariCP [建议的 MySQL 配置](https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration)参数和建议值如下，这些配置有助于提高数据库访问的性能.这些参数的缺省值在[MySQL JDBC 文档](https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-reference-configuration-properties.html)
+HikariCP [建议的 MySQL 配置](https://github.com/brettwooldridge/HikariCP/wiki/MySQL-Configuration)参数和建议值如下，这些配置有助于提高数据库访问的性能. 注意，这个配置是对数据源(dataSource)配置，不是连接池的配置。这些参数的说明在[MySQL JDBC 文档](https://dev.mysql.com/doc/connector-j/5.1/en/connector-j-reference-configuration-properties.html)
 
-- prepStmtCacheSize： 250-500. Default: 25.
-- prepStmtCacheSqlLimit： 2048. Default: 256.
-- cachePrepStmts： true. Default: false.
-- useServerPrepStmts： true. Default: false.
+- `dataSource.prepStmtCacheSize`： 250-500. Default: 25.
+- `dataSource.prepStmtCacheSqlLimit`： 2048. Default: 256.
+- `dataSource.cachePrepStmts`： true. Default: false.
+- `dataSource.useServerPrepStmts`： true. Default: false.
 
 ## 5 其他
 
