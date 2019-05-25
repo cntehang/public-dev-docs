@@ -14,10 +14,11 @@
 
 ## 编码规范
 
+- [Java 代码最佳实践](./code/java-best-practices.md): Java 代码惯例用法
+- [Java 高级代码规范](./code/java-code-guideline.md): 关于复杂场景的 java 编码规约
 - [如何处理异常](./code/how-to-handle-exception.md): 关于异常处理的方式
-- [Java 编码指南](./code/java-code-guideline.md): 关于 java 编码的规约
 - [后端如何写日志](./code/如何写日志.md): 关于后端记日志的详细说明
-- [Java异步编程规范](./code/java异步编程规范.md): 关于Java中异步编程的详细说明
+- [Java 异步编程规范](./code/java异步编程规范.md): 关于 Java 中异步编程的详细说明
 - [Java 命名规范](./code/Java命名规范.md): 关于后端 Java 代码的命名规范
 - [Java 后台项目如何分层](./code/Java后台服务分层规范.md): 关于 Java 后台服务项目如何分层的一些标准
 
@@ -25,3 +26,4 @@
 
 - [数据库设计规范-mysql](./database/数据库设计规范-mysql.md): 关于数据库设计的规范
 - [数据库事务与隔离级别](./database/数据库事务与隔离级别.md)
+- [数据库连接池](./database/数据库连接池.md)
