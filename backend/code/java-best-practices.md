@@ -36,3 +36,23 @@ try {
     }
 }
 ```
+
+## 时区概念
+
+程序中对时间处理，是根据服务器本地时间来的，所以对时间处理（转换，比较），必须要有时区的概念
+
+反例：
+```java
+public static boolean isDateTimeGreaterThanNowOfBeijing(String dateTimeStr) {
+  DateTime dateTime = DateTime.parse(dateTimeStr, DATE_TIME_PATTERN); // 转换时未指定时区，下面的比对会错误
+  DateTime now = DateTime.now(DateTimeZone.forID(ZONE_SHANGHAI));
+  return dateTime.getMillis() > now.getMillis();
+}
+```
+
+正例：
+```java
+public static DateTime getCstNow() {
+  return new DateTime(DateTimeZone.forID(ZONE_SHANGHAI)); // 指定时区
+}
+```
