@@ -42,6 +42,7 @@ try {
 程序中对时间处理，是根据服务器本地时间来的，所以对时间处理（转换，比较），必须要有时区的概念
 
 反例：
+
 ```java
 public static boolean isDateTimeGreaterThanNowOfBeijing(String dateTimeStr) {
   DateTime dateTime = DateTime.parse(dateTimeStr, DATE_TIME_PATTERN); // 转换时未指定时区，下面的比对会错误
@@ -51,6 +52,7 @@ public static boolean isDateTimeGreaterThanNowOfBeijing(String dateTimeStr) {
 ```
 
 正例：
+
 ```java
 public static DateTime getCstNow() {
   return new DateTime(DateTimeZone.forID(ZONE_SHANGHAI)); // 指定时区
@@ -61,7 +63,7 @@ public static DateTime getCstNow() {
 
 在返回给客户端的接口中，有些数据类型需要特殊处理：
 
-1. double/Double -> String：防止出现double转string时把不必要的数字也带上
-2. float/Float -> String：防止出现float转string时把不必要的数字也带上
-3. BigDecimal -> String：BigDecimal一般用于表示金额，这个需要严肃处理，指定具体的格式化形式，防止默认的转换与预期的要求不符
-4. DateTime/其他时间类型 -> String：时间的格式各异，必须要转为String返回
+1. double/Double -> String：防止出现 double 转 string 时把不必要的数字也带上
+2. float/Float -> String：防止出现 float 转 string 时把不必要的数字也带上
+3. BigDecimal -> String：BigDecimal 一般用于表示金额，这个需要严肃处理，指定具体的格式化形式，防止默认的转换与预期的要求不符
+4. DateTime/其他时间类型 -> String：时间的格式各异，必须要转为 String 返回

@@ -173,8 +173,6 @@ HTTP/1.1 200
 
 - 判断集合是否非空使用 org.apache.commons.collections4.CollectionUtils.isNotEmpty
 - 判断字符串非空使用 org.apache.commons.lang3.StringUtils.isNotEmpty，若还需非空格则使用 org.apache.commons.lang3.StringUtils.isNotBlank
-- 判断对象为非 null 使用 java.util.Objects.nonnull
-- 判断 Boolean 类型是否为 true 使用 org.apache.commons.lang3.BooleanUtils.isTrue
 
 ## 12. 日志记录应当涵盖所有代码分支
 
