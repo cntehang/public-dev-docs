@@ -34,7 +34,7 @@
 ## 文档说明
 
 - [程序员工作指南](./程序员工作指南.md)：我们的开发理念
+- [dev-process](./dev-process/README.md)：开发流程的描述
+- [frontend](./frontend/README.md)：前端的技术文档
 - [backend](./backend/README.md): 后端的技术文档
 - [backend-and-frontend](./backend-and-frontend/README.md)：前后端接口相关的技术文档
-- [dev-process](./dev-process/README.md)：开发流程规则
-- [frontend](./frontend/README.md)：前端的技术文档
