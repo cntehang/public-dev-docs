@@ -2,18 +2,21 @@
 
 ---
 
-备注： **这里只存放可以公开共享的、目前有效的技术文档，不要存放任何会议记录或具体项目相关的文档。比如包含有内部项目截屏、计划或人员信息的文档要存在内部私有库。**
+备注： **这里只存放可以公开共享的、目前有效的文档，不要存放任何会议记录或具体项目相关的文档。包含有内部项目截屏、计划或人员信息的文档要存在内部私有库。**
 
 持续的、高质效的软件开发能力是现代企业的核心竞争力。多年实践让我们意识到以下几点事实：
 
-- 思想就是软件 Mind is software （老刘）
-- 切忌随波逐流 Only dead fish go with the flow （西谚）
-- 做人如果没有梦想，跟咸鱼有什么分别 Salted fish has no dream (星爷)
-- 管理的本质是激发善意和潜能 The essence of management is to inspire goodwill and potential（德鲁克）
+- [企业文化](./culture.md)不是业务的一个方面，它就是业务。Culture isn't just one aspect of the game, it is the game. （郭士纳，Louis V. Gerstner, IBM 前总裁）
+- 思想就是软件。 Mind is software. （老刘）
+- 切忌随波逐流。 Only dead fish go with the flow.（西谚）
+- 做人如果没有梦想，跟咸鱼有什么分别。 Salted fish has no dream. (星爷)
+- 管理的本质是激发善意和潜能。The essence of management is to inspire goodwill and potential.（德鲁克）
 
 用思想创造软件进而改变世界的程序员责任重大，任劳任怨。可是环顾四周，多数软件团队的研发能力相对计算机的巨大潜力和广泛的业务需求有巨大鸿沟，开发效率低，软件的质量令人忧伤。稍感安慰的是半个多世纪的编程历史积累了一些最佳实践（best practices)。遵守基于这些最佳实践的规则能大大改善程序员的工作效率。
 
 ## 出发点
+
+首先，企业文化是根本。所有的流程和做事方法都来自[我们的企业文化](./culture.md)。
 
 软件开发有二个根本性原则：正确的业务逻辑与可维护性。
 
