@@ -30,7 +30,6 @@
 所有文件的创建和更新需要创建 PR 和通过 Review。然后通知所有相关人员按新规则执行。不影响软件开发活动的简单的笔误更正和内容改善可以直接提交。
 
 文档统一采用 Markdown 格式。建议采用 VS Code 并用 [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)来保证 markdown 文件风格的一致性。
-v
 
 ## 文档说明
 
