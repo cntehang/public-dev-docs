@@ -27,3 +27,4 @@
 - [数据库设计规范-mysql](./database/数据库设计规范-mysql.md): 关于数据库设计的规范
 - [数据库事务与隔离级别](./database/数据库事务与隔离级别.md)
 - [数据库连接池](./database/数据库连接池.md)
+- [是否使用 Redis](./database/是否使用redis.md)
