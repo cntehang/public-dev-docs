@@ -237,3 +237,33 @@ public class BestExceptionHandler {
 相较于自定义 ExceptionResolver 实现，使用 ControllerAdvice 的优点在于屏蔽了 Respon/Request 等对象，以及丑陋的写输出流的操作。需要注意的是，这里限制了返回的所有错误形式都是我们约定好的 API 响应数据结构。
 
 目前我们项目中混用了 ExceptionResolver 和 ControllerAdvice，实际上选用一种即可。
+
+## 15. Spring Boot 配置
+
+针对 Spring Boot 一些容易重复安放的配置项，规定如下：
+
+- app name、config server 信息、active profile 全部放在 bootstrap.yml 里面
+- 其它配置项放在 application.yml 和 application-{profile}.yml 中
+
+具体来说，需要注意的点有：
+
+- 项目内部的 application.yml 中去掉 app name, active profile（一般都需要去掉）
+- 项目内部的 bootstrap.yml 中维护好 app name, active profile, confing server 配置等配置项
+- 如果以后不想拉配置中心的 dev 配置（即不连接开发库，而连接本机数据库、redis 等）进行开发，可以将 bootstrap.yml 中关于配置中心的配置注释掉如下：
+
+```yml
+spring:
+  application:
+    name: tmc-services
+  profiles:
+    active: dev
+#  cloud:
+#    config:
+#      name: tmcservices
+#      label: master
+#      uri: https://dev-config-service.teyixing.com
+```
+
+- jar 包旁的 bootstrap.yml 应指定 active-profile 和配置中心的相关配置
+- 远程配置 git 仓库中的 app name 相关属性可以去掉，最后以项目内部 bootstrap.yml 配置文件中的为准
+- 为了让集成测试不读取真实的 application.yml 及 bootstrap.yml，需要在集成测试 resources 目录下配置好 application.yml （内含集成测试使用的内存数据库等配置）并新建一个空的 bootstrap.yml 文件
