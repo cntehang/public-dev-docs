@@ -249,7 +249,7 @@ public class BestExceptionHandler {
 
 - 项目内部的 application.yml 中去掉 app name, active profile（一般都需要去掉）
 - 项目内部的 bootstrap.yml 中维护好 app name, active profile, confing server 配置等配置项
-- 如果以后不想拉配置中心的 dev 配置（即不连接开发库，而连接本机数据库、redis 等）进行开发，可以将 bootstrap.yml 中关于配置中心的配置注释掉如下：
+- 如果以后不想拉配置中心的 dev 配置（即使用项目内部的 application-dev.yml）进行开发，可以将 bootstrap.yml 中关于配置中心的配置注释掉如下：
 
 ```yml
 spring:
