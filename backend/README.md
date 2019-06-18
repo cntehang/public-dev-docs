@@ -1,6 +1,6 @@
 # 后端技术规范和最佳实践
 
-这里是有关后端项目的代码规范。
+这里是有关后端项目的技术与代码规范。旧的系统采用 Java， JPA/Hibernate。 新系统的架构在[backend architecture](./backend-architecture.md)有描述.
 
 ## 开发流程
 
