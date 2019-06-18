@@ -10,13 +10,13 @@
 
 ## 技术系统需求
 
-一个理想的系统的架构就是以尽可能靠近物理世界的运作方式。这样一个系统比较高效而且（表面上）容易理解。现实生活中业务系统在时空上都是以一种总体异步，局部同步的多个体并行方式在工作。特定时空的业务内容包含业务处理和数据二个维度。
+一个理想的系统的架构就是以尽可能靠近物理世界的方式运作。这样一个系统比较高效而且（表面上）容易理解。现实生活中业务系统在时空上都是以一种总体异步，局部同步的多个体并行方式在工作。特定时空的业务内容包含业务处理和数据两个维度。
 
-不同于传统做法，把系统功能分成可以组合的细颗粒任务，类似于数学的分形（fractal），然后以一种一致的方式对不同客户/产品进行任意组合。结果就是一种基于工作流（workflow）的工作方式。
+不同于传统做法，采用类似于数学的分形（fractal）思想，把系统功能分成可以组合的细颗粒任务，然后以一种一致的方式对不同客户/产品进行任意组合。结果就是一种基于工作流（workflow）的工作方式。
 
-从数据的角度，这篇 2004 年[星巴克不用二阶段提交](https://www.enterpriseintegrationpatterns.com/ramblings/18_starbucks.html)的博客揭示了业务数据的本质：异步、若序列、灵活错误处理（放弃/重试/补偿）、最终一致性。
+从数据的角度，这篇 2004 年[星巴克不用二阶段提交](https://www.enterpriseintegrationpatterns.com/ramblings/18_starbucks.html)的博客揭示了业务数据的本质：异步、弱序列、灵活错误处理（放弃/重试/补偿）、最终一致性。
 
-近些年的分布式系统趋势回应了类似我们的业务系统需求特点。大趋势是采用异步、分布式并发的工作方式。事物处理也大都是采用最终一致性的工作方式，放弃强一致性换来高并发和高可靠。
+近些年分布式系统的趋势回应了类似我们业务系统需求的特点。大趋势是采用异步、分布式并发的工作方式。事物处理也大都是采用最终一致性的工作方式，放弃强一致性换来高并发和高可靠。
 
 ## 技术选型
 
@@ -26,7 +26,7 @@
 
 Workflow 的一个基本要求就是把数据和处理数据的函数分开。传统的面向对象编程（封装和继承）在这种场合是一种反模式的模型。函数式编程模型，尤其是响应式流处理（reactive streams）和 workflow 有着天然的契合。流行的基于 JVM 的异步流处理框架有 RxJava, Spring Reactor, Vert.x, Ratpack 和 Akka。
 
-除 Akka， 其他框架/类库都比较新而且工作在较低的 Reactive Streams 模型上。使用者需要在 `Flux`, `Mono`, `Subscription` 这种原始概念上逐层建立自己的高层次业务抽象模型。RxJava 有比较完善的开源生态系统。可是采用 Java 语言，在错误处理和运行监控都比较复杂。一种流行的说法是采用 RxJava 的需要六年以上 Java 工作经验。
+除 Akka， 其他框架/类库都比较新而且工作在较低的 Reactive Streams 模型上。使用者需要在 `Flux`, `Mono`, `Subscription` 这种原始概念上逐层建立自己的高层次业务抽象模型。RxJava 有比较完善的开源生态系统。可是采用 Java 语言，在错误处理和运行监控方面的处理都比较复杂。一种流行的说法是使用 RxJava 的工程师需要有六年以上 Java 工作经验。
 
 Akka 就是为了异步分布式处理量身定做的一个工具库（toolkit）。借鉴了 Erlang OTS 的 Actor model, Akka Actor 发布于 2009 年 7 月, Akka Streams 2015 年 4 月发布。做为 Rective Streams 的标准制定参与者和异步分布式处理的长期实践者，Akka Streams 的开发者明白应用开发需要高层次的抽象工具。2014 年 9 月发布的[Akk Stream 预览版](https://akka.io/blog/news/2014/09/12/akka-streams-0.7-released) 就封装了底层接口并支持流程领域特定语言（Flow DSL）来定义灵活组合流程（flow）的 流程图（flow graph）。
 
@@ -39,7 +39,7 @@ Akka 就是为了异步分布式处理量身定做的一个工具库（toolkit�
 - 显示错误处理：支持基本的丢弃、重试和补偿错误处理方式。
 - 可扩展：以一种标准方式支持灵活的业务处理组合与扩展。
 
-相比前微服务，workflow 是更高层次的抽象。如下图：
+相比微服务，workflow 是更高层次的抽象。如下图：
 
 ![workflow vs mcirosevice](./resources/workflow-vs-microservice.png)
 
@@ -53,7 +53,7 @@ Jet Tech 在 2018 年用 FSharp 开发了一套自己的内部工作流工具库
 
 目前流行的数据库访问模式有三种：ORM、SQL 和 Type-safe SQL。对应的实现有 Hibernate, JdbcTempalte/MyBatis, 和 jOOQ/QueryDSL。数据库访问应该满足下面条件：
 
-- 显示的数据库访问：清清楚楚知道连接的范围，事务处理的范围，数据是否缓存等。
+- 显式的数据库访问：清清楚楚知道连接的范围，事务处理的范围，数据是否缓存等。
 - 类型安全：可以编译检查数据类型，也方便重构。
 - 高效：只查询所要的数据和修改要修改的数据，一次数据库访问完成。
 - 简单的关联数据查询：方便的访问有关系的表。
@@ -68,8 +68,8 @@ Jet Tech 在 2018 年用 FSharp 开发了一套自己的内部工作流工具库
 Akka 同时支持 Java 和 Scala。考虑到从 Web API 服务到数据库访问的整个流程处理，我们有四种选择。
 
 - Java: Spring WebFlux + Akka Streams/Actor + jOOQ (方案一)
-- Java: Spring DI + Akka HTTP + Akka Streams/Actor + jOOQ (方案三)
-- Java: Spring DI + Play framework + Akka Streams/Actor + jOOQ (方案二)
+- Java: Spring DI + Akka HTTP + Akka Streams/Actor + jOOQ (方案二)
+- Java: Spring DI + Play framework + Akka Streams/Actor + jOOQ (方案三)
 - Scala: Play framework + Akka Stream/Actor + Slick (方案四)
 
 前三个方案都是基于 Java 和 Spring DI，主要是为了方便现有团队的技术升级。方案一和方案二都已经开发出了概念原型，包括 jOOQ 的异步访问库。方案三花了一天时间还没有调通。方案四是有悠久历史的 Scala 的标准配置，没有什么悬念。
