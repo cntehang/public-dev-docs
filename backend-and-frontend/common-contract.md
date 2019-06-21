@@ -23,10 +23,15 @@
 - 中文姓 surnameCn, 名givenNameCn
 - 英文姓 surnameEn, 名givenNameEn
 
-下述规则供前端参考
+下述规则供前端参考：
 
 - 在未做多语言国际化的情况下，前端展示姓名时需要根据如下原则：
-  - 若有中文姓名则显示 surnameCn + givenNameCn，否则展示   givenNameEn + “ ” + surnameEn
-- 若做了多语言国际化，则根据系统语言环境按如下规则显示：
-  - 若为中文语言环境，则优先展示 surnameCn + givenNameCn
-  - 若为英文语言环境，则优先展示 givenNameCn + " " + surnameCn
+  - 若有中文姓名则显示 surnameCn + givenNameCn，否则展示 surnameEn + “/” + givenNameEn
+  
+后端使用姓名相关字段原则：
+
+- 涉及到员工姓名搜索的地方，应和 customer 表的 name_search_helper 字段进行模糊匹配
+- 涉及到需要获取员工姓名的场景，如通知发送称谓等，使用 Customer 的 buildName() 方法获取姓名字符串
+- 判断 Customer 的姓名和某一字符串是否相同，需要调用 Customer 的 sameName() 方法进行判断
+- 修改了 Customer 任一姓名相关字段需要调用  Customer 的 buildNameSearchHelper() 方法重新构建这一辅助字段
+- 在订单中一定要记录姓名快照（包含预定人姓名、客人姓名等），方便查询
