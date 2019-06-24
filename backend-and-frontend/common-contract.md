@@ -35,3 +35,11 @@
 - 判断 Customer 的姓名和某一字符串是否相同，需要调用 Customer 的 sameName() 方法进行判断
 - 修改了 Customer 任一姓名相关字段需要调用  Customer 的 buildNameSearchHelper() 方法重新构建这一辅助字段
 - 在订单中一定要记录姓名快照（包含预定人姓名、客人姓名等），方便查询
+
+前端使用姓名相关字段原则：
+
+适用范围:webteyixing,tehang-system
+
+- 前台机票，火车票下单根据用户搜索匹配中文名或者英文名，相关正则维护在constant文件，如果是英文名，需要用英文姓/英文名的形式，并且转换为大写传给后端，如果是中文名，则直接中文姓中文名
+- 其他地方显示名字的地方，模板里面用showName的Pipe进行转换，ts里面依赖注入pipe，然后调用pipe的transform方法进行转换
+
