@@ -20,13 +20,21 @@
 
 为了准确表达客户姓名，涉及到客户姓名展示的地方（不含历史快照部分），后端接口都会返回四个字段：
 
-- 中文姓 surnameCn, 名givenNameCn
-- 英文姓 surnameEn, 名givenNameEn
+- 中文姓 surnameCn, 名 givenNameCn
+- 英文姓 surnameEn, 名 givenNameEn
 
 下述规则供前端参考
 
 - 在未做多语言国际化的情况下，前端展示姓名时需要根据如下原则：
-  - 若有中文姓名则显示 surnameCn + givenNameCn，否则展示   givenNameEn + “ ” + surnameEn
+  - 若有中文姓名则显示 surnameCn + givenNameCn，否则展示 givenNameEn + “ ” + surnameEn
 - 若做了多语言国际化，则根据系统语言环境按如下规则显示：
   - 若为中文语言环境，则优先展示 surnameCn + givenNameCn
   - 若为英文语言环境，则优先展示 givenNameCn + " " + surnameCn
+
+## 5 错误代码
+
+我们做的业务系统，用 HTTP 做传输协议，也可以用 RPC，web socket 或 UDP（已经有基于 UDP 的传输协议出来）来做，这个分层的概念很重要。HTTP/REST 只是告诉我们数据传输的状态，和我们的业务是独立的层次。传输层的所有错误：300， 400，甚至 500（应该不用出现） 都是在传输层解决。
+
+所有的业务错误，授权，资源不在，航班没有，都应该有自己的业务错误代码。
+
+总结一下：传输层管理所有网络请求相关错误（包括网关的系统错误），一旦 controller 业务层收到请求，回复 Response 都是 HTTP 200 。 然后才是业务代码。0 表示成功，其它数字代表各种错误。
