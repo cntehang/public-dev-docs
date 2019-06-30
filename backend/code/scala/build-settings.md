@@ -1,6 +1,6 @@
 # Build Settins
 
-制定时间： 2019 年 6 月 20 日
+制定时间： 2019 年 6 月 29 日
 目的：统一一下版本号和标准选项。
 
 ## `build.sbt`
@@ -16,7 +16,8 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-slf4j" % akkaVersion,
     "ch.qos.logback"    %  "logback-classic" % "1.2.3",
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion % Test,
-    "org.scalatest"     %% "scalatest" % "3.0.8" % Test
+    "org.scalatest"     %% "scalatest" % "3.0.8" % Test,
+    "com.typesafe.slick" %% "slick" % "3.3.2"
   )
 }
 ```
@@ -24,7 +25,7 @@ libraryDependencies ++= {
 ## `scala.sbt`
 
 ```scala
-scalaVersion := "2.12.8"
+scalaVersion := "2.13.0"
 
 scalacOptions ++= Seq(
   "-encoding", "utf8", // Option and arguments on same line
