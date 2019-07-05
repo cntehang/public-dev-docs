@@ -5,6 +5,7 @@
 ## 流程管理
 
 - [项目的迭代流程](./management/project-workflow.md)
+- [缺陷流程规范](./management/缺陷流程规范.md)
 - [项目的 bug 管理以及跟踪](./management/how-to-report-bug.md)
 - [如何发布我们的软件](./management/how-to-publish.md)
 - [看板管理流程](./management/kanban-process.md)
