@@ -1,4 +1,4 @@
-# Git 工作流程
+# Git 协作指南
 
 基于一个流行的 [项目开发指南](https://github.com/elsewhencode/project-guidelines)，本文描述了一个建议的 github 工作流程。和上述指南最大的不同是我们采用 develop 分支作为主开发分支。另外创建专门的上线发布 master 分支。这样的好处是 develop 是 `master` 的下游分支，变基，PR 和合并都比较自然。而且上线发布分支只有少数人关注，对开发人员越隐蔽越好。
 
@@ -229,6 +229,8 @@ git cherry-pick ${commitID}    #commitID为hotfix分支对应的commitid
 > 与其在写下的信息中描述提交者做了什么，不如将这些描述信息作为在这些提交被应用于该仓库后将要完成的操作的一个说明。[更多请阅读...](https://news.ycombinator.com/item?id=2079612)
 
 - 使用主体部分去解释 **是什么** 和 **为什么** 而不是 **怎么做**。
+
+更多关于 commit 的内容请参考[Write Good Commit Message](./how-to-write-commit-message.md)
 
 
 ## 4 总结Git工作流如下
