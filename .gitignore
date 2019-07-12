@@ -9,6 +9,7 @@ plugins/
 www/
 resources/android/
 resources/ios/
+.metals/
 
 # Logs
 logs
