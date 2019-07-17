@@ -2,11 +2,11 @@
 
 ## 1 开发工具、环境、主要依赖
 
-实测 scala 2.13.0 在 JDK 11 下无法编译字节码文件运行。根据[官方文档](https://docs.scala-lang.org/overviews/jdk-compatibility/overview.html)所述：JDK 11 support is incomplete.
+根据[官方文档](https://docs.Scala-lang.org/overviews/jdk-compatibility/overview.html)所述，Scala 对 JDK 11 的支持还不完全。文档中 `Running versus compiling` 部分推荐使用 Java 8 进行编译，但是 `Version compatibility table` 部分表明 Scala 2.13.0 可以在 JVM version 11 上运行。
 
-- [JDK 8](http://jdk.java.net/java-se-ri/8)
-- [Scala 2.13.0](https://www.scala-lang.org/download/)
-- [sbt 1.2.8](https://www.scala-sbt.org/0.13/docs/zh-cn/Setup.html)
+- compile with Java 8, run with Java 11
+- [Scala 2.13.0](https://www.Scala-lang.org/download/)
+- [sbt 1.2.8](https://www.Scala-sbt.org/0.13/docs/zh-cn/Setup.html)
 - IntelliJ IDEA
 - Mysql 5.7
 - Redis 4.0
