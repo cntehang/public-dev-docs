@@ -8,7 +8,7 @@
 - [Scala 2.13.0](https://www.scala-lang.org/download/)
 - [sbt 1.2.8](https://www.scala-sbt.org/0.13/docs/zh-cn/Setup.html)
 - IntelliJ IDEA
-- Mysql 4.7
+- Mysql 5.7
 - Redis 4.0
 
 - Akka 2.5.23
