@@ -46,7 +46,11 @@
 
 - [ScalaUA 2019 - Video Q&A session with Martin Odersky, Creator of Scala, EPFL, Lightbend](https://www.youtube.com/watch?v=wm2DhYrZVno)
 
-## Slick
+## Database
+
+### Slick
+
+- Slick: https://github.com/slick/slick
 
 - [Polymorphic record types in a lifted embedding - by Stefan Zeiger](https://www.youtube.com/watch?v=tS6N5AaZTLA)
   - Scala Days New York, 2016
@@ -54,6 +58,12 @@
   - "lifted embedding" is a tech to enable type check of target language in scala's type system
     - "embedding" means designing AST and writing interpreter in scala
     - "lifted" means `T` to `F[T]`
+
+### Doobie
+
+- Doobie: https://github.com/tpolecat/doobie
+
+- [Pure Functional Database Programming with Fixpoint Types—Rob Norris](https://www.youtube.com/watch?v=7xSfLPD6tiQ)
 
 ## DOT (Dependent Object Type)
 
