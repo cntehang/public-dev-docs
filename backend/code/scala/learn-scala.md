@@ -69,6 +69,31 @@
 
 - [Islands in the Stream Integrating Akka Streams and Akka Actors](https://www.youtube.com/watch?v=qaiwalDyayA)
 
+### backpressure
+
+- [Backpressure explained — the resisted flow of data through software, by Jay Phelps](https://medium.com/@jayphelps/backpressure-explained-the-flow-of-data-through-software-2350b3e77ce7)
+
+- The Wikipedia definition:
+  Resistance or force opposing the desired flow of fluid through pipes.
+
+- For software:
+  Resistance or force opposing the desired flow of data through software.
+
+- handling backpressure:
+  - Control the producer (slow down/speed up is decided by consumer)
+    - with pull-based streams, the consumer controls the producer
+    - with push-based streams, the producer is in control
+      and pushes data to the consumer when it’s available.
+  - Buffer (accumulate incoming data spikes temporarily)
+    - buffering is dangerous if unbounded.
+      it is often better to start dropping
+      than to fall over completely (run out of memory).
+  - Drop (sample a percentage of the incoming data)
+  - Ignore the backpressure 
+    - which, to be honest, is not a bad idea
+      if the backpressure isn’t causing critical issues.
+      Introducing more complexity comes at a cost too.
+
 ## DOT (Dependent Object Type)
 
 - So called "Dependent Object Type" means dependent type restricted to path.
