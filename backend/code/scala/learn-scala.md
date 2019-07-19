@@ -71,6 +71,8 @@
   - Blog: https://blog.colinbreck.com/integrating-akka-streams-and-akka-actors-part-iv/
   - Code example: https://github.com/pbernet/akka_streams_tutorial
 
+- [Patterns for Streaming Telemetry with Akka Streams by Colin Breck](https://www.youtube.com/watch?v=ilhImUjF53A)
+
 ### backpressure
 
 - [Backpressure explained — the resisted flow of data through software, by Jay Phelps](https://medium.com/@jayphelps/backpressure-explained-the-flow-of-data-through-software-2350b3e77ce7)
