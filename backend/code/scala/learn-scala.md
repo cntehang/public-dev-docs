@@ -68,6 +68,8 @@
 ## Akka
 
 - [Islands in the Stream Integrating Akka Streams and Akka Actors](https://www.youtube.com/watch?v=qaiwalDyayA)
+  - Blog: https://blog.colinbreck.com/integrating-akka-streams-and-akka-actors-part-iv/
+  - Code example: https://github.com/pbernet/akka_streams_tutorial
 
 ### backpressure
 
