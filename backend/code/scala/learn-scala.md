@@ -65,6 +65,10 @@
 
 - [Pure Functional Database Programming with Fixpoint Types—Rob Norris](https://www.youtube.com/watch?v=7xSfLPD6tiQ)
 
+## Akka
+
+- [Islands in the Stream Integrating Akka Streams and Akka Actors](https://www.youtube.com/watch?v=qaiwalDyayA)
+
 ## DOT (Dependent Object Type)
 
 - So called "Dependent Object Type" means dependent type restricted to path.
