@@ -68,6 +68,15 @@
 ## Akka
 
 - [8 Akka Anti Patterns you'd better be aware of](https://www.youtube.com/watch?v=h3mulWmX1Oo)
+  - Do not pass mutable reference in message, use immutable message, for async call use "ask and pipe" pattern.
+  - Do not always use flat actor hierarchies, use hierarchies and actor model's error handling, let it crash, "error should be handled out of band in a parallel process, they are not part of the main app."
+  - Do not use too many actor systems, each actor system has at least one dispatcher backed by a thread pool.
+  - Do not log to much, do not use block log, turn debug log off in production, do not log to file.
+    - maybe use elastic to aggregate logs: https://www.elastic.co/products/log-monitoring
+  - Do not use to much vm or docker, be close to hardware, it will be easier to config the dispatcher right.
+  - Do not block, do not wait for future.
+  - Do not use akka remoting, use akka cluster.
+  - Do not use java serialization, use protobuf or Avro.
 
 - [Islands in the Stream Integrating Akka Streams and Akka Actors](https://www.youtube.com/watch?v=qaiwalDyayA)
   - Blog: https://blog.colinbreck.com/integrating-akka-streams-and-akka-actors-part-iv/
