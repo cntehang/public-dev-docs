@@ -67,6 +67,8 @@
 
 ## Akka
 
+- [8 Akka Anti Patterns you'd better be aware of](https://www.youtube.com/watch?v=h3mulWmX1Oo)
+
 - [Islands in the Stream Integrating Akka Streams and Akka Actors](https://www.youtube.com/watch?v=qaiwalDyayA)
   - Blog: https://blog.colinbreck.com/integrating-akka-streams-and-akka-actors-part-iv/
   - Code example: https://github.com/pbernet/akka_streams_tutorial
