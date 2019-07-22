@@ -52,9 +52,19 @@ sbt.version = 1.2.8
 build.sbt 示例内容：
 
 ```sbt
-name := "your-project-name"
-version := "1.0.0"
-scalaVersion := "2.13.0"
+// 定义一些通用的build 设置，可所有Scala服务共用
+lazy val commonSettings = Seq(
+  organization := "com.tehang", // 代码组织，我们属于特航
+  scalaVersion := "2.13.0" //  Scala 的版本号
+)
+
+// 当前项目本身的一些build配置
+lazy val root = (project in file("."))
+  .settings(
+    commonSettings,
+    name := "your-project-name", //  项目的名字
+    version := "0.0.1", // 当前项目的版本
+  )
 
 libraryDependencies ++= {
   val akkaVersion = "2.5.23"
