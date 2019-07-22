@@ -146,16 +146,13 @@ sbt 虽然没有类似 maven 自动初始化项目结构的功能，但是内嵌
 
 ## 5 SBT 常用命令
 
-- sbt 进入 sbt 交互式命令行
-- sbt about 当前本地安装使用的 sbt 相关信息
-
-下面为 sbt 交互式命令行中使用的命令
-
-- exit 退出 sbt 交互式命令行
-- sbtVersion 构建使用的 sbt 版本
-- help 显示 sbt 帮助文档
-- inspect tree compile:compile 查看 sbt 执行 compile 所需东西
-- console 进入 scala 解释器
+- sbt 进入 sbt 交互式命令行, 下面为交互式模式中的常用命令：
+  - exit 退出 sbt 交互式命令行
+  - sbtVersion 构建使用的 sbt 版本
+  - help 显示 sbt 帮助文档
+  - inspect tree compile:compile 查看 sbt 执行 compile 所需东西
+  - console 进入 scala 解释器
+  - about 当前本地安装使用的 sbt 相关信息
 
 下面为在 scala interpreter 中使用的命令
 
