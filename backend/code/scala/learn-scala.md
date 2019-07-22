@@ -26,22 +26,27 @@
 ## Martin Odersky
 
 - [FOSDEM 2009 Scala - A Scalable Language](https://www.youtube.com/watch?v=zqFryHC018k)
+
   - In this talk the author describes the design principles of the Scala programming language,
     which has scalability as its primary design objective.
 
 - ["Working Hard to Keep It Simple" - OSCON Java 2011](https://www.youtube.com/watch?v=3jg1AheF4n0)
+
   - Why we need functional programming and actor model
   - Object oriented programming is as important as functional programming
 
 - [Plain Functional Programming, 2017, at Devoxx](https://www.youtube.com/watch?v=YXDm3WHZT5g)
+
   - Kleisli triples v.s. implicit function type
   - with a reference to [Strategic Scala Style: Principle of Least Power](http://www.lihaoyi.com/post/StrategicScalaStylePrincipleofLeastPower.html)
 
 - [From DOT to Dotty by Martin Odersky](https://www.youtube.com/watch?v=iobC5yGRWoo)
+
   - About the theoretic foundation of Scala, i.e. DOT (with dependent type restricted to path)
   - implicit function type in dotty (scala 3.x)
 
 - [Keynote - What to Leave Implicit by Martin Odersky](https://www.youtube.com/watch?v=Oij5V7LQJsA)
+
   - Scala Days Chicago 2017
 
 - [ScalaUA 2019 - Video Q&A session with Martin Odersky, Creator of Scala, EPFL, Lightbend](https://www.youtube.com/watch?v=wm2DhYrZVno)
@@ -121,10 +126,11 @@
 ## Type System
 
 - [Daniel Beskin at #ScalaUA - Compile Time Logic Programming in Scala](https://www.youtube.com/watch?v=wHrdrRvC1Wg)
+
   - implicitly searching type is like prolog's searching
 
     | prolog           | scala type system                                            |
-    |------------------|--------------------------------------------------------------|
+    | ---------------- | ------------------------------------------------------------ |
     | atom and functor | trait with or without type arguments                         |
     | fact             | implicit value                                               |
     | rule             | chained implicit (implicit function with implicit arguments) |

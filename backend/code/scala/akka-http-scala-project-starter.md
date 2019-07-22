@@ -63,7 +63,7 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
     "com.typesafe.akka" %% "akka-http" % httpVersion,
     "com.typesafe.akka" %% "akka-http-spray-json" % httpVersion,
-    
+
     // For testing
     "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % Test,
     "com.typesafe.akka" %% "akka-http-testkit" % httpVersion % Test,
@@ -83,7 +83,7 @@ libraryDependencies ++= {
 
 ### 3.2 书写业务逻辑
 
-在 IDE/TEXT EDITOR 中打开刚才创建的文件夹，在 src/main/scala 路径下新建 Main.scala 文件，书写 WEB SERVER 启动类，示例如下：
+在 IDE/TEXT EDITOR 中打开刚才创建的文件夹，在 src/main/scala 路径下新建 Application.scala 文件，书写 WEB SERVER 启动类，示例如下：
 
 ```scala
 import akka.actor._
@@ -123,7 +123,7 @@ object HelloHttp extends App {
 
 使用 IDE：
 
-- 运行 Main.scala 文件的方法即可启动 web server
+- 运行 Application.scala 文件的方法即可启动 web server
 
 使用 sbt：
 
@@ -136,7 +136,7 @@ sbt 的指令之间有依赖关系，比如 run 指令会先执行 compile 作�
 
 ## 4 初始化项目-简单版
 
-sbt 虽然没有类似 maven 自动初始化项目结构的功能，但是内嵌（sbt 0.13.13及后版本）了借助 [Gilter8](http://www.foundweekends.org/giter8/) 工具导入项目模版的功能。基于 Lightbend 官方给出的一个托管在 github 上的 scala 项目模版，可经由如下步骤使用：
+sbt 虽然没有类似 maven 自动初始化项目结构的功能，但是内嵌（sbt 0.13.13 及后版本）了借助 [Gilter8](http://www.foundweekends.org/giter8/) 工具导入项目模版的功能。基于 Lightbend 官方给出的一个托管在 github 上的 scala 项目模版，可经由如下步骤使用：
 
 - 执行命令：`sbt new scala/scala-seed.g8`
 - 根据提示输入项目名
@@ -146,16 +146,16 @@ sbt 虽然没有类似 maven 自动初始化项目结构的功能，但是内嵌
 
 ## 5 SBT 常用命令
 
-- sbt 进入sbt交互式命令行
-- sbt about 当前本地安装使用的sbt相关信息
+- sbt 进入 sbt 交互式命令行
+- sbt about 当前本地安装使用的 sbt 相关信息
 
 下面为 sbt 交互式命令行中使用的命令
 
-- exit 退出sbt交互式命令行
-- sbtVersion 构建使用的sbt版本
-- help 显示sbt帮助文档
-- inspect tree compile:compile 查看sbt执行compile所需东西
-- console 进入scala解释器
+- exit 退出 sbt 交互式命令行
+- sbtVersion 构建使用的 sbt 版本
+- help 显示 sbt 帮助文档
+- inspect tree compile:compile 查看 sbt 执行 compile 所需东西
+- console 进入 scala 解释器
 
 下面为在 scala interpreter 中使用的命令
 
