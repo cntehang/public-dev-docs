@@ -116,13 +116,6 @@
       if the backpressure isn’t causing critical issues.
       Introducing more complexity comes at a cost too.
 
-## DOT (Dependent Object Type)
-
-- So called "Dependent Object Type" means dependent type restricted to path.
-
-- [DOT: Scala Types from Theory to Practice—Nada Amin](https://www.youtube.com/watch?v=fjj_fv346lY)
-  - Scala World, 2017
-
 ## Type System
 
 - [Daniel Beskin at #ScalaUA - Compile Time Logic Programming in Scala](https://www.youtube.com/watch?v=wHrdrRvC1Wg)
@@ -140,6 +133,38 @@
     - `CanBuildFrom`
     - implicit instances of typeclasses
     - Akka stream graph's `ClosedShape`
+
+- [Existential Types — Make OOP Great Again! by Julien Richard Foy](https://www.youtube.com/watch?v=6j5kZj17aUw)
+  - how to do abstraction in type? Parameters vs abstract members.
+
+    ``` scala
+    trait Group {
+      type Element
+      def unit: Element
+      def add(x: Element, y: Element): Element
+    }
+
+    case object RationalGroup extends Group {
+      case class Element(numerator: Int, denominator: Int)
+      def unit: Element = Element(0, 0)
+      def add(x: Element, y: Element): Element =
+        Element(
+          numerator = x.numerator * y.denominator +
+            y.numerator * x.denominator,
+          denominator = x.denominator * y.denominator)
+    }
+    ```
+
+  - when to use abstract members?
+    - abstract members provide a way to make a type opaque from "outside"
+    - when you have a lots of wildcard types like `C[_]`
+
+### DOT (Dependent Object Type)
+
+- So called "Dependent Object Type" means dependent type restricted to path.
+
+- [DOT: Scala Types from Theory to Practice—Nada Amin](https://www.youtube.com/watch?v=fjj_fv346lY)
+  - Scala World, 2017
 
 ## Web App
 
