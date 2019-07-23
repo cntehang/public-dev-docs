@@ -140,18 +140,21 @@
     ``` scala
     trait Group {
       type Element
-      def unit: Element
+      def id: Element
       def add(x: Element, y: Element): Element
+      def neg(x: Element): Element
     }
 
     case object RationalGroup extends Group {
       case class Element(numerator: Int, denominator: Int)
-      def unit: Element = Element(0, 0)
+      def id: Element = Element(0, 0)
       def add(x: Element, y: Element): Element =
         Element(
           numerator = x.numerator * y.denominator +
             y.numerator * x.denominator,
           denominator = x.denominator * y.denominator)
+      def neg(x: Element): Element =
+        Element(- x.numerator, x.denominator)
     }
     ```
 
