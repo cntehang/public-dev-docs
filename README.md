@@ -36,10 +36,10 @@
 
 ## 文档说明
 
-- [team](./team/README.md)： 团队文化和程序员工作指南。v
+- [team](./team/README.md)： 团队文化和程序员工作指南。
+- [guide](./guide/README.md): 基本软件开发流程。
 - [frontend](./frontend/README.md)：前端的技术文档。
 - [backend](./backend/README.md): 后端的技术文档。
 - [backend-and-frontend](./backend-and-frontend/README.md)：前后端接口相关的技术文档
-- [ops](./ops/README.md): 运维技术文档。
 - [pm](./pm/README.md): 产品经理和项目管理文档。
 - [learning](./learning/README.md): 程序员学习指南。
