@@ -1,20 +1,23 @@
 # Code Review
 
-We review code before it is merged to ensure that code is maintainable and usable by someone other than the author.
+## 基本原则
 
-- Is the code well commented, structured for clarity, and consistent with DM’s code style?
-- Is there adequate unit test coverage for the code?
-- Is the documentation augmented or updated to be consistent with the code changes?
-- Are the Git commits well organized and well annotated to help future developers understand the code development?
+- 代码审查是最有效率的质量改善工具。比各种测试都有效。
+- 审查者要像自己写代码一样，确认阅读和理解每一行语句。
+- 如果审查者和程序员不能达成一致，由团队其他人协调。
 
-Code reviews should also address whether the code fulfills design and performance requirements.
+## 审查的颗粒度
 
-Ideally the code review should not be a design review. Before serious coding effort is committed to a ticket, the developer should either undertake an informal design review while creating the design.
+- 审查的代码量可以很小，但是最大不能超过一周代码的上限。
+- 对于小需求和缺陷修复，以可以验证或操作的功能为单位进行审查。
+- 如果对三天或以上的代码量审查，需要提前 24 小时找到审查者并告知可能的审查工作量。
 
-Code review discussion should happen on the GitHub pull request, with the reviewer giving a discussion summary.
+## 检查事项
 
-Pull request conversations should only happen in ‘Conversation’ and ‘Files changed’ tabs; your comments might get lost otherwise.
-
-Code reviews are a collaborative check-and-improve process. Reviewers do not hold absolute authority, nor can developers ignore the reviewer’s suggestions. The aim is to discuss, iterate, and improve the pull request until the work is ready to be deployed on master.
-
-If the review becomes stuck on a design decision, that aspect of the review can be elevated to seek team-wide consensus.
+- 为提高审查效率，先理解高层的代码设计和实现功能。
+- 复杂的代码模块是否有设计文档，没有就停止审查。
+- 代码可以编译、可以 Merge。不可以就停止审查。
+- 如果有可验证的用户界面，先操作界面完成所需功能。不对就停止审查。
+- 代码是否有关键模块的单元测试，核心流程的集成测试。没有就停止审查。
+- 认真阅读和理解每一行代码，如同自己重写一遍。
+- 所有的建议和讨论都在 PR 上面保留。
