@@ -28,15 +28,18 @@
 
 可以和所以开发者共享的、可以标准化的流程和最佳实践都存放这里。所有的工作都必须符合流程规则要求。如果规则或最佳实践不再适用，要先更新文档再按新流程执行。更新流程和最佳实践是所有开发人员的责任。
 
-所有目录都有一个`README.md`说明文件。这个文件描述了目录下的所有文件并保持更新。当目录下的文件和文件夹超过十个时，需要按分类创建子目录。
+所有目录都有一个`README.md`说明文件。这个文件描述了目录下的所有文件并保持更新 v 当目录下的文件和文件夹超过十个时，需要按分类创建子目录。
 
 所有文件的创建和更新需要创建 PR 和通过 Review。然后通知所有相关人员按新规则执行。不影响软件开发活动的简单的笔误更正和内容改善可以直接提交。
 
-文档统一采用 Markdown 格式。建议采用 VS Code 并用 [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)来保证 markdown 文件风格的一致性。
+文档统一采用 Markdown 格式。使用 VS Code 并用 [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)来保证 markdown 文件风格的一致性。
 
 ## 文档说明
 
-- [dev-process](./dev-process/README.md)：开发流程的描述
-- [frontend](./frontend/README.md)：前端的技术文档
-- [backend](./backend/README.md): 后端的技术文档
+- [team](./team/README.md)： 团队文化和程序员工作指南。v
+- [frontend](./frontend/README.md)：前端的技术文档。
+- [backend](./backend/README.md): 后端的技术文档。
 - [backend-and-frontend](./backend-and-frontend/README.md)：前后端接口相关的技术文档
+- [ops](./ops/README.md): 运维技术文档。
+- [pm](./pm/README.md): 产品经理和项目管理文档。
+- [learning](./learning/README.md): 程序员学习指南。
