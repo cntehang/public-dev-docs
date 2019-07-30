@@ -2,6 +2,13 @@
 
 **In general, observe the style of existing code and respect it.**
 
+## Naming
+
+- Use intention-revealing names which don't need explanation.
+  - use `index` instead of `i`
+
+- Constants should be named with all uppercase with words seperated by underscores ("_").
+
 ## Formating
 
 - Maximal line length is limited to 80 characters.
