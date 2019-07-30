@@ -14,8 +14,8 @@
 
 ![发布示例](../resources/release_example.png)
 
-2. 通知运维发布新版，并确定发版成功
-3. 版本迭代
+1. 通知运维发布新版，并确定发版成功
+1. 版本迭代
 
 发布之后，发布人需要把当前版本号更新迭代，如 v2.0.1 -> v2.0.2，迭代涉及以下工作：
 
@@ -24,7 +24,7 @@
 - github 上，点击 Wiki -> New Page -> title 用版本号（版本号为最新的），初始化内容
 - 把上述修改 push 并 merge 到 master 中
 
-### 特别注意：
+### 特别注意
 
 - release Tag version 是打包时实际上采用的版本号，应与 application_version.gradle 中的版本号一致，且与 Wiki 中 title 的版本字段一致
 - release Title 与 release Tag version 保持一致
@@ -47,7 +47,9 @@ jar {
 
 ### 2.2 sql/vX_X_X
 
+```text
     对应版本需要执行的sql语句存放的目录，vX_X_X与版本号对应，由发版人员新建，开发人员在该版本使用的sql都存放在对应的目录下
+```
 
 ### 2.3 Wiki Page
 
