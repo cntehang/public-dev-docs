@@ -7,7 +7,8 @@
 - Use intention-revealing names which don't need explanation.
   - use `index` instead of `i`
 
-- Constants should be named with all uppercase with words seperated by underscores ("_").
+- Constant names should be in upper camel case.
+  - use `HotelId` instead of `HOTEL_ID`
 
 ## Formating
 
