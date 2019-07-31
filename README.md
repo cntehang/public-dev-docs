@@ -36,7 +36,7 @@
 
 - [程序员工作原则](./principles.md)：我们的工作理念和原则
 - [team](./team/README.md)： 企业文化。
-- [guide](./guide/README.md): 基本软件开发流程。
+- [coding-guide](./coding-guide/README.md): 编程指南，包括 Git 工作流、代码审核和如何写日志等。
 - [frontend](./frontend/README.md)：前端的技术文档。
 - [backend](./backend/README.md): 后端的技术文档。
 - [backend-and-frontend](./backend-and-frontend/README.md)：前后端接口相关的技术文档
