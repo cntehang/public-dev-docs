@@ -16,13 +16,11 @@
 
 ## 出发点
 
-首先，企业文化是根本。所有的流程和做事方法都来自[我们的企业文化](./team/culture.md)。
+高效工作来自我高标准驱动与合作精神。[程序员工作原则](./principles.md) 给出了我们的理念和工作原则。企业文化是企业提倡的价值观。所有的流程和做事方法都来自[我们的企业文化](./team/culture.md)。
 
 软件开发有二个根本性原则：正确的业务逻辑与可维护性。
 
 软件开发管理活动，如自动测试要求，代码标准，代码审核，文档标准，github 工作流，需求工作流程，设计工作流程，开发环境配置等等都是基于这二个原则来展开。我们明白这些流程、标准、模版不是限制，任何规则都可以定制，目的是让整个开发过程自动化和标准化，从而让开发人员把精力放在最关键的创造性工作中。
-
-高效工作来自我高标准驱动与合作精神。[程序员工作指南](./team/程序员工作指南.md) 给出了我们的开发理念。
 
 ## 文档的创建和维护
 
@@ -34,9 +32,10 @@
 
 文档统一采用 Markdown 格式。使用 VS Code 并用 [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)来保证 markdown 文件风格的一致性。
 
-## 文档说明
+## 目录和文件说明 vv
 
-- [team](./team/README.md)： 团队文化和程序员工作指南。
+- [程序员工作原则](./principles.md)：我们工作理念和原则
+- [team](./team/README.md)： 企业文化。
 - [guide](./guide/README.md): 基本软件开发流程。
 - [frontend](./frontend/README.md)：前端的技术文档。
 - [backend](./backend/README.md): 后端的技术文档。
