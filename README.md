@@ -6,7 +6,7 @@
 
 持续的、高质效的软件开发能力是现代企业的核心竞争力。多年实践让我们意识到以下几点事实：
 
-- [企业文化](./team/culture.md)不是业务的一个方面，它就是业务。Culture isn't just one aspect of the game, it is the game. （郭士纳，Louis V. Gerstner, IBM 前总裁）
+- 企业文化不是业务的一个方面，它就是业务。Culture isn't just one aspect of the game, it is the game. （郭士纳，Louis V. Gerstner, IBM 前总裁）
 - 思想就是软件。 Mind is software. （老刘）
 - 切忌随波逐流。 Only dead fish go with the flow.（西谚）
 - 做人如果没有梦想，跟咸鱼有什么分别。 Salted fish has no dream. (星爷)
