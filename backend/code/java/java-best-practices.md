@@ -2,7 +2,9 @@
 
 ## try with resource
 
-尽量使用 Java 7 和 Java 9 带来的新语法减缓代码。注意，当有多个资源时，各个资源用`;`分开，都应该都做 try 后面的括号里面。
+对于外部资源（文件、数据库连接、网络连接等），必须要在使用完毕后手动关闭它们，否则就会导致外部资源泄露。
+
+Java 7 之前关闭资源的代码很丑陋，应该尽量使用 Java 7 和 Java 9 带来的新语法。当有多个资源时，各个资源用`;`分开，放在 try 后面的括号里面。但是，不是所有资源都能这么写，一定要实现了AutoCloseable接口才行。
 
 ```java
 // use the folloiwng in Java 7 and Java 8
@@ -67,3 +69,7 @@ public static DateTime getCstNow() {
 2. float/Float -> String：防止出现 float 转 string 时把不必要的数字也带上
 3. BigDecimal -> String：BigDecimal 一般用于表示金额，这个需要严肃处理，指定具体的格式化形式，防止默认的转换与预期的要求不符
 4. DateTime/其他时间类型 -> String：时间的格式各异，必须要转为 String 返回
+
+## 外部数据的校验
+
+对于外部（数据库、接口等）返回的数据，一定要做严格的非空校验，来避免 NPE。
