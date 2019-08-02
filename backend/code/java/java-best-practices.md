@@ -79,11 +79,15 @@ public static DateTime getCstNow() {
 在object内部对属性赋值，使用以下顺序的语法
 
 使用当前对象：
+```java
 xxx = XXX
 this.xxx = XXX
 setXXX(XXX)
 this.setXXX(XXX)
+```
 
 本对象内新建的对象：
+```java
 object.xxx = XXX
 object.setXXX(XXX)
+```
