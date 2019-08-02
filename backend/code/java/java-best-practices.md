@@ -73,3 +73,17 @@ public static DateTime getCstNow() {
 ## 外部数据的校验
 
 对于外部（数据库、接口等）返回的数据，一定要做严格的非空校验，来避免 NPE。
+
+## object内部对属性赋值
+
+在object内部对属性赋值，使用以下顺序的语法
+
+使用当前对象：
+xxx = XXX
+this.xxx = XXX
+setXXX(XXX)
+this.setXXX(XXX)
+
+本对象内新建的对象：
+object.xxx = XXX
+object.setXXX(XXX)
