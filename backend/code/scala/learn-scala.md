@@ -1,5 +1,9 @@
 # Learn Scala
 
+## Blogs
+
+- [Richard Imaoka -- Akka, Concurrency, etc.](https://richardimaoka.github.io/blog)
+
 ## Youtube Channels
 
 - [Scala Days Conferences](https://www.youtube.com/channel/UCOHg8YCiyMVRRxb3mJT_0Mg)
@@ -162,7 +166,7 @@
     - abstract members provide a way to make a type opaque from "outside"
     - when you have a lots of wildcard types like `C[_]`
     - finally tagless encoding
-    
+
 ### DOT (Dependent Object Type)
 
 - So called "Dependent Object Type" means dependent type restricted to path.
