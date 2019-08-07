@@ -3,6 +3,7 @@
 ## Blogs
 
 - [Richard Imaoka -- Akka, Concurrency, etc.](https://richardimaoka.github.io/blog)
+  - [Akka HTTP Request and Response models](https://richardimaoka.github.io/blog/akka-http-request-response-model/)
 
 ## Youtube Channels
 
