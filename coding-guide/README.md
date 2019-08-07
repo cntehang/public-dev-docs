@@ -8,4 +8,5 @@
 - [前端代码审查列表](./fe-code-review-check-list.md)
 - [项目版本号约定](./how-to-control-version.md)
 - [如何写日志](./how-to-log.md)
+- [错误处理指南](./how-to-handle-error.md)
 - [项目 Readme 模版](./sample-project-readme.md)
