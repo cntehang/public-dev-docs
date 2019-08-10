@@ -175,6 +175,10 @@
 - [DOT: Scala Types from Theory to Practice—Nada Amin](https://www.youtube.com/watch?v=fjj_fv346lY)
   - Scala World, 2017
 
+## Monad 
+
+- [Options in Futures, how to unsuck them](https://www.youtube.com/watch?v=hGMndafDcc8)
+
 ## Web App
 
 - [Monadic Logging and You - NE Scala 2016](https://www.youtube.com/watch?v=t-YX55ZF4g0)
