@@ -69,6 +69,9 @@
     - "embedding" means designing AST and writing interpreter in scala
     - "lifted" means `T` to `F[T]`
 
+- [Reactive Database Mapping with Scala and Slick - Jacek Kunicki](https://www.youtube.com/watch?v=Ksobupg60Vk)
+  - example usage of slick
+
 ### Doobie
 
 - Doobie: https://github.com/tpolecat/doobie
