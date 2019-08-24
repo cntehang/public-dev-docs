@@ -1,5 +1,9 @@
 # Learn Scala
 
+## Basic Tips
+
+- [Interpret Code Block and Curly Braces](https://www.geekabyte.io/2018/03/an-alternative-way-to-interpret-usage.html)
+
 ## Blogs
 
 - [Richard Imaoka -- Akka, Concurrency, etc.](https://richardimaoka.github.io/blog)
@@ -63,6 +67,7 @@
 - Slick: https://github.com/slick/slick
 
 - [Polymorphic record types in a lifted embedding - by Stefan Zeiger](https://www.youtube.com/watch?v=tS6N5AaZTLA)
+
   - Scala Days New York, 2016
   - an overview of the "lifted embedding" at the core of the Scala DSL in Slick.
   - "lifted embedding" is a tech to enable type check of target language in scala's type system
@@ -74,26 +79,28 @@
 
 ### Doobie
 
-- Doobie: https://github.com/tpolecat/doobie
+- [Doobie](https://github.com/tpolecat/doobie)
 
 - [Pure Functional Database Programming with Fixpoint Types—Rob Norris](https://www.youtube.com/watch?v=7xSfLPD6tiQ)
 
 ## Akka
 
 - [8 Akka Anti Patterns you'd better be aware of](https://www.youtube.com/watch?v=h3mulWmX1Oo)
+
   - Do not pass mutable reference in message, use immutable message, for async call use "ask and pipe" pattern.
   - Do not always use flat actor hierarchies, use hierarchies and actor model's error handling, let it crash, "error should be handled out of band in a parallel process, they are not part of the main app."
   - Do not use too many actor systems, each actor system has at least one dispatcher backed by a thread pool.
   - Do not log to much, do not use block log, turn debug log off in production, do not log to file.
-    - maybe use elastic to aggregate logs: https://www.elastic.co/products/log-monitoring
+    - maybe [use elastic to aggregate logs](https://www.elastic.co/products/log-monitoring)
   - Do not use to much vm or docker, be close to hardware, it will be easier to config the dispatcher right.
   - Do not block, do not wait for future.
   - Do not use akka remoting, use akka cluster.
   - Do not use java serialization, use protobuf or Avro.
 
 - [Islands in the Stream Integrating Akka Streams and Akka Actors](https://www.youtube.com/watch?v=qaiwalDyayA)
-  - Blog: https://blog.colinbreck.com/integrating-akka-streams-and-akka-actors-part-iv/
-  - Code example: https://github.com/pbernet/akka_streams_tutorial
+
+  - [Blog](https://blog.colinbreck.com/integrating-akka-streams-and-akka-actors-part-iv/)
+  - [Code example](https://github.com/pbernet/akka_streams_tutorial)
 
 - [Patterns for Streaming Telemetry with Akka Streams by Colin Breck](https://www.youtube.com/watch?v=ilhImUjF53A)
 
@@ -119,7 +126,7 @@
       it is often better to start dropping
       than to fall over completely (run out of memory).
   - Drop (sample a percentage of the incoming data)
-  - Ignore the backpressure 
+  - Ignore the backpressure
     - which, to be honest, is not a bad idea
       if the backpressure isn’t causing critical issues.
       Introducing more complexity comes at a cost too.
@@ -143,9 +150,10 @@
     - Akka stream graph's `ClosedShape`
 
 - [Existential Types — Make OOP Great Again! by Julien Richard Foy](https://www.youtube.com/watch?v=6j5kZj17aUw)
+
   - how to do abstraction in type? Parameters vs abstract members.
 
-    ``` scala
+    ```scala
     trait Group {
       type Element
       def id: Element
@@ -193,13 +201,16 @@
 ## Misc
 
 - [The Last 10 Percent by Stefan Zeiger](https://www.youtube.com/watch?v=RmEMUwfQoSc)
+
   - about publishing open source scala library, which is infinitely more complicated than npm.
     (I would rather writing scripts to use libraries locally than to use this)
   - scala's npmjs.org is Sonatype,
-    - sbt's docs about using it: https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html
-    - which direct you to another docs at: https://central.sonatype.org/pages/ossrh-guide.html
+
+    - sbt's [docs about using it](https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html)
+    - which direct you to [another doc](https://central.sonatype.org/pages/ossrh-guide.html)
       which says:
-      ```
+
+      ```text
       Sonatype uses JIRA to manage requests.
       - Create your JIRA account
       - Create a New Project ticket
