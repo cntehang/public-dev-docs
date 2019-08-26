@@ -198,6 +198,13 @@
   - log less
   - when to log ?
 
+## Scalajs
+
+- [From first principles: Why I bet on Scala.js](http://www.lihaoyi.com/post/FromfirstprinciplesWhyIbetonScalajs.html)
+- [Hands-on Scala.js](http://www.lihaoyi.com/hands-on-scala-js/)
+- [Youtube video: Full Stack Scala with the Play Framework and Scala.js](https://youtu.be/NJVL2IsGXZ4)
+- [Play Framework with Scala.js Template](https://github.com/vmunier/play-scalajs.g8)
+
 ## Misc
 
 - [The Last 10 Percent by Stefan Zeiger](https://www.youtube.com/watch?v=RmEMUwfQoSc)
