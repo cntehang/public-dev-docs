@@ -381,3 +381,8 @@ this.service
   ```
 
 - 对于后端返回的时间格式，不要滥用 date pipe 来对时间进行格式转换，只有在标准[ISO 8601]格式下才能使用 date pipe, 如果是其他格式的字符串（例如： yyyy-MM-dd HH:mm）, 直接使用 date pipe 的话在 IE 和 Safari 上会存在兼容性问题。
+
+- 所有提交后台的按钮操作都应该做好放重复点击，针对不同的场景，应该有以下三种解决方式：
+  - 直接在请求开始前 disable 掉按钮，请求结束后 enable.
+  - 使用 spin 组件将 button 包裹起来，然后对 spin 的 start 与 stop 管理.
+  - 如果使用的是 nz-button 组件，可以使用 [nzLoading] 关联请求的开始与结束状态.
