@@ -267,3 +267,18 @@ spring:
 - jar 包旁的 bootstrap.yml 应指定 active-profile 和配置中心的相关配置
 - 远程配置 git 仓库中的 app name 相关属性可以去掉，最后以项目内部 bootstrap.yml 配置文件中的为准
 - 为了让集成测试不读取真实的 application.yml 及 bootstrap.yml，需要在集成测试 resources 目录下配置好 application.yml （内含集成测试使用的内存数据库等配置）并新建一个空的 bootstrap.yml 文件
+
+## 16 Spring Boot Controller 参数校验
+
+对于需要进行参数校验的场景，做如下约定：
+
+### 1. Controller 方法中的对象（含 List<T>）旁打 `javax.validation.Valid` 注解，对象中需要进行校验的嵌套对象上也需要打上该注解
+
+- `对象`是指由程序员定义的可控制的 Java Class 实例，突出可控是因为该对象类的字段需要定义 Constraint 注解才能使参数校验有意义
+- 利用了 `Spring Boot RequstResponseBodyMethodProcessor` 在解析 Controller 方法参数过程中调用了 `org.hibernate.validator.internal.engine.ValidatorImpl` 的 `validate` 方法的逻辑
+- 此规定是为了统一风格和简单
+
+### 2. 所有 controller 类上打 `org.springframework.validation.annotation.Validated` 注解
+
+- 项目中设置 Controller 基类，所有 Controller 类继承基类即可获得该注解
+- 该注解会以 AOP 的方式对 Controller 中的所有方法进行增强，利用了 `MethodValidationInterceptor` 对方法入参/出参校验时调用 `org.hibernate.validator.internal.engine.ValidatorImpl` 的 `validateParameters` 方法的逻辑
