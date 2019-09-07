@@ -1,4 +1,4 @@
-# Java 高级代码规范
+# Java 代码指南
 
 ## 1. Spring 依赖注入
 
@@ -278,7 +278,7 @@ spring:
 - 利用了 `Spring Boot RequstResponseBodyMethodProcessor` 在解析 Controller 方法参数过程中调用了 `org.hibernate.validator.internal.engine.ValidatorImpl` 的 `validate` 方法的逻辑
 - 此规定是为了统一风格和简单
 
-### 2. 所有 controller 类上打 `org.springframework.validation.annotation.Validated` 注解
+### 2. 所有 Controller 类上打 `org.springframework.validation.annotation.Validated` 注解
 
 - 项目中设置 Controller 基类，所有 Controller 类继承基类即可获得该注解
 - 该注解会以 AOP 的方式对 Controller 中的所有方法进行增强，利用了 `MethodValidationInterceptor` 对方法入参/出参校验时调用 `org.hibernate.validator.internal.engine.ValidatorImpl` 的 `validateParameters` 方法的逻辑
