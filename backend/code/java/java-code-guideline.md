@@ -282,3 +282,4 @@ spring:
 
 - 项目中设置 Controller 基类，所有 Controller 类继承基类即可获得该注解
 - 该注解会以 AOP 的方式对 Controller 中的所有方法进行增强，利用了 `MethodValidationInterceptor` 对方法入参/出参校验时调用 `org.hibernate.validator.internal.engine.ValidatorImpl` 的 `validateParameters` 方法的逻辑
+- 主要是为了弥补第一种方法无法对 URL 中携带的 query 参数和 RequestBody 中携带的 List<T> 对象进行校验的缺陷
