@@ -85,6 +85,7 @@
 
 ## Akka
 
+- [Programming Reactive Systems](https://courses.edx.org/courses/course-v1:EPFLx+scala-reactiveX+2T2019/course/): free edX Akka Actor and Streaming course.
 - [8 Akka Anti Patterns you'd better be aware of](https://www.youtube.com/watch?v=h3mulWmX1Oo)
 
   - Do not pass mutable reference in message, use immutable message, for async call use "ask and pipe" pattern.
