@@ -38,3 +38,31 @@ public class WechatPlaceOrderDto implements Serializable {
 @PostMapping(path = "/test", produces = {"application/xml", "text/xml"})
 public WechatPlaceOrderDto test2(@RequestBody String body) {}
 ```
+
+## RestTemplate 设置
+
+一般情况下，不用丹顿设置 RestTemplate，但是有时候第三方不按正规方法做，就需要自主设置一下了
+
+请求发送设置：
+
+```java
+  HttpHeaders headers = new HttpHeaders();
+  headers.setContentType(MediaType.APPLICATION_XML); // 表示自己发送的是xml格式数据，会按照xml来序列化
+  HttpEntity<WechatPlaceOrderDto> request = new HttpEntity<WechatPlaceOrderDto>(dto, headers);
+  *** resultDto = restTemplate.postForObject(url, request, ***.class);
+```
+
+解析 response 设置：
+
+```java
+  //正常情况不用设置，有对应的message converter，但也有例外，如微信服务端，返回的是xml数据，但是media type设置的是text/plain，这样就导致不能够自动解析到对象，只能以字符串接收，然后手工解析，但是也可以设置自己的message converter。 这个只有在确定对方的返回数据时才可以使用。
+  MappingJackson2XmlHttpMessageConverter converter = new MappingJackson2XmlHttpMessageConverter();
+    List<MediaType> types = new ArrayList<>();
+    types.addAll(converter.getSupportedMediaTypes());
+    types.add(0, new MediaType("text", "plain"));
+    converter.setSupportedMediaTypes(types);
+
+    List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
+    converters.add(0, converter);
+    restTemplate.setMessageConverters(converters);
+```
