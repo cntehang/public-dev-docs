@@ -41,7 +41,7 @@ public WechatPlaceOrderDto test2(@RequestBody String body) {}
 
 ## RestTemplate 设置
 
-一般情况下，不用丹顿设置 RestTemplate，但是有时候第三方不按正规方法做，就需要自主设置一下了
+一般情况下，不用单独设置 RestTemplate，但是有时候第三方不按正规方法做，就需要自主设置一下了
 
 请求发送设置：
 
