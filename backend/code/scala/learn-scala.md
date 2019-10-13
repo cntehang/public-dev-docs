@@ -64,7 +64,7 @@
 
 ### Slick
 
-- Slick: https://github.com/slick/slick
+- [Slick](https://github.com/slick/slick)
 
 - [Polymorphic record types in a lifted embedding - by Stefan Zeiger](https://www.youtube.com/watch?v=tS6N5AaZTLA)
 
