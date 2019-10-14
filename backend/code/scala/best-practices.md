@@ -8,7 +8,7 @@ Best practices for Scala programming. Unless you have a strong reason and get ap
 
 Only use subtypes (or subclasses in Java) in one well-defined scenario: to define [sum types](https://alvinalexander.com/scala/fp-book/algebraic-data-types-adts-in-scala). 虽然用的是类或对象的继承关系，其实只是用仅有一层的继承语法定义了数据的类型 （is-a 关系 ），相关的数据操作，通常定义到相应的 companion object 里面。
 
-For other polymorphism scnearios, don't use subtype, i.e, don't use type hierarchy, use the type class pattern as the following for Scala 2. Scala 3 has better syntax.
+For other polymorphism scnearios, don't use subtype, i.e, don't use type hierarchy. Pleasse use the following 2-step type class pattern for Scala 2. Scala 3 has better syntax.
 
 ```scala
 // Step 1: use a trait to define a type class
@@ -18,21 +18,15 @@ trait Named[T] {
   def addTitle(a: T, title: String): T
 }
 
-// Step 2: define the the companion object of the type class.
-// It is used to call any method of the type class.
-object Named {
-  def apply[T](implicit instance: Named[T]) = instance
-}
-
-// Step 3: define the type enrichment class.
+// Step 2: define the type enrichment class.
 // The naming convention is to add `Ops` postfix.
 // It extends AnyVal to minimize the overhead
-implicit class NamedOps[T](val t: T) extends AnyVal {
-  def name(implicit named: Named[T])  = named.name(t)
-  def addTitle(title: String)(implicit named: Named[T]) = named.addTitle(t, title)
+implicit class NamedOps[T](val t: T)(implicit named: Named[T]) {
+  def name = named.name(t)
+  def addTitle(title: String) = named.addTitle(t, title)
 }
 
-// To use the type class,define an implicit instance for each concrete type
+// To use the type class,define an implicit instance for each concrete type in its companion object
 case class Cat(name: String, age: Int)
 object Cat {
   implicit val NamedCat = new Named[Cat] {
@@ -41,14 +35,12 @@ object Cat {
   }
 }
 
-// Usage example 1: use the interface pattern when type enrichment class is not defined
 val tom = Cat("Tom", 2)
-println(Named[Cat].name(tom))
 
-// Usage example 2: use with type enrichment
+// Usage example 1: use with type enrichment
 println(tom.name)
 
-// Usage example 3: use context bound [T: Named]
+// Usage example 2: use context bound [T: Named]
 // a type T should have an implicit instance of Named[T]
 def showDear[T: Named](t: T) = t.addTitle("Dear ").name
 println(showDear(tom))
