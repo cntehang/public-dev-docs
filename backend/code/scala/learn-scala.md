@@ -31,11 +31,10 @@
 
 ### Martin Odersky
 
-- [A Scalable Language - FOSDEM 2009 Scala](https://www.youtube.com/watch?v=zqFryHC018k): In this talk the author describes the design principles of the Scala programming language, which has scalability as its primary design objective.
 - [Working Hard to Keep It Simple - OSCON Java 2011](https://www.youtube.com/watch?v=3jg1AheF4n0):
   - Why we need functional programming and actor model
   - Object oriented programming is as important as functional programming
-- [What to Leave Implicit - ScalaDay 2017](https://www.youtube.com/watch?v=Oij5V7LQJsA): use implict correctly.
+- [What to Leave Implicit - ScalaDay 2017](https://www.youtube.com/watch?v=Oij5V7LQJsA): the first half shows the different way and preferred way to use implicit while the second half is about new.
 - [Plain Functional Programming - 2017](https://www.youtube.com/watch?v=YXDm3WHZT5g): with a reference to [Strategic Scala Style: Principle of Least Power](http://www.lihaoyi.com/post/StrategicScalaStylePrincipleofLeastPower.html)
 - [From DOT to Dotty by Martin Odersky - VoxxedDays 2017](https://www.youtube.com/watch?v=iobC5yGRWoo): About the theoretic foundation of Scala, i.e. DOT (with dependent type restricted to path), implicit function type in dotty (scala 3.x).
 - [Video Q&A session with Martin Odersky- ScalaUA 2019](https://www.youtube.com/watch?v=wm2DhYrZVno)
