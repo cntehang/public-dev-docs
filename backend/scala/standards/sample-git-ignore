@@ -1,11 +1,11 @@
 # WebStorm/IntelliJ
 target
-/.idea
-/.idea_modules
-/.classpath
-/.project
-/.settings
-/RUNNING_PID
+.idea
+.idea_modules
+.classpath
+.project
+.settings
+RUNNING_PID
 *.ipr
 *.iml
 
