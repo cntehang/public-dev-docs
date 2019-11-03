@@ -2,9 +2,12 @@
 
 **In general, observe the style of existing code and respect it.**
 
+Use [Scalafmt](https://scalameta.org/scalafmt/) in both IDE and sbt build.
+
 ## Naming
 
 - Use intention-revealing names which don't need explanation.
+
   - use `index` instead of `i`
 
 - Constant names should be in upper camel case.
@@ -28,6 +31,5 @@
 
 ## `case class` v.s. `class`
 
-- TODO
-
+- Prefer `final case class` over `class`.
 - More at: https://books.underscore.io/essential-scala/essential-scala.html#case-classes
