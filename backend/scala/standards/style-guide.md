@@ -32,4 +32,4 @@ Use [Scalafmt](https://scalameta.org/scalafmt/) in both IDE and sbt build.
 ## `case class` v.s. `class`
 
 - Prefer `final case class` over `class`.
-- More at: https://books.underscore.io/essential-scala/essential-scala.html#case-classes
+- More at: [Essential Scala case class](https://books.underscore.io/essential-scala/essential-scala.html#case-classes)
