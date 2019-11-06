@@ -3,7 +3,9 @@
 ## Basic Tips
 
 - [Interpret Code Block and Curly Braces](https://www.geekabyte.io/2018/03/an-alternative-way-to-interpret-usage.html)
-- [sbt - A task engine](https://jazzy.id.au/2015/03/03/sbt-task-engine.html)
+- An sbt Tutorial
+  - [sbt - A task engine](https://jazzy.id.au/2015/03/03/sbt-task-engine.html)
+  - [sbt - A declarative DSL](https://jazzy.id.au/2015/03/04/sbt-declarative-dsl.html)
 - [Essential Scala: Six Core Principles for Learning Scala](https://www.youtube.com/watch?v=J8wUy1XxL5o)
   - It is essential to program like keyboard cat!
   - discuss six fundamental concepts that underly effective Scala; How can programmers quickly and effectively learn to write idiomatic Scala?
