@@ -314,5 +314,4 @@ spring:
 - new BigDecimal("0.00").equals(BigDecimal.ZERO) 为 false
 
 应该使用 compareTo 来比较两个 BigDecimal 的数值大小。
-            return xs == s;失信
-            return xs == s;
+
