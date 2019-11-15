@@ -315,3 +315,22 @@ spring:
 
 应该使用 compareTo 来比较两个 BigDecimal 的数值大小。
 
+## 18 使用 POI 导入 EXCEL 时谨慎处理列数据边界
+
+根据 POI 文档所述，遍历 Excel 文件一行所有列的推荐做法为：
+
+```text
+ short minColIx = row.getFirstCellNum();
+ short maxColIx = row.getLastCellNum();
+ for(short colIx=minColIx; colIx<maxColIx; colIx++) {
+   Cell cell = row.getCell(colIx);
+   if(cell == null) {
+     continue;
+   }
+   //... do something with cell
+ }
+```
+
+需要注意的点为：
+
+- row.getLastCellNum: Gets the index of the last cell contained in this row **PLUS ONE**
