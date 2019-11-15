@@ -283,3 +283,36 @@ spring:
 - 项目中设置 Controller 基类，所有 Controller 类继承基类即可获得该注解
 - 该注解会以 AOP 的方式对 Controller 中的所有方法进行增强，利用了 `MethodValidationInterceptor` 对方法入参/出参校验时调用 `org.hibernate.validator.internal.engine.ValidatorImpl` 的 `validateParameters` 方法的逻辑
 - 主要是为了弥补第一种方法无法对 URL 中携带的 query 参数和 RequestBody 中携带的 List<T> 对象进行校验的缺陷
+
+## 17 慎用 BigDecimal 的 equals 方法
+
+```text
+    @Override
+    public boolean equals(Object x) {
+        if (!(x instanceof BigDecimal))
+            return false;
+        BigDecimal xDec = (BigDecimal) x;
+        if (x == this)
+            return true;
+        if (scale != xDec.scale)
+            return false;
+        long s = this.intCompact;
+        long xs = xDec.intCompact;
+        if (s != INFLATED) {
+            if (xs == INFLATED)
+                xs = compactValFor(xDec.intVal);
+            return xs == s;
+        } else if (xs != INFLATED)
+            return xs == compactValFor(this.intVal);
+
+        return this.inflated().equals(xDec.inflated());
+    }
+```
+
+其实现如上，equals 并不适合用于比较两个 BigDecimal 数值相等，例子：
+
+- new BigDecimal("0.00").equals(BigDecimal.ZERO) 为 false
+
+应该使用 compareTo 来比较两个 BigDecimal 的数值大小。
+            return xs == s;失信
+            return xs == s;
