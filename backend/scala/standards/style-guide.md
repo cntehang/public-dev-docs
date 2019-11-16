@@ -29,7 +29,23 @@ Use [Scalafmt](https://scalameta.org/scalafmt/) in both IDE and sbt build.
   only `override` for method with default method,
   do not use `override` for abstract method of the trait.
 
-## `case class` v.s. `class`
+## Prefer `final case class` over `class`
 
-- Prefer `final case class` over `class`.
-- More at: [Essential Scala case class](https://books.underscore.io/essential-scala/essential-scala.html#case-classes)
+## Type Annotation
+
+- Explicitly type-annoted public members
+
+## Error Representation
+
+- `Option` for potential absence of a value
+- `Either` for potential failing computatoin
+- `Try` to deal with code that throw
+
+## Tools
+
+- scapegoat
+- wartremover
+- scala linter
+- scalastyle
+- scalafix
+- [Recommended Scalac flags](https://tpolecat.github.io/2017/04/25/scalac-flags.html)
