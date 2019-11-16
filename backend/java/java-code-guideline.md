@@ -335,3 +335,7 @@ spring:
 
 - row.getLastCellNum: Gets the index of the last cell contained in this row **PLUS ONE**
 - 与之对应的sheet.getLastRowNum 则需要加一
+
+## 19 使用 POI 导入 EXCEL 如果没有充分的理由，不要使用迭代器遍历sheet, row等
+
+如果使用`iterator()`来遍历excel中的数据，当遇到空的时候会直接跳过，导致数据错位。
