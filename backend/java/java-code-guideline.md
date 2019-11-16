@@ -322,7 +322,7 @@ spring:
 ```text
  short minColIx = row.getFirstCellNum();
  short maxColIx = row.getLastCellNum();
- for(short colIx=minColIx; colIx<maxColIx; colIx++) {
+ for(short colIx = minColIx; colIx < maxColIx; colIx++) {// row.getLastCellNum()内部已经进行了加一处理，所以不要加一 
    Cell cell = row.getCell(colIx);
    if(cell == null) {
      continue;
@@ -334,3 +334,4 @@ spring:
 需要注意的点为：
 
 - row.getLastCellNum: Gets the index of the last cell contained in this row **PLUS ONE**
+- 与之对应的sheet.getLastRowNum 则需要加一
