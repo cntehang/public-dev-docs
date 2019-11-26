@@ -30,7 +30,7 @@ public void asyncMethod() {
 
 由于Async方法在新的异步线程中执行，JPA的OpenSessionInView无效，导致执行上下文中并不存在对应的EnitityManager，这会产生一系列问题，典型场景就是导致lazyLoading无效。
 
-为解决此问题，我们编写了**OpenJpaSession**注解，在需要访问数据库的@Async方法中加此注解，即可实现与OpenSessionInView类似的效果。
+为解决此问题，我们编写了**OpenJpaSession**注解，在需要访问数据库的@Async方法中加此注解，即可实现与OpenSessionInView类似的效果。但是，方法的入参不能传数据库实体，即不要将数据库实体从一个session传到另一个session，这样是无法获取到该实体的上下文的，这种场景应该传id，重新查出数据库实体。
 
 示例代码：
 
