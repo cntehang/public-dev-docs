@@ -26,7 +26,7 @@ List<FlightOrder> orders = orders.stream()
 
 ### 3. stream 要适当地换行，不要写在一行中
 
-### 4. 不要在 stream 中访问数据库；
+### 4. 不要在 stream 中访问数据库
 
 原因： 在循环中访问数据库往往导致性能问题。
 
@@ -59,3 +59,5 @@ private void setTicketSuccess(FlightOrder order) {
   //...
 }
 ```
+
+其本质是，函数式编程不要有副作用。
