@@ -1,20 +1,20 @@
-# java异步编程规范
+# java 异步编程规范
 
-## Async使用规范
+## Async 使用规范
 
-在java中推荐的异步编程方式是使用Spring的Async注解，该方式的优点是简单易用，当方法标注了Async注解以后，将在异步线程中执行该方法，但有以下限制：
+在 java 中推荐的异步编程方式是使用 Spring 的 Async 注解，该方式的优点是简单易用，当方法标注了 Async 注解以后，将在异步线程中执行该方法，但有以下限制：
 
-- Async方法必须是类的第一个被调用的方法；
+- Async 方法必须是类的第一个被调用的方法；ß
 
-- Async必须是实例方法，且该方法的对象必须是Spring注入的。
+- Async 必须是实例方法，且该方法的对象必须是 Spring 注入的。
 
 使用时除以上限制需要注意之外，我们还需要解决一些其他问题，如下：
 
 ### 1. 日志记录
 
-由于Sync方法并非通过Controller进入，绕开了我们的通用异常拦截层，即CommonExceptionHandler，所以对于异步方法发生的异常没有进行日志记录。
+由于 Sync 方法并非通过 Controller 进入，绕开了我们的通用异常拦截层，即 CommonExceptionHandler，所以对于异步方法发生的异常没有进行日志记录。
 
-为解决此问题，我们编写了**AsyncExceptionLogger**注解，在所有@Async方法加上此注解，即可保证异常得到记录。
+为解决此问题，我们编写了**AsyncExceptionLogger**注解，在所有@Async 方法加上此注解，即可保证异常得到记录。
 
 例如：
 
@@ -26,13 +26,13 @@ public void asyncMethod() {
 }
 ```
 
-### 2. 与JPA整合
+### 2. 与 JPA 整合
 
-由于Async方法在新的异步线程中执行，JPA的OpenSessionInView无效，导致执行上下文中并不存在对应的EnitityManager，这会产生一系列问题，典型场景就是导致lazyLoading无效。
+由于 Async 方法在新的异步线程中执行，JPA 的 OpenSessionInView 无效，导致执行上下文中并不存在对应的 EnitityManager，这会产生一系列问题，典型场景就是导致 lazyLoading 无效。
 
-为解决此问题，我们编写了**OpenJpaSession**注解，在需要访问数据库的@Async方法中加此注解，即可实现与OpenSessionInView类似的效果。但是，方法的入参不能传数据库实体，即不要将数据库实体从一个session传到另一个session，这样是无法获取到该实体的上下文的，这种场景应该传id，重新查出数据库实体。
+为解决此问题，我们编写了**OpenJpaSession**注解，在需要访问数据库的@Async 方法中加此注解，即可实现与 OpenSessionInView 类似的效果。但是，方法的入参不能传数据库实体，即不要将数据库实体从一个 session 传到另一个 session，这样是无法获取到该实体的上下文的，这种场景应该传 id，重新查出数据库实体。
 
-- 示例代码1：
+- 示例代码 1：
 
 ```java
 @Async
@@ -43,7 +43,7 @@ public void asyncMethod() {
 }
 ```
 
-- 示例代码2：
+- 示例代码 2：
 
 ```java
 @Async
@@ -57,7 +57,7 @@ public void asyncMethod(long flightOrderId) {// 禁止直接传FlightOrder数据
 
 ### 3. 使用事务
 
-我们当前使用事务的方式是使用@Transactional注解，但由于@Transational只能用在对象被调用的的第一个公有方法上，使用起来多有不便（为了事务而创建一个类实在不能接受），而且在很多情况下，我们都需要更加灵活地进行事务范围的控制。
+我们当前使用事务的方式是使用@Transactional 注解，但由于@Transational 只能用在对象被调用的的第一个公有方法上，使用起来多有不便（为了事务而创建一个类实在不能接受），而且在很多情况下，我们都需要更加灵活地进行事务范围的控制。
 
 为此，我们编写了一个辅助类**TransactionHelper**，使用方式如下：
 
@@ -87,7 +87,7 @@ private Long doCreateTicketConfirmTaskIfRequired(long orderId) {
 }
 ```
 
-我们只需要将事务中的代码以lamda调用的方式包裹在一个withTransaction调用中即可。
+我们只需要将事务中的代码以 lamda 调用的方式包裹在一个 withTransaction 调用中即可。
 
 ### 4. 线程同步
 
@@ -140,7 +140,7 @@ public void ticketConfirm(FlightOrder order, FlightTask ticketConfirmTask) {
 @OpenJpaSession
 @AsyncExceptionLogger
 private void sendNotifyAsync(long orderId, long ticketId, AsyncEvent asyncEvent) {
-  
+
   //等待主线程执行成功再开始
   if (asyncEvent.await() && asyncEvent.isSuccessful()) {
     //发送短信通知
@@ -149,9 +149,9 @@ private void sendNotifyAsync(long orderId, long ticketId, AsyncEvent asyncEvent)
 }
 ```
 
-为实现线程间的同步，我们设计了一个AsyncEvent类，该类内部包含一个CountDownLatch对象，初值为1。异步线程等待这个CountDownLatch对象，当主线程事务完成以后，调用CountDownLatch的countDown()方法，从而触发异步线程的执行。
+为实现线程间的同步，我们设计了一个 AsyncEvent 类，该类内部包含一个 CountDownLatch 对象，初值为 1。异步线程等待这个 CountDownLatch 对象，当主线程事务完成以后，调用 CountDownLatch 的 countDown()方法，从而触发异步线程的执行。
 
-AsyncEvent的代码如下（只列出了主要实现细节）：
+AsyncEvent 的代码如下（只列出了主要实现细节）：
 
 ```java
 public class AsyncEvent {

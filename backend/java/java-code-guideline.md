@@ -322,7 +322,7 @@ spring:
 ```text
  short minColIx = row.getFirstCellNum();
  short maxColIx = row.getLastCellNum();
- for(short colIx = minColIx; colIx < maxColIx; colIx++) {// row.getLastCellNum()内部已经进行了加一处理，所以不要加一 
+ for(short colIx = minColIx; colIx < maxColIx; colIx++) {// row.getLastCellNum()内部已经进行了加一处理，所以不要加一
    Cell cell = row.getCell(colIx);
    if(cell == null) {
      continue;
@@ -334,8 +334,8 @@ spring:
 需要注意的点为：
 
 - row.getLastCellNum: Gets the index of the last cell contained in this row **PLUS ONE**
-- 与之对应的sheet.getLastRowNum 则需要加一
+- 与之对应的 sheet.getLastRowNum 则需要加一
 
-## 19 使用 POI 导入 EXCEL 如果没有充分的理由，不要使用迭代器遍历sheet, row等
+## 19 使用 POI 导入 EXCEL 如果没有充分的理由，不要使用迭代器遍历 sheet, row 等
 
-如果使用`iterator()`来遍历excel中的数据，当遇到空的时候会直接跳过，导致数据错位。
+如果使用`iterator()`来遍历 excel 中的数据，当遇到空的时候会直接跳过，导致数据错位。
