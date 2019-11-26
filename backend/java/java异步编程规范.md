@@ -32,13 +32,25 @@ public void asyncMethod() {
 
 为解决此问题，我们编写了**OpenJpaSession**注解，在需要访问数据库的@Async方法中加此注解，即可实现与OpenSessionInView类似的效果。但是，方法的入参不能传数据库实体，即不要将数据库实体从一个session传到另一个session，这样是无法获取到该实体的上下文的，这种场景应该传id，重新查出数据库实体。
 
-示例代码：
+- 示例代码1：
 
 ```java
 @Async
 @OpenJpaSession
 @AsyncExceptionLogger
 public void asyncMethod() {
+  //...
+}
+```
+
+- 示例代码2：
+
+```java
+@Async
+@OpenJpaSession
+@AsyncExceptionLogger
+public void asyncMethod(long flightOrderId) {// 禁止直接传FlightOrder数据库实体
+  FlightOrder order = flightOrderRepo.findByIdEnsured(flightOrderId);
   //...
 }
 ```
