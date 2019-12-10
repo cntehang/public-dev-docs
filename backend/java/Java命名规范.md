@@ -68,9 +68,15 @@ public static final String ORDER_STATUS = "TicketConfirmed";
 
 - 一般不允许使用缩写，除非该缩写是大家公认的，没有异议的，比如 id，dto 等
 - 引入新的缩写词，需经团队成员共同确认，并列在下表中
+
   - id: 实体类的主键字段
   - dto: 数据传输对象
   - bo: 业务层使用的数据传输对象
   - repo：数据访问层使用的 JPA 的 Repository 类型的变量，以 xxxRepo 命名
   - utils: 辅助性质的工具类，以 xxxUtils 命名
   - spec: 单元测试的类名, 以 xxxSpec 命名，其中 xxx 表示待测试的原始类名
+
+- 在变量、类命名时，统一采用一下缩写方式：
+  - Repository --> Repository
+  - DomainService --> Service
+  - ApplicationService --> Application
