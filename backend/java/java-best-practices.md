@@ -4,7 +4,7 @@
 
 对于外部资源（文件、数据库连接、网络连接等），必须要在使用完毕后手动关闭它们，否则就会导致外部资源泄露。
 
-Java 7 之前关闭资源的代码很丑陋，应该尽量使用 Java 7 和 Java 9 带来的新语法。当有多个资源时，各个资源用`;`分开，放在 try 后面的括号里面。但是，不是所有资源都能这么写，一定要实现了AutoCloseable接口才行。
+Java 7 之前关闭资源的代码很丑陋，应该尽量使用 Java 7 和 Java 9 带来的新语法。当有多个资源时，各个资源用`;`分开，放在 try 后面的括号里面。但是，不是所有资源都能这么写，一定要实现了 AutoCloseable 接口才行。
 
 ```java
 // use the folloiwng in Java 7 and Java 8
@@ -74,11 +74,12 @@ public static DateTime getCstNow() {
 
 对于外部（数据库、接口等）返回的数据，一定要做严格的非空校验，来避免 NPE。
 
-## object内部对属性赋值
+## object 内部对属性赋值
 
-在object内部对属性赋值，使用以下顺序的语法
+在 object 内部对属性赋值，使用以下顺序的语法
 
 使用当前对象：
+
 ```java
 xxx = XXX
 this.xxx = XXX
@@ -87,6 +88,7 @@ this.setXXX(XXX)
 ```
 
 本对象内新建的对象：
+
 ```java
 object.xxx = XXX
 object.setXXX(XXX)

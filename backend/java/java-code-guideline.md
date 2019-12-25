@@ -140,10 +140,11 @@ HTTP/1.1 200
 
 针对`io.springfox:springfox-swagger2`的使用，我们要注意：
 
-1. @ApiModel 注解 value 属性值不能写中文，会导致 swagger 导出 json 时会报错。建议直接不写参数。
-2. 任何 swagger 注解的属性值都不要有单引号，json 不认识单引号，swagger 导出 json 会报错。比如@ApiModelProperty 注解 example 属性值我们有时候希望给复杂类型（比如"['111','222']"）。遇到这种情况，我们不写 example。
+### @ApiModel 注解 value 属性值不能写中文，会导致 swagger 导出 json 时会报错。建议直接不写参数。
 
-## 10. 对同一服务下的接口文档进行分类
+### 任何 swagger 注解的属性值都不要有单引号，json 不认识单引号，swagger 导出 json 会报错。比如@ApiModelProperty 注解 example 属性值我们有时候希望给复杂类型（比如"['111','222']"）。遇到这种情况，我们不写 example。
+
+### 对同一服务下的接口文档进行分类
 
 如 [swagger-usage-guideline](https://github.com/cntehang/public-dev-docs/blob/master/backend/swagger-usage-guideline.md) 中说明的那样，我们使用 swagger 用来作为前后端交流接口约定的工具。
 
@@ -169,12 +170,12 @@ HTTP/1.1 200
   }
 ```
 
-## 11. 更多地使用官方工具包中定义好的 API，以一种更易读的方式对空、null 进行判断
+## 10. 更多地使用官方工具包中定义好的 API，以一种更易读的方式对空、null 进行判断
 
 - 判断集合是否非空使用 org.apache.commons.collections4.CollectionUtils.isNotEmpty
 - 判断字符串非空使用 org.apache.commons.lang3.StringUtils.isNotEmpty，若还需非空格则使用 org.apache.commons.lang3.StringUtils.isNotBlank
 
-## 12. 日志记录应当涵盖所有代码分支
+## 11. 日志记录应当涵盖所有代码分支
 
 日志记录是为追踪业务流程，排查系统 BUG 服务的，所以日志记录应该涵盖代码执行的所有分支。如：
 
@@ -182,7 +183,7 @@ HTTP/1.1 200
 - if-else 语句的 if 代码块和 else 代码块
 - throw exception 代码前
 
-## 13. 所有集成测试用例使用统一的外部服务模拟器
+## 12. 所有集成测试用例使用统一的外部服务模拟器
 
 集成测试中需要对当前服务调用到的外部服务进行模拟（使用 WireMock 等工具），如下代码定义了一个运行在 10098 端口的模拟服务器：
 
@@ -196,7 +197,7 @@ HTTP/1.1 200
 
 如果为每个 IntegrationTest 类创建一个模拟服务器，一方面会降低集成测试运行的效率（考虑模拟服务器开闭消耗的时间），另一方面会给包含异步方法调用的集成测试带来访问不到目标地址的风险（进行访问拦截的模拟服务器此时可能已经关闭）。故推荐为所有的集成测试启动一个唯一的外部服务模拟器，统一加载需要拦截的 URL，在所有集成测试运行之始，在所有集成测试运行结束后关闭。
 
-## 14. 统一服务的错误处理
+## 13. 统一服务的错误处理
 
 这里的统一是指形式上的统一，如同本文第三点中所述 API 返回体数据结构定义的那样，错误信息也应该在这样的数据结构中返回。
 要想做到这一点，我们需要一个统一的异常拦截器对程序中抛出的异常进行包装，以兼容定义好的数据结构。要想实现这一点，可使用自定义 ExceptionResolver（Spring 3.2 以下），或者使用 ControllerAdvice（Spring 3.2 及以上）。一个可能的最佳异常处理器形式如下：
@@ -238,7 +239,7 @@ public class BestExceptionHandler {
 
 目前我们项目中混用了 ExceptionResolver 和 ControllerAdvice，实际上选用一种即可。
 
-## 15. Spring Boot 配置
+## 14. Spring Boot 配置
 
 针对 Spring Boot 一些容易重复安放的配置项，规定如下：
 
@@ -268,7 +269,7 @@ spring:
 - 远程配置 git 仓库中的 app name 相关属性可以去掉，最后以项目内部 bootstrap.yml 配置文件中的为准
 - 为了让集成测试不读取真实的 application.yml 及 bootstrap.yml，需要在集成测试 resources 目录下配置好 application.yml （内含集成测试使用的内存数据库等配置）并新建一个空的 bootstrap.yml 文件
 
-## 16 Spring Boot Controller 参数校验
+## 15 Spring Boot Controller 参数校验
 
 对于需要进行参数校验的场景，做如下约定：
 
@@ -284,7 +285,7 @@ spring:
 - 该注解会以 AOP 的方式对 Controller 中的所有方法进行增强，利用了 `MethodValidationInterceptor` 对方法入参/出参校验时调用 `org.hibernate.validator.internal.engine.ValidatorImpl` 的 `validateParameters` 方法的逻辑
 - 主要是为了弥补第一种方法无法对 URL 中携带的 query 参数和 RequestBody 中携带的 List<T> 对象进行校验的缺陷
 
-## 17 慎用 BigDecimal 的 equals 方法
+## 16 不要用 BigDecimal 的 equals 方法
 
 ```text
     @Override
@@ -315,14 +316,16 @@ spring:
 
 应该使用 compareTo 来比较两个 BigDecimal 的数值大小。
 
-## 18 使用 POI 导入 EXCEL 时谨慎处理列数据边界
+## 17 使用 POI 导入 EXCEL
+
+### 谨慎处理列数据边界
 
 根据 POI 文档所述，遍历 Excel 文件一行所有列的推荐做法为：
 
 ```text
  short minColIx = row.getFirstCellNum();
  short maxColIx = row.getLastCellNum();
- for(short colIx=minColIx; colIx<maxColIx; colIx++) {
+ for(short colIx = minColIx; colIx < maxColIx; colIx++) {// row.getLastCellNum()内部已经进行了加一处理，所以不要加一
    Cell cell = row.getCell(colIx);
    if(cell == null) {
      continue;
@@ -334,3 +337,8 @@ spring:
 需要注意的点为：
 
 - row.getLastCellNum: Gets the index of the last cell contained in this row **PLUS ONE**
+- 与之对应的 sheet.getLastRowNum 则需要加一
+
+### 如果没有充分的理由，不要使用迭代器遍历 sheet, row 等
+
+如果使用`iterator()`来遍历 excel 中的数据，当遇到空的时候会直接跳过，导致数据错位。

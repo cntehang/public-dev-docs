@@ -1,4 +1,4 @@
-# Java命名规范
+# Java 命名规范
 
 ## 0. 原则
 
@@ -17,17 +17,17 @@
 
 ## 3. 类名和接口名
 
-- 类名遵守Pascal命名法（即首字母大写，多个单词组成时，每个单词的首字母大写)。如:
+- 类名遵守 Pascal 命名法（即首字母大写，多个单词组成时，每个单词的首字母大写)。如:
 
 ```java
  public class FlightOrder {}
- ```
+```
 
 - 接口的命名和类保持一致
 
 ## 4. 方法名
 
-- 方法名遵守camel命名法(即首字母小写，多个单词组成时，从第二个单词开始，每个单词的首字母大写。
+- 方法名遵守 camel 命名法(即首字母小写，多个单词组成时，从第二个单词开始，每个单词的首字母大写。
 - 方法名应为动词或动词词组，如：
 
 ```java
@@ -38,16 +38,16 @@ public void cancelOrder()
 
 ### 5.1 普通变量名
 
-- 采用camel命名法，一般为名词形式，如:
+- 采用 camel 命名法，一般为名词形式，如:
 
 ```java
 FlightOrder order = null;
 ```
 
-- 禁止使用i, j等单字母变量，应使用更有意义的名字；
+- 禁止使用 i, j 等单字母变量，应使用更有意义的名字；
 - 代码中一般不允许直接写入数字（magic number)和字符串，应定义成更有意义的常量名称后使用；
 
-  - **例外**：对于0和1, 在某些情况下，直接写入数字可能更易于理解，如下：
+  - **例外**：对于 0 和 1, 在某些情况下，直接写入数字可能更易于理解，如下：
 
   ```java
   /**
@@ -64,13 +64,19 @@ FlightOrder order = null;
 public static final String ORDER_STATUS = "TicketConfirmed";
 ```
 
-## 6.  关于缩写
+## 6. 关于缩写
 
-- 一般不允许使用缩写，除非该缩写是大家公认的，没有异议的，比如 id，dto等
+- 一般不允许使用缩写，除非该缩写是大家公认的，没有异议的，比如 id，dto 等
 - 引入新的缩写词，需经团队成员共同确认，并列在下表中
+
   - id: 实体类的主键字段
   - dto: 数据传输对象
   - bo: 业务层使用的数据传输对象
-  - repo：数据访问层使用的JPA的Repository类型的变量，以xxxRepo命名
-  - utils: 辅助性质的工具类，以xxxUtils命名
-  - spec: 单元测试的类名, 以xxxSpec命名，其中xxx表示待测试的原始类名
+  - repo：数据访问层使用的 JPA 的 Repository 类型的变量，以 xxxRepo 命名
+  - utils: 辅助性质的工具类，以 xxxUtils 命名
+  - spec: 单元测试的类名, 以 xxxSpec 命名，其中 xxx 表示待测试的原始类名
+
+- 在变量、类命名时，统一采用一下缩写方式：
+  - Repository --> Repository
+  - DomainService --> Service
+  - ApplicationService --> Application
