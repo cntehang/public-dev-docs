@@ -179,7 +179,7 @@ HTTP/1.1 200
 
 日志记录是为追踪业务流程，排查系统 BUG 服务的，所以日志记录应该涵盖代码执行的所有分支。如：
 
-- while 语句代码快
+- while 语句代码块
 - if-else 语句的 if 代码块和 else 代码块
 - throw exception 代码前
 
