@@ -380,8 +380,8 @@ this.service
     }
   }
   ```
-  
-- `pipe` 只使用纯(pure)管道，非纯管道使用 `observable$ | async` 组合替代
+
+- `pipe` 管道只自定义纯(pure)管道，需要定义非纯管道的场景使用 `observable$ | async` 组合替代。`async` 是非纯管道
 - 对于后端返回的时间格式，不要滥用 date pipe 来对时间进行格式转换，只有在标准[ISO 8601]格式下才能使用 date pipe, 如果是其他格式的字符串（例如： yyyy-MM-dd HH:mm）, 直接使用 date pipe 的话在 IE 和 Safari 上会存在兼容性问题。
 
 - 所有提交后台的按钮操作都应该做好放重复点击，针对不同的场景，应该有以下三种解决方式：
