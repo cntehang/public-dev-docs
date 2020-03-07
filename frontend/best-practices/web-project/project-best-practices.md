@@ -18,7 +18,7 @@
 
 路由复用配置流程：
 
-- 声明复用。在 `data` 中配置 `reuse`，同时要注意 `detail` 的 `path: 'xxx-yy/detail'`，包含了上一级页面的 `path`
+- 声明复用。在 `data` 中配置 `reuse`，同时要注意 `detail` 的 `path: 'xxx-yy/detail/:id'`，包含了上一级页面的 `path: 'xxx-yy'`
 
 ```ts
  {
@@ -35,7 +35,7 @@
 
 - 组件实现接口 `RouteReuseHooks`， `export class XxxYyComponent implements RouteReuseHooks`
   - `_onReuseInit(): void;` 页面复用的时候触发。通常要刷新一次当前列表，保证数据的实时性质
-  - `_onReuseDestroy?(): void;` 页面销毁的时候触发。可能要取消掉一些订阅，
+  - `_onReuseDestroy?(): void;` 页面销毁的时候触发。可能要取消掉一些订阅，取消的订阅记得在 `_onReuseInit` 中恢复
 
 > 这里的接口应该按 `OnInit`，`OnDestroy` 一样分开来更好
 
