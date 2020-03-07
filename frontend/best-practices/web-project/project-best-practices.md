@@ -1,5 +1,44 @@
 # Front Project
 
+## 路由配置
+
+### 自定义配置
+
+在路由配置中，使用 `RoutesData` 代替 `Routes`，`RoutesData` 扩展了一些我们自定义的一些配置，使配置有更好的代码提示和类型检查
+
+### Path
+
+- `path` 要保证唯一。例：详情页不要配置为 `page/:id`，应该配置为 `page/detail/:id`
+
+### 路由复用
+
+为了更好的**用户体验**，以下场景需要考虑路由复用
+
+- 列表页进入某个详情页
+
+路由复用配置流程：
+
+- 声明复用。在 `data` 中配置 `reuse`，同时要注意 `detail` 的 `path: 'xxx-yy/detail'`，包含了上一级页面的 `path`
+
+```ts
+ {
+    path: 'xxx-yy',
+    component: XxxYyComponent,
+    data: {
+      reuse: true, // 声明复用
+    },
+  },
+    path: 'xxx-yy/detail/:id',
+    component: XxxYyDetailComponent,
+  },
+```
+
+- 组件实现接口 `RouteReuseHooks`， `export class XxxYyComponent implements RouteReuseHooks`
+  - `_onReuseInit(): void;` 页面复用的时候触发。通常要刷新一次当前列表，保证数据的实时性质
+  - `_onReuseDestroy?(): void;` 页面销毁的时候触发。可能要取消掉一些订阅，
+
+> 这里的接口应该按 `OnInit`，`OnDestroy` 一样分开来更好
+
 ## 简单查询列表展示页
 
 可以使用统一模板：[simple-query-page](./simple-query-page.md)
