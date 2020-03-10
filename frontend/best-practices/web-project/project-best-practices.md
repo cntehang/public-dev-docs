@@ -10,6 +10,18 @@
 
 - `path` 要保证唯一。例：详情页不要配置为 `page/:id`，应该配置为 `page/detail/:id`
 
+### 复用的组件
+
+- 复用的 `component` 通过 `data` 传入的静态数据来标识入口，**不要通过从 url** 取参数来处理，如：
+
+```ts
+{
+  path: `biz/:id/xxx-yy`,
+  component: XxxYyComponent,
+  data: { biz: Biz[type] }
+}
+```
+
 ### 路由复用
 
 为了更好的**用户体验**，以下场景需要考虑路由复用
