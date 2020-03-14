@@ -50,7 +50,7 @@ It is not recommended that a module provides services and declares declarables. 
   - 文件相对路径以及文件名：`./flight/flight.module.ts`
   - `Module` 名： `FlightModule`
 - 在基础数据模块中同样有一个国内机票模块，命名也和订单处理一致。
-- 在订单处理模块和基础数据模块的 `RoutingModule` 中使用懒加载：
+- 在订单处理模块和基础数据模块的 `RoutingModule` 中使用懒加载：
 
 ```ts
   {
@@ -68,10 +68,10 @@ ERROR in Duplicated path in loadChildren detected: "./domestic-flight/domestic-f
 通过错误提示，我们可以得知问题的原因是由于 `Webpack` 无法正确的区分它们。  
 那么解决办法有两个：
 
-- 在 `RoutingModule` 中的 `loadChildren` 添加一个父级路径，例如：
+- 在 `RoutingModule` 中的 `loadChildren` 添加一个父级路径，例如：
 
 ```ts
-  // 基础数据模块的 `RoutingModule`
+  // 基础数据模块的 `RoutingModule`
   {
     path: 'flight',
     loadChildren: '../basic-resource/flight/flight.module#FlightModule',
