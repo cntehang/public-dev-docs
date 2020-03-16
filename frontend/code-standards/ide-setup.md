@@ -8,7 +8,7 @@ README： 请参考通用的项目 [README.md 模版](../sample-project-readme.m
 
 ## IDE 配置
 
-前端 Javascript 和 TypeScript 的项目统一采用 VS Code 做为 IDE。按转 VS Code 后，根据不同具体项目安装常用的 Extensions.
+前端 Javascript 和 TypeScript 的项目统一采用 VS Code 做为 IDE。安装 VS Code 后，根据不同项目安装常用的 Extensions.
 
 ### User Settings
 
