@@ -84,3 +84,4 @@
   1. SVG 资源文件放到相应的目录：`assets/${namespace}`；
   2. 使用`<i nz-icon nzType="${namespace}:${fileName}"></i>`
   3. 例：`<i nz-icon nzType="icons:on-business"></i>`。 `namespace` 为 `icons`，`on-business` 表示`assets` 目录下的 `on-business.svg`文件
+  4. 尺寸参照设计稿，设置 `font-size`
