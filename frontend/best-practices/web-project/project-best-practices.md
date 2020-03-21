@@ -1,5 +1,7 @@
 # Front Project
 
+## module
+
 ## 路由配置
 
 ### 自定义配置
@@ -74,3 +76,11 @@
 - 日期显示格式、提交格式，务必依据接口具体情况具体处理，不需要格式化的地方不要进行格式化
 - `dateFns` 在处理字符串格式日期时会做夏令时兼容，这点会将'1991-04-14'格式化成'1991-04-13'，如果依赖它处理 `Date` 要特别注意
 - 获取 UTC 日期：`DateUtils.startOfDay(createDateTimeStart)`，创建时间、预订时间可能需要用到
+
+### icon
+
+- 第三方提供的图标 [zorro-icon](https://ng.ant.design/version/7.5.x/components/icon/zh)
+- 自定义图标，采用 zorro 提供的**命名空间-动态引入**。
+  1. SVG 资源文件放到相应的目录：`assets/${namespace}`；
+  2. 使用`<i nz-icon nzType="${namespace}:${fileName}"></i>`
+  3. 例：`<i nz-icon nzType="icons:on-business"></i>`。 `namespace` 为 `icons`，`on-business` 表示`assets` 目录下的 `on-business.svg`文件
