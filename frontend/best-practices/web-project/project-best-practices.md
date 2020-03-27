@@ -85,3 +85,7 @@
   2. 使用`<i nz-icon nzType="${namespace}:${fileName}"></i>`
   3. 例：`<i nz-icon nzType="icons:on-business"></i>`。 `namespace` 为 `icons`，`on-business` 表示`assets` 目录下的 `on-business.svg`文件
   4. 尺寸参照设计稿，设置 `font-size`
+
+### 按钮防止多次点击
+
+对严格要求防重复点击的按钮，在处理点击事件的函数内部，loading操作应该放在最开始的部分，保证不经过有异步操作以后才loading
