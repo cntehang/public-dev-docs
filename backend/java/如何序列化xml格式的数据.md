@@ -3,7 +3,7 @@
 统一采用这种方式来进行 API 的序列化和反序列化
 gradle 依赖：`compile('com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.8')`
 
-## dto 样例：
+## dto 样例
 
 ```java
 @Data
