@@ -343,6 +343,74 @@ this.service
     }
   }
   ```
+  
+## Modal的处理
+
+在前后台项目里面，存在很多业务特定的模态框，为了代码维护，为了代码可维护性我们通常会将带有模态框的部分抽成组件。在充分考虑父组件的易用性和子组件的封闭性等因素，对于这个组件的显示和隐藏应该这样处理：
+
+> 以下基于带有创建和编辑功能的模态框而言
+
+1. 在子组件内部封装打开逻辑，比如：`editEmplyeeInfo`
+2. 在父组件的模板里面引用这个带有模态框的组件，并且给它设置模板引用`#modal`
+3. 通过如下两种方式来打开模态框：
+  - 在父组件的模板里面直接通过`modal.editEmployeeInfo()`来打开子组件
+  - 在父组件的`Component`里面通过`ViewChild('modal')`来调用`editEmployeeInfo`
+4. 如果父组件需要知道子组件里面发生了某些变化，则可以让打开模态框的方法返回一个`observable`，然后在父组件里面直接订阅它。（例如子组件创建或者编辑完之后父组件需要刷新数据）
+
+```ts
+// parent component
+@Component({
+  template: `
+    <h4>Parent component</h4>
+    <child-comp #modal></child-comp>
+    <button (click)="startEdit()"></button>
+  `
+})
+class ParentComp {
+  @ViewChild('modal')
+  editModal: ChildComp
+  
+  startEdit() {
+    this.childComp.editEmployeeInfo().subscribe(() => {
+      // refresh data after updated or created
+      this.query()    
+    })
+  }
+  
+  private query() {
+  
+  }
+}
+
+// child component with modal inside
+@Component({
+  selector: 'child-comp',
+  template: `
+    <h4>Child Component</h4>
+    <nz-modal [(visible)]="" (nzOnOk)="save()"></nz-modal>
+  `
+})
+class ChildComponent {
+  isVisible: boolean = false
+  private save$ = new Subject()
+  
+  
+  editEmployeeInfo(): Observable<> {
+    this.isVisible = true
+    return this.save$.asObservable()
+  }
+  
+  save(): void {
+    this.save$.emit()
+    this.hideModal()
+  }
+  
+  private hideModal(): void {
+    this.isVisible = false
+  }
+}
+```
+
 
 ## Components 风格指南
 
