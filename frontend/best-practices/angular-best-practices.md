@@ -348,7 +348,7 @@ this.service
 
 在前后台项目里面，存在很多业务特定的模态框，为了代码维护，为了代码可维护性我们通常会将带有模态框的部分抽成组件。在充分考虑父组件的易用性和子组件的封闭性等因素，对于这个组件的显示和隐藏应该这样处理：
 
-> 以下基于带有创建和编辑功能的模态框而言
+> 以下基于带有创建和编辑功能的模态框而言，其他场景下的modal，大原则是一致的
 
 1. 在子组件内部封装打开逻辑，比如：`editEmplyeeInfo`
 2. 在父组件的模板里面引用这个带有模态框的组件，并且给它设置模板引用`#modal`
@@ -368,7 +368,7 @@ this.service
 })
 class ParentComp {
   @ViewChild('modal')
-  editModal: ChildComp
+  editModal: ChildComponent
   
   startEdit() {
     this.childComp.editEmployeeInfo().subscribe(() => {
