@@ -387,7 +387,7 @@ class ParentComp {
   selector: 'child-comp',
   template: `
     <h4>Child Component</h4>
-    <nz-modal [(visible)]="" (nzOnOk)="save()"></nz-modal>
+    <nz-modal [(visible)]="isVisible" (nzOnOk)="save()"></nz-modal>
   `
 })
 class ChildComponent {
