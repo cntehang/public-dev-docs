@@ -142,7 +142,9 @@ HTTP/1.1 200
 
 ### @ApiModel 注解 value 属性值不能写中文，会导致 swagger 导出 json 时会报错。建议直接不写参数。
 
-### 任何 swagger 注解的属性值都不要有单引号，json 不认识单引号，swagger 导出 json 会报错。比如@ApiModelProperty 注解 example 属性值我们有时候希望给复杂类型（比如"['111','222']"）。遇到这种情况，我们不写 example。
+### 任何 swagger 注解的属性值都不要有单引号，json 不认识单引号，swagger 导出 json 会报错
+
+### @ApiModelProperty 注解 example 属性值不要用大括号、中括号这种东西，会干扰 json 反序列化
 
 ### 对同一服务下的接口文档进行分类
 
