@@ -18,7 +18,7 @@
 
 ## 2 规避 JPA 的常见问题
 
-下面的几个问题互相依赖，归根结底，是 Spring Boot 默认开启 OSIV 带来的。此行为的的理由有：
+下面的几个问题互相依赖，归根结底，是 [Spring Boot 默认开启 OSIV](https://www.baeldung.com/spring-open-session-in-view#1-entity-graphs) 带来的。此行为的的理由有：
 
 - 减少 LazyInitializationException，让代码编写更符合直觉，无需关心数据库访问细节
 - 傻瓜化数据库访问，数据库连接的概念基本对用户不可见，无需关心连接的获取和释放
