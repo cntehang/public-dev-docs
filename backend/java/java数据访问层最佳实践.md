@@ -107,13 +107,41 @@ return employees.stream().map(EmployeeDocDto::build).collect(Collectors.toList()
 考虑下面这段代码：
 
 ```java
+// 外层无事务
 Optional<Employee> employee = repository.findById(1L);
 if (employee.ifPresent()) {
     // do remote call
 }
 ```
 
-在开启 OSIV 的情况下，每个请求会在一开始就绑定一个 Session 对象，并在第一次执行数据库访问的时候为 Session 对象绑定一个数据库连接（从服务的数据库连接池中取一个），Session 在本次请求结束的时候自动关闭，并归还数据库连接。上面的代码中，当有远程调用，如果这个远程调用需要消耗蛮长的时间（如 10s），那么只需要同时并发 10 个请求，就能让[默认配置数据库连接池配置](https://stackoverflow.com/a/55026845/9304616)（10 个连接）下的 Spring Boot 服务陷入无数据库连接可用的情况，带来巨大的性能问题。
+在开启 OSIV 的情况下，每个请求会在一开始就绑定一个 Session 对象，并在第一次执行数据库访问的时候为 Session 对象绑定一个数据库连接（从服务的数据库连接池中取一个），Session 在本次请求结束的时候自动关闭，并归还数据库连接。上面的代码中，我们的期望行为是：
+
+```java
+// 外层无事务
+// 获取数据库连接并访问对象
+Optional<Employee> employee = repository.findById(1L);
+// 归还数据库连接
+// 发起远程访问
+if (employee.ifPresent()) {
+    // do remote call
+}
+```
+
+但是开启 OSIV 的实际行为是：
+
+```java
+// 外层无事务
+// 获取数据库连接并访问对象
+Optional<Employee> employee = repository.findById(1L);
+// 数据库连接随 Session 对象保持
+// 发起远程访问
+if (employee.ifPresent()) {
+    // do remote call
+}
+// 数据库连接随 Session 对象保持
+```
+
+当有远程调用，如果这个远程调用需要消耗蛮长的时间（如 10s），那么只需要同时并发 10 个请求，就能让[默认配置数据库连接池配置](https://stackoverflow.com/a/55026845/9304616)（10 个连接）下的 Spring Boot 服务陷入无数据库连接可用的情况，带来巨大的性能问题。
 
 ## 3 一些推荐的代码写法
 
