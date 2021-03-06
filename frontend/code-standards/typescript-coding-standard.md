@@ -27,7 +27,7 @@ The coding guidelines are defined in the next section. There are two tools used 
 
 ### 2.3 Usage
 
-1. Use `undefined`, do't use `null`.
+1. Use `undefined`, don't use `null`.
 1. Consider objects like Nodes, Symbols, etc. as immutable outside the component that created them. Do not change them.
 1. Consider arrays as immutable by default after creation.
 1. More than 2 related Boolean properties on a type should be turned into an Enum flag.
