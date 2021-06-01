@@ -7,13 +7,13 @@
 
 ## 1. 分层示例：
 
-![分层示例](../../resources/java_project_layer.png)
+![分层示例](../resources/java_project_layer.png)
 
 其中各层的引用关系从上到下依次为：  
 API 层 -> Application 层 -> DomainService -> Repository -> DomainModel
 
 引用关系见下图
-![分层示例](../../resources/java_layer_depencies.png)
+![分层示例](../resources/java_layer_depencies.png)
 
 ## 2. API 层
 
